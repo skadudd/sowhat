@@ -15,6 +15,9 @@
    - `settled` → `❌ 이미 settled된 섹션입니다. /sowhat:challenge로 재검토하세요.`
    - `invalidated` → `❌ invalidated 상태입니다. 상위 논거가 먼저 revision되어야 합니다.`
    - `draft` 또는 `discussing` 또는 `needs-revision` → 진행
+5. `.research/` 디렉터리 확인:
+   - 해당 섹션과 관련된 `status: unreviewed` 파인딩이 있으면:
+     `ℹ️ 이 섹션과 관련된 미검토 리서치가 {N}건 있습니다. /sowhat:research review {section}`
 
 ## 핑퐁 절차
 

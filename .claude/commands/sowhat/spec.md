@@ -22,6 +22,9 @@
 1. `00-thesis.md` — 최상위 논리
 2. 관련 기획 섹션들 — 명세의 근거가 되는 기획 내용
 3. 대상 명세 섹션 파일
+4. `.research/` 디렉터리 확인:
+   - 해당 섹션과 관련된 `status: unreviewed` 파인딩이 있으면:
+     `ℹ️ 이 섹션과 관련된 미검토 리서치가 {N}건 있습니다. /sowhat:research review {section}`
 
 ## 섹션별 핑퐁 가이드
 
