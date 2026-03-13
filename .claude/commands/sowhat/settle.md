@@ -1,3 +1,6 @@
+---
+model: claude-haiku-4-5-20251001
+---
 # /sowhat:settle — 완료 선언
 
 이 커맨드는 섹션의 status를 settled로 전환한다. `$ARGUMENTS`에 섹션 이름, 번호, 또는 `thesis`가 전달된다.

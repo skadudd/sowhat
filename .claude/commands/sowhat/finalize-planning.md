@@ -1,3 +1,6 @@
+---
+model: claude-sonnet-4-6
+---
 # /sowhat:finalize-planning — 기획 레이어 완료 + 명세 레이어 생성
 
 이 커맨드는 기획 레이어의 게이트를 통과하고 명세 레이어 초안을 자동 생성한다.

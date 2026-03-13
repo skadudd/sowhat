@@ -1,3 +1,6 @@
+---
+model: claude-sonnet-4-6
+---
 # /sowhat:spec — 명세 섹션 핑퐁
 
 이 커맨드는 명세 레이어의 섹션을 핑퐁 방식으로 전개한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.

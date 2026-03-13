@@ -1,3 +1,6 @@
+---
+model: claude-haiku-4-5-20251001
+---
 # /sowhat:sync — GitHub 변경 감지 + 로컬 반영
 
 이 커맨드는 GitHub의 변경사항을 감지하여 로컬 파일에 반영한다.

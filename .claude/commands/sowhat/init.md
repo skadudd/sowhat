@@ -1,3 +1,6 @@
+---
+model: claude-sonnet-4-6
+---
 # /sowhat:init — 프로젝트 초기화 + Thesis 핑퐁
 
 이 커맨드는 sowhat 프로젝트를 초기화한다. 인간이 project name과 rough idea를 입력하면, Claude가 핑퐁을 통해 thesis를 도출한다.

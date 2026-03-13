@@ -1,3 +1,6 @@
+---
+model: claude-sonnet-4-6
+---
 # /sowhat:finalize — GSD Export 생성
 
 이 커맨드는 명세 레이어를 완료하고 GSD가 소비할 export 파일을 생성한다.
