@@ -186,15 +186,15 @@ needs-revision 있으면:
 
 ```
 flowchart TD
-  T["💡 Thesis:\n{Answer 40자}"]:::thesis
+  T["💡 {Answer 40자}"]:::thesis
   KA["🧩 {Key Arg}"]:::keyarg
-  C["📌 Claim:\n{전체 Claim 문장}"]:::{status}
-  G["🔍 Grounds:\n{전체 Grounds}"]:::grounds
-  W["🔗 Warrant:\n{전체 Warrant}"]:::grounds
-  B["📚 Backing:\n{Backing}"]:::grounds
-  Q["🎯 Qualifier: {Qualifier}"]:::draft
-  R["⚡ Rebuttal:\n{전체 Rebuttal}"]:::rebuttal
-  OQ["❓ Open Q:\n{Open Questions}"]:::draft
+  C["📌 {Claim 문장}"]:::{status}
+  G["🔍 {Grounds 핵심}"]:::grounds
+  W["🔗 {Warrant 핵심}"]:::grounds
+  B["📚 {Backing 핵심}"]:::grounds
+  Q["🎯 {Qualifier}"]:::draft
+  R["⚡ {Rebuttal 문장}"]:::rebuttal
+  OQ["❓ {Open Questions}"]:::draft
 
   T --> KA --> C
   C -.->|근거| G
@@ -205,7 +205,11 @@ flowchart TD
   C -.->|미해결| OQ
 ```
 
-텍스트를 **자르지 않고** 전체 문장 표시 (local 모드는 상세 확인용).
+**노드 텍스트 규칙:**
+- `\n` 사용 금지 — Mermaid 노드는 단일행만 지원
+- 타입 아이콘은 텍스트 앞에 prefix로만 표시 (예: `💡 답변 문장`)
+- 긴 문장은 30자에서 잘라 `...` 추가
+- local 모드는 40자까지 허용
 
 ### 4. 저장
 
