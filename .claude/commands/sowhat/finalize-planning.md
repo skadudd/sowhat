@@ -7,7 +7,7 @@ model: claude-sonnet-4-6
 
 ## 사전 검증
 
-1. `.planning/config.json` 로드
+1. `planning/config.json` 로드
 2. `layer`가 `"planning"`인지 확인
    - `"spec"` → `❌ 이미 명세 레이어입니다.`
    - `"finalized"` → `❌ 이미 완료된 프로젝트입니다.`
@@ -25,6 +25,16 @@ model: claude-sonnet-4-6
 
 - 문제가 발견되면 → **즉시 중단**. 인간이 문제를 해결한 후 다시 실행해야 한다.
 - 문제가 없으면 → 다음 단계 진행
+
+## 디렉터리 준비
+
+명세 레이어 진입 전, 필요한 디렉터리가 있는지 확인하고 없으면 생성한다:
+
+```bash
+mkdir -p logs maps/local maps/snapshots maps/debate research planning
+```
+
+(init에서 이미 생성되었으면 무시된다)
 
 ## 명세 레이어 초안 생성
 
@@ -58,11 +68,13 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 - 모든 기획 섹션의 Acceptance Criteria 합산
 - 중복 제거 및 구조화
 
-각 파일의 형식:
+각 파일의 형식 (Toulmin 구조 포함):
 
 ```markdown
 ---
 status: draft
+scheme:
+qualifier:
 version: 1
 section: {N}
 title: {section-name}
@@ -75,10 +87,22 @@ updated: {current_datetime}
 ## Claim
 > {기획에서 추출한 내용 — 초안}
 
-## Supporting Arguments
+## Grounds (근거)
 
 ### {근거 1}
 {기획에서 추출한 내용}
+
+## Warrant (논거 연결)
+> {Claim과 Grounds를 연결하는 원칙 — 초안 또는 비워둠}
+
+## Backing (Warrant 강화)
+>
+
+## Qualifier
+>
+
+## Rebuttal (반론 대응)
+>
 
 ## Scope
 ### In
@@ -97,6 +121,10 @@ updated: {current_datetime}
 
 ## Open Questions
 - [ ] 초안 검토 필요
+
+## Argument Log
+| round | datetime | move | agent | outcome |
+|-------|----------|------|-------|---------|
 
 ## Decision Log
 | v | 변경 내용 | 이유 | 날짜 |
@@ -123,10 +151,11 @@ updated: {current_datetime}
 
 ## GitHub Issues 생성
 
-각 명세 섹션에 대해 GitHub Issue를 생성한다.
+각 명세 섹션에 대해 GitHub Issue를 생성한다 (frontmatter 제거 후):
 
 ```bash
-gh issue create --title "{section-title}" --body-file {section-file} --label "spec,draft"
+sed '1,/^---$/d; 1,/^---$/d' {section-file} > /tmp/spec-body.md
+gh issue create --title "{section-title}" --body-file /tmp/spec-body.md --label "spec,draft"
 ```
 
 ## Git commit
@@ -156,3 +185,4 @@ git commit -m "planning-complete: generate spec layer"
 - **기획 레이어 완성 전 명세 레이어 진입 불가** — 게이트가 강제한다
 - **challenge 자동 실행은 생략 불가**
 - **명세 초안은 기획에서 추출** — Claude가 새로운 내용을 만들지 않는다
+- **Toulmin 필드는 비워두되 구조는 미리 만든다** — spec 핑퐁에서 채워진다

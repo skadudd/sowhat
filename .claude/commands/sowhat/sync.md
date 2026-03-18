@@ -9,7 +9,7 @@ model: claude-haiku-4-5-20251001
 
 ### 1. config.json 로드
 
-`.planning/config.json`을 로드하여 GitHub repo 정보와 섹션 목록을 가져온다.
+`planning/config.json`을 로드하여 GitHub repo 정보와 섹션 목록을 가져온다.
 
 ### 2. GitHub Issues 상태 Pull
 

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -v D:\\\\code\\\\sowhat\\\\.claude\\\\commands\\\\sowhat\\\\*.md ~/.claude/commands/sowhat/)",
+      "Bash(cp -v /d/code/sowhat/.claude/commands/sowhat/*.md ~/.claude/commands/sowhat/)",
+      "Bash(for f:*)",
+      "Bash(python3 -c \"print\\('ok'\\)\")",
+      "Bash(git add:*)",
+      "Bash(cd D:\\\\code\\\\sowhat\\\\.claude\\\\commands\\\\sowhat && for f in *.md; do sed -i 's/\\\\.planning\\\\//planning\\\\//g; s/\\\\.research\\\\//research\\\\//g' \"$f\"; done && echo \"done\")",
+      "Bash(cd \"/d/code/sowhat/.claude/commands/sowhat\" && for f in *.md; do sed -i 's/\\\\.planning\\\\//planning\\\\//g; s/\\\\.research\\\\//research\\\\//g' \"$f\"; done && echo \"done\")",
+      "Bash(find C:UsersOwner.claudecommandsgsd -type f -name *.md)",
+      "Bash(git -C D:/code/sowhat log --oneline -5)",
+      "Bash(git:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
