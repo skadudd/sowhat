@@ -77,24 +77,36 @@ git checkout -b "$BRANCH"
 
 ## 3-에이전트 역할
 
-### Pro-Agent (claude-sonnet-4-6)
-- 역할: 현재 Claim/Thesis를 **최선을 다해** 방어
-- 사용 전략: Toulmin 구조 전체 동원 (Grounds → Warrant → Backing → Qualifier)
-- 양보 조건: 논리적으로 불가능한 경우에만, 그리고 반드시 Qualifier 또는 Scope 조정과 함께
-- 금지: 논리적 근거 없는 양보
-
 ### Con-Agent (claude-opus-4-6)
-- 역할: 섹션의 `scheme` 필드에 맞는 Walton Critical Questions로 공격
-- scheme별 공격 전략:
-  - `authority`: 권위의 진정성·관련성 공격, 반대 권위 제시
-  - `analogy`: 유사성의 정도 공격, 차이가 Claim을 무효화하는지 검증
-  - `cause-effect`: 인과 메커니즘 공격, 교란 변수 제시
-  - `statistics`: 표본 대표성·방법론 공격
-  - `example`: 사례의 대표성 공격, 체리피킹 여부 검증
-  - `sign`: 지표의 신뢰성 공격, 대안 설명 제시
-  - `principle`: 원칙의 적용 가능성 공격, 예외 상황 제시
-  - `consequence`: 결과의 현실성 공격, 의도치 않은 부작용 제시
-- 에스컬레이션: Claim 무너지면 → Key Argument 도전 → Key Argument 무너지면 → Thesis 도전
+- 역할: 섹션을 다층 분석 후 **가장 치명적인 약점 하나**만 골라 공격
+- 공격 전 분석 순서 (이 순서대로 점검, 첫 발견 시 우선 공격):
+  1. **Warrant 취약점 먼저**: Non-sequitur / Missing link / Circular 중 해당되는가?
+  2. **Qualifier Overclaiming**: `definitely` + 약한 근거 / `definitely` + 반론 없음?
+  3. **Scheme CQ**: 해당 scheme의 Critical Questions 중 가장 치명적 질문 하나
+  4. **Steelman**: 위 세 가지로 공격이 없으면, 섹션에 대한 최강 반론을 독립 생성
+
+- scheme별 Critical Questions:
+
+  | Scheme | Critical Questions |
+  |--------|-------------------|
+  | authority | 이 권위자가 이 도메인의 진짜 전문가인가? 이해충돌은 없는가? 반대 권위는? |
+  | analogy | 두 케이스가 논증의 핵심 측면에서 충분히 유사한가? 차이점이 결정적인가? |
+  | cause-effect | 인과 메커니즘이 타당한가? 역인과 가능성은? Confounding variable은? |
+  | statistics | 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 현재 시점에 유효한가? |
+  | example | 대표 사례인가? 체리피킹이 아닌가? 일반화가 가능한가? |
+  | sign | 이 신호가 신뢰할 수 있는 지표인가? 동일 신호에 대한 다른 해석은? |
+  | principle | 이 원칙이 이 상황에 적용되는가? 관련 예외 조건은? |
+  | consequence | 결과가 현실적인가? 의도치 않은 부작용은? 적용 시간대는? |
+
+- 에스컬레이션: Claim `broken` → Key Argument 도전 → Key Argument `broken` → Thesis 도전
+- **공격은 하나만**: 여러 약점을 나열하지 않는다. 가장 치명적인 것 하나에 집중.
+
+### Pro-Agent (claude-sonnet-4-6)
+- 역할: Con-Agent의 공격에 **공격의 논리적 약점을 직접 해소하는 방식**으로만 방어
+- 방어 성공 기준: 공격이 지적한 구체적 논리 취약점을 직접 해소했는가?
+- 방어 순서: Grounds 보강 → Warrant 명시화 → Qualifier 조정 → Scope 제한
+- 금지: 단순 재주장 (Claim을 반복하는 것), 주제 전환, 감정적 호소
+- 양보 조건: 방어 순서 전체를 소진해도 취약점을 해소할 수 없을 때만
 
 ### Research-Agent (claude-sonnet-4-6)
 - 역할: Pro-Agent 또는 Con-Agent가 외부 근거를 요청할 때만 활성화
@@ -108,46 +120,52 @@ git checkout -b "$BRANCH"
 
 ### Step 1: Con-Agent 공격
 
-1. 섹션의 `scheme` 필드 확인
-2. 해당 scheme의 Walton Critical Questions 적용
-3. 현재 Grounds, Warrant, Backing의 약점 식별
-4. **가장 강한 공격 하나**만 선택하여 제시
+1. 섹션 파일의 Warrant, Qualifier, scheme, Grounds, Rebuttal 순서로 점검
+2. **Warrant 취약점 우선 확인**:
+   - Non-sequitur: Grounds → Claim이 논리적으로 연결되지 않음
+   - Missing link: A → C 점프, 중간 단계 없음
+   - Circular: Warrant가 Claim을 그대로 반복
+3. Warrant 이상 없으면 **Qualifier Overclaiming** 확인:
+   - `definitely` + 약한 근거 (인터뷰 1-3건, 사례 1-2개) → 공격
+   - `definitely` + Rebuttal 없음 → 공격
+4. 위 이상 없으면 **scheme CQ 적용**: scheme의 Critical Questions 중 현재 Grounds/Warrant를 가장 직접적으로 무력화하는 질문 선택
+5. 위 이상 없으면 **Steelman**: 섹션의 Rebuttal을 먼저 보지 않고, 독립적으로 이 섹션에 대한 최강 반론 생성. Rebuttal 필드와 대조하여 대응 못한 부분 공격
 
 출력 형식:
 ```
-🔴 Con [라운드 N] — {scheme} scheme 공격
-  Critical Question: {Walton CQ 구체적 질문}
-  공격: {구체적 논리 공격}
-  근거: {Grounds/Warrant/Backing 중 어디가 취약한가}
+🔴 Con [라운드 N]
+  공격 유형: {Warrant취약 | Qualifier과잉 | SchemesCQ | Steelman}
+  공격: {구체적 논리 공격 — 단 하나, 명확하게}
+  취약 지점: {Grounds/Warrant/Qualifier/Rebuttal 중 어디가 표적인가}
 ```
 
 ### Step 2: Pro-Agent 방어
 
-Con-Agent의 공격에 응답한다. 응답 유형:
+Con-Agent의 공격에 응답한다. **공격이 지적한 논리적 약점을 직접 해소해야만 방어 성공**이다.
 
 **방어 성공 (defense)**:
-- Warrant 또는 Backing으로 반박
-- Rebuttal 섹션에 이 반박을 추가
+- 공격의 취약 지점을 Grounds 보강 / Warrant 명시화 / Backing 제시로 직접 해소
+- 단순 재주장(Claim 반복) 불가
 ```
 🟢 Pro — 방어 성공
-  반박: {논리적 근거}
-  Rebuttal 업데이트: {구체적 내용}
+  해소 방식: {어떻게 취약점을 직접 해소했는가}
+  Rebuttal 업데이트: {섹션 파일 Rebuttal에 추가할 내용}
 ```
 
 **수정 방어 (concession with modification)**:
-- Qualifier 축소 또는 Scope 제한으로 방어
+- 취약점을 완전히 해소할 수 없으나, Qualifier 축소 또는 Scope 제한으로 공격 범위를 무력화
 - Claim이 약화되지만 유효성 유지
 ```
 🟡 Pro — 수정 방어
   수정: {Qualifier/Scope 조정 내용}
-  이유: {왜 이 조정으로 공격을 무력화하는가}
+  이유: {왜 이 조정으로 공격 범위가 벗어나는가}
 ```
 
 **완전 양보 (full concession)**:
-- 논리적으로 더 이상 방어 불가능
-- Claim을 invalidated 처리
+- Grounds 보강, Warrant 명시화, Qualifier 조정 모두 시도했으나 취약점 해소 불가
 ```
 🔴 Pro — 완전 양보
+  소진한 방어: {시도했으나 불충분한 방어들}
   인정: {왜 방어 불가능한가}
 ```
 
@@ -168,17 +186,22 @@ Pro-Agent 또는 Con-Agent가 다음 표현을 사용할 때만 활성화:
   삽입 위치: Grounds 항목 {N} 또는 Backing
 ```
 
-### Step 4: 오케스트레이터 평가
+### Step 4: 오케스트레이터 판정
 
-라운드 결과를 다음 중 하나로 판정한다:
+Pro-Agent의 방어가 공격의 논리적 취약점을 **직접 해소했는가**를 기준으로 판정한다.
 
-| 결과 | 조건 | 섹션 status 변경 |
-|------|------|------------------|
-| `strengthened` | 방어 성공, Rebuttal 강화됨 | 유지 |
-| `modified` | Qualifier/Scope 축소 | 유지 (내용 수정) |
-| `weakened` | 방어했으나 논리적 손상 | `needs-revision` |
-| `broken` | 완전 양보 | `invalidated` |
+| 결과 | 판정 기준 | 섹션 status 변경 |
+|------|-----------|------------------|
+| `strengthened` | Pro가 공격 취약점을 직접 해소 + Rebuttal 강화됨 | 유지 |
+| `modified` | Qualifier/Scope 조정으로 공격 범위를 벗어남 (약화 수용) | 유지 (내용 수정) |
+| `weakened` | Pro가 방어했으나 취약점 일부 잔존 — "방어는 했으나 논리 손상" | `needs-revision` |
+| `broken` | Pro가 완전 양보 | `invalidated` |
 | `thesis-threatened` | Thesis Answer까지 영향 | **즉시 PAUSE** |
+
+**판정 기준 세부:**
+- `strengthened` vs `weakened` 경계: Pro가 취약점을 **직접** 해소했는가 vs 다른 논거로 우회했는가
+- 우회 방어는 `weakened`로 판정 (공격 지점이 해소되지 않았으므로)
+- `modified`는 Pro가 Qualifier/Scope를 좁혀 "그 범위에서는 여전히 참"임을 보인 경우만
 
 ### Step 5: 라운드 파일 생성 및 커밋
 
@@ -228,6 +251,32 @@ branch: {branch_name}
 git add {section_file} logs/debate/{section}-round-{N}.md logs/argument-log.md
 git commit -m "debate({section}): round-{N} - {outcome}"
 ```
+
+## 세션 저장
+
+각 라운드 시작 시 `logs/session.md`를 Write 도구로 덮어쓴다:
+
+```markdown
+---
+command: debate
+section: {section}
+step: round-{N}
+status: in_progress
+saved: {current_datetime}
+---
+
+## 마지막 컨텍스트
+{이번 라운드 Con-Agent 공격 요약 + 현재 판정 대기 중인지 여부. 예: "round-2 진행 중. Con: Warrant의 인과관계 약점 공격. Pro: 상관관계 데이터로 방어 중. 오케스트레이터 판정 대기"}
+
+## 재개 시 첫 질문
+{판정 결과를 적용하고 다음 라운드 시작할 것, 또는 Post-Debate 요약 제시할 것}
+```
+
+라운드 완료 후 `step: round-{N}-complete`으로 업데이트.
+
+debate 완료 커밋 직전에 `status: complete`로 업데이트한다.
+
+---
 
 ## 에스컬레이션 경로
 
@@ -354,8 +403,12 @@ merge 또는 cherry-pick 완료 후:
 
 ## 핵심 원칙
 
+- **Warrant 취약점 우선** — Con-Agent는 항상 Warrant Non-sequitur/Missing link/Circular 먼저 점검
+- **Steelman 독립 생성** — Rebuttal을 먼저 보지 않고 최강 반론 생성 후 대조
+- **공격은 하나만** — 여러 약점 나열 금지, 가장 치명적인 것 하나에 집중
+- **우회 방어는 weakened** — 공격 지점을 직접 해소하지 않은 방어는 성공이 아님
+- **Pro-Agent 단순 재주장 금지** — Claim 반복은 방어가 아님
 - **Claim이 무너져야 한다면 무너뜨린다** — 방어를 위한 방어 없음
-- **scheme별 CQ 적용 필수** — 일반 공격이 아닌 논증 구조 특화 공격
 - **Research-Agent는 요청 시만 활성화** — 자동으로 검색하지 않는다
 - **브랜치는 인간이 결정한다** — 자동 merge 없음
 - **Thesis 위기는 즉시 PAUSE** — 임의로 처리하지 않는다
