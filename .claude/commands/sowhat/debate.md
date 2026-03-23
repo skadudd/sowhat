@@ -363,6 +363,36 @@ git checkout main
 git merge {branch_name} --no-ff -m "debate({section}): merge round results"
 ```
 
+merge 완료 후, 섹션 status를 `discussing`으로 복원한다 (needs-revision이었던 경우):
+
+```bash
+date -u +"%Y-%m-%dT%H:%M:%SZ"
+```
+
+섹션 파일에서:
+- `status: needs-revision` → `status: discussing`
+- `updated: {current_datetime}`
+
+```bash
+git add {section_file}
+git commit -m "debate({section}): restore status to discussing after merge"
+```
+
+그 다음, Open Questions 정리를 확인한다:
+
+```
+debate 중 추가된 Open Questions가 있습니까?
+
+  ## Open Questions
+  {현재 미해결 항목 목록}
+
+  [1] 모두 해소됨 — settle로 진행
+  [2] 아직 미해소 항목 있음 — /sowhat:expand {section} 으로 먼저 정리
+```
+
+인간이 [1]을 선택하면: Open Questions 체크박스를 모두 checked로 표시하고 커밋한 뒤 settle 안내.
+인간이 [2]를 선택하면: expand 안내 후 종료.
+
 **[2] cherry-pick 선택**:
 인간이 커밋 해시를 지정하거나 라운드 번호를 선택하면:
 ```bash
@@ -395,10 +425,33 @@ merge 또는 cherry-pick 완료 후:
 ✅ Debate 완료: {section}
   결과: {outcome}
   적용된 변경: {N}건
+```
 
-다음: /sowhat:expand {section} → weakened/broken 섹션 재전개
-      /sowhat:challenge → 전체 트리 검증
-      /sowhat:settle {section} → 강화된 섹션 완료 선언
+outcome에 따라 다음 안내를 표시한다:
+
+**strengthened / modified** (섹션 유효):
+```
+⚠️  /clear 전에 반드시 완료하세요:
+  → /sowhat:settle {section}
+
+  /clear 후에는 이 안내가 사라집니다.
+  settle을 건너뛰면 다음 세션에서 섹션이 unsettled 상태로 남습니다.
+```
+
+**weakened** (needs-revision):
+```
+이 섹션은 needs-revision 상태입니다.
+  → /sowhat:expand {section} 으로 먼저 논거를 보강하세요
+  → 보강 후 /sowhat:settle {section}
+
+  /clear 전에 expand + settle을 완료하는 것을 권장합니다.
+```
+
+**broken / invalidated**:
+```
+이 섹션은 invalidated 상태입니다.
+  → 상위 Key Argument를 먼저 revision하거나 thesis를 수정하세요.
+  다음: /sowhat:expand {section} → /sowhat:init (thesis 수정)
 ```
 
 ## 핵심 원칙
