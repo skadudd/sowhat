@@ -3,30 +3,25 @@ model: claude-haiku-4-5-20251001
 ---
 # /sowhat:map — 논증 흐름 시각화
 
-논증의 흐름을 **Mermaid 다이어그램**으로 시각화한다. `$ARGUMENTS`
+논증의 흐름을 **Mermaid 다이어그램**으로 즉시 시각화하여 응답에 출력한다. `$ARGUMENTS`
 
-파일 구조가 아닌 **명제와 논리 관계**를 보여주는 것이 목적이다:
-- 어떤 질문에서 출발했는가
-- 어떤 주장이 나왔는가
-- 어떤 근거로 뒷받침했는가
-- 어떤 반박이 있었고 어떻게 극복했는가
-- 지금 현재 상태가 어떤 맥락에서 도출되었는가
+파일 저장이 아닌 **지금 바로 보는 것**이 목적이다.
 
 ---
 
 ## 인자 파싱
 
 ```
-/sowhat:map [section] [--snapshot] [--local | --global]
+/sowhat:map [section] [--save]
 ```
 
 | 인자 | 의미 |
 |------|------|
-| 인자 없음 또는 `--global` | 전체 논증 흐름 맵 |
+| 인자 없음 | 전체 논증 흐름 맵 |
 | `{section}` (번호 또는 이름) | 해당 섹션 상세 맵 |
-| `--snapshot` | 현재 상태를 타임스탬프 파일로도 저장 |
+| `--save` | 파일로도 저장 (`maps/overview.md` 또는 `maps/local/{name}.md`) |
 
-모드 결정: `--global` > `{section}` 존재 > global
+모드 결정: `{section}` 존재 → Local 모드, 없으면 → Global 모드
 
 ---
 
@@ -34,10 +29,6 @@ model: claude-haiku-4-5-20251001
 
 1. `planning/config.json` 로드
 2. `00-thesis.md` 로드
-3. 디렉터리 생성:
-   ```bash
-   mkdir -p maps/snapshots maps/local maps/debate
-   ```
 
 ---
 
@@ -72,8 +63,8 @@ classDef rebuttal fill:#fff1f0,stroke:#ffa39e,color:#000
 
 ### 텍스트 처리
 
-- 노드 내 텍스트는 **30자 이내**로 잘라 `...` 추가 (가독성)
-- 실제 전체 내용은 섹션 파일에서 확인 가능
+- 노드 내 텍스트는 **50자 이내**로 잘라 `...` 추가
+- `\n` 사용 금지 — Mermaid 노드는 단일행만 지원
 - 빈 필드는 노드 생성 안 함 (생략)
 
 ---
@@ -100,17 +91,17 @@ classDef rebuttal fill:#fff1f0,stroke:#ffa39e,color:#000
 
 ```
 flowchart TD
-  T["💡 {Answer 30자...}"]:::thesis
+  T["💡 {Answer 50자...}"]:::thesis
 
   T --> KA1["🧩 {Key Arg 1}"]:::keyarg
   T --> KA2["🧩 {Key Arg 2}"]:::keyarg
 
-  KA1 --> S1["📌 {Claim 30자...}"]:::settled
-  S1 --> G1["🔍 {Grounds 30자...}"]:::grounds
-  S1 --> R1["⚡ {Rebuttal 30자...}"]:::rebuttal
-  R1 --> RE1["↩ {Response 30자...}"]:::settled
+  KA1 --> S1["📌 {Claim 50자...}"]:::settled
+  S1 -.->|근거| G1["🔍 {Grounds 50자...}"]:::grounds
+  S1 -->|반박| R1["⚡ {Rebuttal 50자...}"]:::rebuttal
+  R1 -->|재반론| RE1["↩ {Response 50자...}"]:::settled
 
-  KA2 --> S2["📌 {Claim 30자...}"]:::discussing
+  KA2 --> S2["📌 {Claim 50자...}"]:::discussing
 
   classDef thesis fill:#91caff,stroke:#4096ff,color:#000
   classDef keyarg fill:#d3adf7,stroke:#9254de,color:#000
@@ -123,46 +114,28 @@ flowchart TD
 **연결 원칙:**
 - Thesis → 각 Key Argument
 - Key Argument → 해당 섹션의 Claim
-- Claim → Grounds (있으면, 점선 `-.->`)
-- Claim → Warrant (있으면, 점선 `-.->`)
-- Claim → Rebuttal (있으면, 실선 `-->`)
-- Rebuttal → Response (있으면, 실선 `-->`)
+- Claim → Grounds (있으면, 점선 `-.->|근거|`)
+- Claim → Warrant (있으면, 점선 `-.->|추론|`)
+- Claim → Rebuttal (있으면, 실선 `-->|반박|`)
+- Rebuttal → Response (있으면, 실선 `-->|재반론|`)
 
-**엣지 레이블:**
-- Claim → Grounds: `|근거|`
-- Claim → Warrant: `|추론|`
-- Claim → Rebuttal: `|반박|`
-- Rebuttal → Response: `|재반론|`
+### 3. 응답 출력 형식
 
-### 3. 저장
+다이어그램을 **응답 본문에 직접 렌더링**한다:
 
-```markdown
-# 논증 흐름 맵
-> {현재 datetime}
+````markdown
+## 논증 흐름 맵
 
 ```mermaid
 {생성된 다이어그램}
 ```
 
-## 섹션 상태
-| 섹션 | 상태 | 주장 요약 |
-|------|------|-----------|
-| {N}-{name} | {status} | {Claim 40자...} |
+**{settled}/{total} settled** | needs-revision: {목록 또는 없음}
+````
+
+`--save` 플래그 있을 때만 `maps/overview.md`에 추가 저장 후:
 ```
-
-파일: `maps/overview.md` (항상 덮어쓰기)
-
-`--snapshot` 플래그 있으면 `maps/snapshots/overview-{YYYYMMDD-HHMM}.md` 에도 저장.
-
-### 4. 출력
-
-```
-✅ maps/overview.md ({settled}/{total} settled)
-```
-
-needs-revision 있으면:
-```
-⚠️  needs-revision: {섹션 번호 목록}
+💾 maps/overview.md 저장 완료
 ```
 
 ---
@@ -186,7 +159,7 @@ needs-revision 있으면:
 
 ```
 flowchart TD
-  T["💡 {Answer 40자}"]:::thesis
+  T["💡 {Answer 50자}"]:::thesis
   KA["🧩 {Key Arg}"]:::keyarg
   C["📌 {Claim 문장}"]:::{status}
   G["🔍 {Grounds 핵심}"]:::grounds
@@ -205,21 +178,17 @@ flowchart TD
   C -.->|미해결| OQ
 ```
 
-**노드 텍스트 규칙:**
-- `\n` 사용 금지 — Mermaid 노드는 단일행만 지원
-- 타입 아이콘은 텍스트 앞에 prefix로만 표시 (예: `💡 답변 문장`)
-- 긴 문장은 30자에서 잘라 `...` 추가
-- local 모드는 40자까지 허용
+### 4. 응답 출력 형식
 
-### 4. 저장
+````markdown
+## {섹션 이름} — 논증 상세
 
-`maps/local/{section-name}.md`
-
-### 5. 출력
-
+```mermaid
+{생성된 다이어그램}
 ```
-✅ maps/local/{section-name}.md
-```
+````
+
+`--save` 플래그 있을 때만 `maps/local/{section-name}.md`에 추가 저장.
 
 ---
 
@@ -232,9 +201,12 @@ flowchart TD
 git show HEAD~1:{section-file}.md
 ```
 
-이전 Claim/Warrant/Rebuttal(회색) vs 현재(파랑) 비교:
+이전 Claim/Warrant/Rebuttal(회색) vs 현재(파랑) 비교를 **응답에 직접 출력**:
 
-```
+````markdown
+## debate 변화 — {섹션} 라운드 {N}
+
+```mermaid
 flowchart LR
   subgraph Before["라운드 {N-1}"]
     BC["📌 {이전 Claim}"]:::draft
@@ -246,26 +218,13 @@ flowchart LR
   end
   BC -->|"debate"| AC
 ```
-
-저장: `maps/debate/debate-{section}-r{N}.md`
-
----
-
-## 파일 명명 규칙
-
-| 종류 | 경로 |
-|------|------|
-| 전체 개요 | `maps/overview.md` |
-| 전체 스냅샷 | `maps/snapshots/overview-{YYYYMMDD-HHMM}.md` |
-| 로컬 뷰 | `maps/local/{section-name}.md` |
-| Debate 뷰 | `maps/debate/debate-{section}-r{N}.md` |
+````
 
 ---
 
 ## 핵심 원칙
 
+- **인라인 우선** — 파일 저장이 아닌 응답 본문에 Mermaid 코드블록으로 직접 출력
+- **`--save`는 옵션** — 명시적으로 요청할 때만 파일 저장
 - **명제 중심** — 노드 내용은 파일명이 아닌 실제 주장·근거·반박 문장
-- **Mermaid** — Excalidraw JSON 대신 텍스트 기반 다이어그램, 생성 비용 최소화
-- **논증 흐름** — 질문 → 주장 → 근거/반박 → 결론의 논리 맥락 전달
-- **Global은 항상 덮어쓴다** — 최신 상태 유지
-- **스냅샷은 누적** — 삭제하지 않는다
+- **50자 제한** — 30자보다 넓게 허용해 내용 전달력 확보
