@@ -7,6 +7,48 @@ model: claude-sonnet-4-6
 
 ## 실행 절차
 
+### 0. 환경 체크
+
+```bash
+agent-browser --version 2>/dev/null
+```
+
+미설치 시:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  필수 도구 미설치: agent-browser
+
+  sowhat Sub-Research 기능에 필요합니다.
+  (Vercel Labs 개발 — AI agent용 고성능 브라우저)
+  설치하지 않으면 Sub-Research 기능이 비활성화됩니다.
+
+  [1] 지금 설치 (권장)
+  [2] 나중에 설치 (Sub-Research 비활성화로 계속)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**[1] 선택 시:**
+
+```bash
+# agent-browser CLI 설치
+npm install -g agent-browser
+
+# Chrome for Testing 다운로드
+agent-browser install
+
+# 설치 검증
+agent-browser --version
+```
+
+```
+✅ agent-browser 설치 완료 — Sub-Research 활성화됨
+```
+
+**[2] 선택 시:** `planning/config.json`의 `features.sub_research`를 `"disabled"`로 설정한다 (Step 11에서 처리).
+
+---
+
 ### 1. 입력 수집
 
 인간에게 다음을 요청한다:
@@ -224,6 +266,11 @@ Issue 번호를 기록한다.
     "count": 0,
     "unreviewed": 0,
     "last_research": null
+  },
+  "features": {
+    "sub_research": "enabled",
+    "sub_research_engine": "agent-browser",
+    "sub_research_fallback": "websearch"
   }
 }
 ```

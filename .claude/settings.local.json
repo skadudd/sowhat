@@ -11,7 +11,14 @@
       "Bash(find C:UsersOwner.claudecommandsgsd -type f -name *.md)",
       "Bash(git -C D:/code/sowhat log --oneline -5)",
       "Bash(git:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Read(//c/Users/Owner/.claude/commands/**)",
+      "Read(//c/Users/Owner/.claude/**)",
+      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/resume.md /c/Users/Owner/.claude/commands/sowhat/resume.md)",
+      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/map.md /c/Users/Owner/.claude/commands/sowhat/map.md)",
+      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/expand.md /c/Users/Owner/.claude/commands/sowhat/expand.md)",
+      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/debate.md /c/Users/Owner/.claude/commands/sowhat/debate.md)",
+      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/spec.md /c/Users/Owner/.claude/commands/sowhat/spec.md)"
     ]
   }
 }

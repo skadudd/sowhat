@@ -89,6 +89,30 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 - `updated`를 현재 datetime으로 변경
 - 인간의 답변을 해당 섹션에 구조화하여 기록
 
+## 세션 저장
+
+각 핑퐁 질문 제시 후 `logs/session.md`를 Write 도구로 덮어쓴다:
+
+```markdown
+---
+command: spec
+section: {N}-{section}
+step: {현재 질문 키워드: actors|requirements|data-model|api|edge-cases|acceptance}
+status: in_progress
+saved: {current_datetime}
+---
+
+## 마지막 컨텍스트
+{지금까지 핑퐁에서 나온 핵심 결정사항 2~3문장. 예: "05-functional-requirements 전개 중. 로그인 플로우의 happy path 정의 완료. 현재 에러 플로우 정의 중. OAuth 실패 시 처리 방식 논의 중"}
+
+## 재개 시 첫 질문
+{다음 질문 그대로}
+```
+
+핑퐁 완료 커밋 직전에 `status: complete`로 업데이트한다.
+
+---
+
 ## 종료
 
 인간이 충분하다고 판단하면 핑퐁을 종료한다.
