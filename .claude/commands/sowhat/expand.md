@@ -1,5 +1,6 @@
 ---
 model: claude-sonnet-4-6
+description: 특정 섹션을 Toulmin 구조로 bottom-up 전개한다. "섹션 전개", "논거 작성", "섹션 채우기", "claim 작성", "grounds 추가", "논증 구체화" 등 개별 섹션의 주장과 근거를 핑퐁으로 발전시킬 때 사용. draft 또는 needs-revision 상태 섹션에 반드시 사용하라.
 ---
 # /sowhat:expand — 섹션 Bottom-Up 전개
 

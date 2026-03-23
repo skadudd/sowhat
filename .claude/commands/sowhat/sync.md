@@ -1,5 +1,6 @@
 ---
 model: claude-haiku-4-5-20251001
+description: GitHub 변경사항을 감지하고 로컬에 반영한다. "sync", "동기화", "GitHub 반영", "변경사항 가져오기", "label 업데이트" 등 GitHub에서 직접 이슈를 수정했거나 팀원이 변경했을 때 로컬과 맞추기 위해 사용. GitHub이 source-of-truth — 충돌 시 확인 요구.
 ---
 # /sowhat:sync — GitHub 변경 감지 + 로컬 반영
 

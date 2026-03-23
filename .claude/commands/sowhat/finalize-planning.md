@@ -1,5 +1,6 @@
 ---
 model: claude-sonnet-4-6
+description: 기획 레이어를 완료하고 명세 레이어(04~09 섹션)를 자동 생성한다. "기획 완료", "명세 시작", "스펙 생성", "planning 완료", "finalize-planning" 등 모든 기획 섹션이 settled 된 후 명세 작업으로 전환할 때 사용. challenge 실행 후 6개 명세 섹션 draft 자동 생성 + GitHub Issues 생성.
 ---
 # /sowhat:finalize-planning — 기획 레이어 완료 + 명세 레이어 생성
 
