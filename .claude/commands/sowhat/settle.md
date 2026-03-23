@@ -126,25 +126,33 @@ git add logs/argument-log.md planning/config.json 00-thesis.md
 git commit -m "wip(logs): settle log for {section}"
 ```
 
-### 8. 맵 스냅샷 저장 (선택)
+### 8. 완료 안내 + 논증 구조 요약
 
-`maps/` 디렉터리가 존재하고 `maps/overview.excalidraw`가 있으면:
-
-```bash
-date -u +"%Y%m%d-%H%M"
-# maps/snapshots/overview-{YYYYMMDD-HHMM}.excalidraw 에 복사
-```
-
-### 9. 완료 안내
+완료 메시지와 함께 논증 구조를 **인라인으로 즉시 출력**한다.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ settled: {섹션 이름}
-  Claim:     {한 줄 요약}
-  Scheme:    {scheme}
-  Qualifier: {qualifier}
-  Warrant:   {명시됨 | ⚠️ Implicit — 나중에 명시 권장}
   Issue #{N} closed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 논증 구조 요약
+
+  📌 Claim [{scheme} / {qualifier}]
+    {Claim 전문}
+
+  🔍 Grounds
+    {Grounds 전문}
+
+  🔗 Warrant
+    {Warrant 전문 | ⚠️ Implicit — 명시화 권장}
+
+  📚 Backing
+    {Backing | 없음}
+
+  ⚡ Rebuttal
+    {Rebuttal | 없음}
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠️  컨텍스트 관리 권장
   세션이 길어졌을 수 있습니다.
@@ -154,7 +162,10 @@ date -u +"%Y%m%d-%H%M"
   [3] 계속 진행
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-다음: /sowhat:expand {next} | /sowhat:challenge | /sowhat:debate {section}
+다음: /sowhat:revise {section}     → 논증 수정 + 영향 점검
+      /sowhat:expand {next}        → 다음 섹션 전개
+      /sowhat:challenge            → 전체 트리 공격
+      /sowhat:debate {section}     → 변증법 강화
 ```
 
 ## 핵심 원칙
