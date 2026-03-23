@@ -5,15 +5,18 @@ model: claude-sonnet-4-6
 
 이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Toulmin Model 전체 구조(Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
-## 사전 검증
+## 사전 검증 (1회만 실행 — 이후 재로드 금지)
+
+**세션 시작 시 아래 파일들을 한 번만 로드하고 이후 모든 스텝에서 메모리 값을 재사용한다.**
 
 1. `planning/config.json` 로드 → `layer`가 `"planning"`인지 확인
    - `"spec"` 또는 `"finalized"`이면: `❌ 이미 명세/완료 레이어입니다. 기획 섹션 전개 불가.`
-2. `00-thesis.md` 로드 (항상)
+2. `00-thesis.md` 로드 → `thesis_answer`(Answer 40자), `key_arguments` 목록 추출 후 변수 저장
 3. 대상 섹션 파일 확인:
    - `$ARGUMENTS`가 숫자면 → `{N}-*.md` 패턴으로 검색
    - `$ARGUMENTS`가 이름이면 → `*-{name}.md` 패턴으로 검색
    - 없으면 → 새 섹션 파일 생성 (다음 번호 자동 부여)
+   - 섹션 파일 전체를 로드하고 **모든 필드를 변수로 추출**: `thesis_argument`, `stasis`, `scheme`, `claim`, `grounds`, `warrant`, `backing`, `qualifier`, `rebuttal`
 4. 섹션 status 확인:
    - `settled` → `❌ 이미 settled된 섹션입니다. /sowhat:challenge로 재검토하세요.`
    - `invalidated` → `❌ invalidated 상태입니다. 상위 논거가 먼저 revision되어야 합니다.`
@@ -26,20 +29,25 @@ model: claude-sonnet-4-6
    mkdir -p logs maps/local maps/snapshots maps/debate
    ```
 
+> **로드 원칙**: 이후 스텝에서 배너·질문·판단에 필요한 값은 모두 위에서 추출한 변수를 사용한다.
+> 섹션 파일 재로드는 **사용자가 필드를 수정한 직후 저장 확인 시에만** 허용한다.
+
 ---
 
 ## 컨텍스트 배너
 
-**모든 핑퐁 질문 앞에 다음 배너를 표시한다.** 인간이 맥락을 잃지 않도록 현재까지 결정된 내용을 항상 보여준다.
+**모든 핑퐁 질문 앞에 다음 배너를 표시한다.** 사전 검증에서 추출한 변수를 사용하며 **파일을 재로드하지 않는다**.
 
 ```
 ┌─── 진행 컨텍스트 ──────────────────────────────────────┐
-│ Thesis: "{00-thesis.md Answer 40자}"                   │
+│ Thesis: "{thesis_answer}"                              │
 │ 이 섹션 논거: "{thesis_argument}"                       │
 │ 스텝 {N}/9 — {스텝명}                                  │
 │ 완료: {완료된 필드와 값 요약 (없으면 생략)}               │
 └────────────────────────────────────────────────────────┘
 ```
+
+배너의 "완료" 행은 메모리에 저장된 변수(`claim`, `grounds`, `warrant` 등)에서 직접 구성한다.
 
 예시:
 ```

@@ -5,18 +5,23 @@ model: claude-opus-4-6
 
 이 커맨드는 전체 문서 트리를 7단계 논리 검증으로 공격한다. Toulmin Model, Walton Argument Schemes, Pragma-Dialectics를 모두 적용한다. 부분 공격은 없다 — 항상 전체를 대상으로 한다.
 
-## 사전 준비
+## 사전 준비 (1회만 실행 — 이후 재로드 금지)
+
+**모든 섹션 파일을 한 번만 로드하고 7단계 전체에서 메모리 값을 재사용한다.**
 
 1. `planning/config.json` 로드
-2. `00-thesis.md` 로드
-3. 모든 섹션 파일 로드 (숫자 순서대로)
-4. `settled` 또는 `discussing` 상태 섹션만 대상
+2. `00-thesis.md` 로드 → `thesis_answer`, `key_arguments` 추출
+3. 모든 섹션 파일을 **한 번에** 로드 (숫자 순서대로)
+   - `settled` 또는 `discussing` 상태 섹션만 대상
    - `draft`, `invalidated` 섹션은 건너뜀
-5. 현재 layer가 `"spec"`이면 기획 + 명세 전체를 대상으로 함
-6. 로그 디렉터리 확인:
+   - 각 섹션에서 추출: `status`, `thesis_argument`, `scheme`, `claim`, `grounds`, `warrant`, `qualifier`, `rebuttal`
+4. 현재 layer가 `"spec"`이면 기획 + 명세 전체를 대상으로 함
+5. 로그 디렉터리 확인:
    ```bash
-   mkdir -p logs maps/local maps/snapshots maps/debate
+   mkdir -p logs
    ```
+
+> **로드 원칙**: 이후 [1단계]~[7단계] 검증은 모두 위에서 추출한 메모리 값을 참조한다. 섹션 파일 재로드 금지.
 
 ---
 
@@ -140,60 +145,65 @@ scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되
 
 ## 공격 리포트 출력
 
-문제가 발견되면 다음 형식으로 출력:
+**상세 리포트는 파일로 저장하고, 응답에는 요약만 출력한다.**
 
+### 1. 파일 저장
+
+```bash
+date -u +"%Y%m%d-%H%M"
 ```
-🔴 Challenge Report — {N}건의 문제 발견
 
-━━━ Scheme 문제 ━━━
+전체 상세 리포트를 `logs/challenge-{YYYYMMDD-HHMM}.md`에 저장:
+
+```markdown
+# Challenge Report — {datetime}
+
+## Scheme 문제
 [1] cause-effect 논증 취약 (02-market)
-  문제: "시장 성장 → 우리 성공" 인과에 confounding variable 존재 가능
-  근거: 경쟁 진입 장벽이 Grounds에 언급되지 않음
-  Critical Question: "경쟁사가 동일한 속도로 대응할 때 인과가 성립하는가?"
-  영향: 02-market Claim 약화
+  문제: ...
+  Critical Question: ...
+  영향: ...
 
-━━━ Warrant 문제 ━━━
-[2] Implicit Warrant (03-solution)
-  문제: "유저 고통이 큼 → 우리 솔루션이 필요" 연결 논리 명시 없음
-  근거: 경쟁사도 같은 고통을 해결할 수 있으므로 우리 솔루션의 필요성이 자동 도출되지 않음
-  권장: Warrant 명시화 필요 (/sowhat:expand 03 → Warrant 스텝)
+## Warrant 문제
+...
 
-━━━ Qualifier 문제 ━━━
-[3] Overclaiming (01-problem)
-  문제: "definitely" qualifier이지만 근거가 인터뷰 3건뿐
-  근거: definitely는 예외 없음을 주장하나 3건 인터뷰로 예외 없음을 증명 불가
-  권장: "in most cases" 또는 "usually"로 하향
+## Qualifier 문제
+...
 
-━━━ Steelman 미대응 ━━━
-[4] Rebuttal 미흡 (02-market)
-  가장 강한 반론: "시장이 크다고 해도 우리가 그 시장을 선점할 실행력이 있다는 증거가 없다.
-                   경쟁사 X는 이미 시장에 진입해 있고, 우리보다 리소스가 많다."
-  현재 Rebuttal: "없음" (필드 비어있음)
-  권장: Rebuttal 작성 필요
+## Steelman 미대응
+...
 
-━━━ So What 문제 ━━━
-[5] 논증 비약 (04-solution)
-  문제: Grounds → Claim 연결 시 Warrant 없이 점프
-  근거: "고통 지점 목록" → "우리가 유일한 해결책" 연결 논리 없음
-  권장: Warrant 추가 필요
-
-━━━ 통과 ━━━
-  ✅ Thesis 정합성 — 모든 섹션 통과
-  ✅ Why So — 모든 섹션 통과
-  ✅ MECE — 중복/누락 없음
+## 통과
+...
 ```
 
-문제가 없으면:
-```
-✅ Challenge 통과
-  7개 검증 단계 모두 통과
-  논증 강도: [████████░░] 80%
+### 2. 응답 출력 (요약만)
 
-  Scheme:    모든 섹션 통과
-  Warrant:   모든 섹션 명시화됨
-  Qualifier: 모든 섹션 근거와 균형
-  Steelman:  모든 섹션 대응 완료
+문제가 있을 때:
 ```
+🔴 Challenge — {N}건 발견 (상세: logs/challenge-{datetime}.md)
+
+  [Scheme]    {N}건 — {섹션 목록 한 줄}
+  [Warrant]   {N}건 — {섹션 목록 한 줄}
+  [Qualifier] {N}건 — {섹션 목록 한 줄}
+  [Steelman]  {N}건 — {섹션 목록 한 줄}
+  [So What]   {N}건 — {섹션 목록 한 줄}
+  [Why So]    {N}건 — {섹션 목록 한 줄}
+  [MECE]      {N}건
+
+가장 심각한 문제:
+  [1] {유형} ({섹션}): {한 줄 설명}
+  [2] {유형} ({섹션}): {한 줄 설명}
+  [3] {유형} ({섹션}): {한 줄 설명}
+```
+
+문제가 없을 때:
+```
+✅ Challenge 통과 — 7단계 모두 통과
+  논증 강도: [████████░░] {N}%
+```
+
+> **응답 원칙**: 섹션별 상세 내용은 로그 파일에만 저장한다. 응답에 각 공격의 전문을 출력하지 않는다.
 
 ---
 
@@ -267,6 +277,8 @@ scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되
 
 ## 핵심 원칙
 
+- **섹션 파일 1회 로드** — 사전 준비에서 한 번만 로드, 7단계 내내 메모리 값 재사용
+- **리포트는 파일에, 요약만 응답에** — 응답에 각 공격의 전문을 출력하지 않는다
 - **항상 전체 트리 공격** — 부분 공격 없음
 - **검증 순서 고정** — Thesis → Scheme → Warrant → So What → Why So → Qualifier → MECE+Steelman
 - **인간의 반박을 무조건 수용하지 않는다** — 논리적 타당성 재검증
