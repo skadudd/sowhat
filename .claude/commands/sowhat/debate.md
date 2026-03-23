@@ -109,7 +109,10 @@ git checkout -b "$BRANCH"
 - 방어 성공 기준: 공격이 지적한 구체적 논리 취약점을 직접 해소했는가?
 - 방어 순서: Grounds 보강 → Warrant 명시화 → Qualifier 조정 → Scope 제한
 - 금지: 단순 재주장 (Claim을 반복하는 것), 주제 전환, 감정적 호소
-- 양보 조건: 방어 순서 전체를 소진해도 취약점을 해소할 수 없을 때만
+- 양보 조건 (다음 중 하나라도 해당되면 즉시 양보):
+  1. Qualifier가 원래보다 2단계 이상 하락 (definitely → probably 이상) → `broken`
+  2. Scope 제한이 원래 Claim의 적용 대상을 절반 이하로 축소 → `broken`
+  3. 위 조건 미해당 시에만 방어 순서(Grounds → Warrant → Qualifier → Scope) 진행, 전체 소진 시 양보
 
 ### Research-Agent (claude-sonnet-4-6)
 - 역할: Pro-Agent 또는 Con-Agent가 외부 근거를 요청할 때만 활성화
@@ -204,7 +207,13 @@ Pro-Agent의 방어가 공격의 논리적 취약점을 **직접 해소했는가
 **판정 기준 세부:**
 - `strengthened` vs `weakened` 경계: Pro가 취약점을 **직접** 해소했는가 vs 다른 논거로 우회했는가
 - 우회 방어는 `weakened`로 판정 (공격 지점이 해소되지 않았으므로)
-- `modified`는 Pro가 Qualifier/Scope를 좁혀 "그 범위에서는 여전히 참"임을 보인 경우만
+- `modified`는 Pro가 Qualifier/Scope를 좁혀 "그 범위에서는 여전히 참"임을 보인 경우만 (1단계 하락 허용, 2단계 이상이면 `broken`)
+
+**증명 책임(Burden of Proof) 추적:**
+- Con 공격이 성립하면 → BoP가 Pro에게 이동 (Pro는 새 Grounds 또는 Warrant 제시 의무)
+- Pro가 새 Grounds/Warrant를 제시하면 → BoP가 Con에게 이동
+- Pro가 Claim 재주장만 하면 → BoP 이동 없음 → `weakened` 판정
+- BoP가 2라운드 연속 Pro에게 머물면 → `broken` 판정
 
 ### Step 5: 라운드 파일 생성 및 커밋
 
