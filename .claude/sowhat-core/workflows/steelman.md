@@ -1,5 +1,18 @@
 # /sowhat:steelman — Counter-Narrative Generation
 
+<!--
+@metadata
+checkpoints:
+  - type: verify-argument
+    when: "Counter-narrative 생성 후 결과 확인"
+config_reads: [layer, sections]
+config_writes: []
+continuation:
+  primary: "/sowhat:revise {weakest_section}"
+  alternatives: ["/sowhat:debate {section}", "/sowhat:challenge"]
+status_transitions: []
+-->
+
 이 워크플로우는 현재 thesis에 대한 최강 반대 논증 트리를 자동 생성한다. 논증의 근본적 강도를 스트레스 테스트하는 것이 목적이다.
 
 ---

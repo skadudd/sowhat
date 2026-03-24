@@ -1,5 +1,16 @@
 # /sowhat:progress — 세션 재개 + 현재 상태 확인
 
+<!--
+@metadata
+checkpoints: []
+config_reads: [project, layer, sections, research, last_sync]
+config_writes: []
+continuation:
+  primary: "(동적 — 상태에 따라 결정)"
+  alternatives: []
+status_transitions: []
+-->
+
 이 커맨드는 현재 sowhat 프로젝트 상태를 한눈에 보여주고, 다음 행동을 안내한다.
 인수 없음. 연결 재개 또는 새 세션 시작 시 호출한다.
 

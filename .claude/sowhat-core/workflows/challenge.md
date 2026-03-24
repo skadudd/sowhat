@@ -1,5 +1,20 @@
 # /sowhat:challenge — 논증 트리 공격 (전체 / 부분)
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "각 공격에 대한 반박/수용"
+  - type: decision
+    when: "역전파 범위 결정"
+config_reads: [layer, sections]
+config_writes: [sections]
+continuation:
+  primary: "/sowhat:finalize-planning (통과 시)"
+  alternatives: ["/sowhat:revise {section}", "/sowhat:expand {section}"]
+status_transitions: ["settled → needs-revision", "discussing → needs-revision"]
+-->
+
 이 커맨드는 문서 트리를 7단계 논리 검증으로 공격한다. Toulmin Model, Walton Argument Schemes, Pragma-Dialectics를 모두 적용한다. **두 가지 모드**를 지원한다:
 
 - **전체 모드 (full mode)**: `$ARGUMENTS`가 비어있거나 `--force`만 포함 → 전체 트리를 대상으로 공격

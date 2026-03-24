@@ -1,5 +1,20 @@
 # /sowhat:init — 프로젝트 초기화 + Thesis 핑퐁
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "Answer 후보 선택"
+  - type: decision
+    when: "Key Arguments 구성"
+config_reads: []
+config_writes: [project, github, layer, sections, last_sync, features]
+continuation:
+  primary: "/sowhat:expand 01-{section}"
+  alternatives: ["/sowhat:progress"]
+status_transitions: ["(none) → draft"]
+-->
+
 이 커맨드는 sowhat 프로젝트를 초기화한다. 인간이 project name과 rough idea를 입력하면, Claude가 핑퐁을 통해 thesis를 도출한다.
 
 ## 실행 절차

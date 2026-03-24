@@ -1,5 +1,16 @@
 # /sowhat:sync — GitHub 변경 감지 + 로컬 반영
 
+<!--
+@metadata
+checkpoints: []
+config_reads: [sections, last_sync, github]
+config_writes: [sections, last_sync]
+continuation:
+  primary: "/sowhat:progress"
+  alternatives: []
+status_transitions: []
+-->
+
 이 커맨드는 GitHub의 변경사항을 감지하여 로컬 파일에 반영한다.
 
 ## 실행 절차

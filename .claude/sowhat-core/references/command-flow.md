@@ -58,6 +58,25 @@ flowchart LR
     end
 ```
 
+### 추가 커맨드 (v2)
+
+| 커맨드 | 위치 | 설명 |
+|--------|------|------|
+| `/sowhat:inject {section} {source}` | expand/settle 사이 | 외부 자료를 특정 필드에 직접 주입 |
+| `/sowhat:autonomous` | 전체 파이프라인 대체 | expand→debate→settle 자동 루프 |
+| `/sowhat:steelman` | challenge 이후 | 최강 반대 논증 트리 생성 |
+| `/sowhat:branch {section}` | expand 전후 | 대안 논증 분기 탐색 |
+
+```mermaid
+flowchart LR
+    subgraph v2 커맨드
+        INJECT["/sowhat:inject<br/>외부 자료 주입"]
+        AUTONOMOUS["/sowhat:autonomous<br/>자동 루프"]
+        STEELMAN["/sowhat:steelman<br/>최강 반론"]
+        BRANCH["/sowhat:branch<br/>대안 분기"]
+    end
+```
+
 ## 커맨드 간 트리거 관계
 
 | 소스 커맨드 | 트리거 | 대상 커맨드 |

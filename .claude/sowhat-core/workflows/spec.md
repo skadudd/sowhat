@@ -1,5 +1,20 @@
 # /sowhat:spec — 명세 섹션 핑퐁
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "명세 필드 구성 중 선택"
+  - type: human-input
+    when: "도메인 전문 지식 필요 시"
+config_reads: [layer, sections]
+config_writes: [sections]
+continuation:
+  primary: "/sowhat:settle {section}"
+  alternatives: ["/sowhat:challenge"]
+status_transitions: ["draft → discussing"]
+-->
+
 이 커맨드는 명세 레이어의 섹션을 핑퐁 방식으로 전개한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
 ## 사전 검증

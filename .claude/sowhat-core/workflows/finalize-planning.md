@@ -1,5 +1,18 @@
 # /sowhat:finalize-planning — 기획 레이어 완료 + 명세 레이어 생성
 
+<!--
+@metadata
+checkpoints:
+  - type: verify-argument
+    when: "challenge 통과 확인 후 진행 승인"
+config_reads: [layer, sections]
+config_writes: [layer, sections]
+continuation:
+  primary: "/sowhat:spec 04-actors"
+  alternatives: []
+status_transitions: ["layer: planning → spec"]
+-->
+
 이 커맨드는 기획 레이어의 게이트를 통과하고 명세 레이어 초안을 자동 생성한다.
 
 ## 사전 검증

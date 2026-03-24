@@ -1,5 +1,24 @@
 # /sowhat:autonomous — 자율 파이프라인
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "Thesis 방향 변경 필요 시"
+  - type: decision
+    when: "Critical issue 발견 시"
+  - type: decision
+    when: "Claim 완전 뒤집힘 (debate broken)"
+  - type: decision
+    when: "3회 연속 settle 실패"
+config_reads: [layer, sections, research, features, credibility]
+config_writes: [sections, research]
+continuation:
+  primary: "/sowhat:challenge (자동 실행)"
+  alternatives: ["/sowhat:draft"]
+status_transitions: ["draft → discussing → settled (자동 순환)"]
+-->
+
 이 커맨드는 모든 미완성 섹션을 자동으로 전개·검증·확정한다. GSD의 `/gsd:autonomous`와 같은 역할이지만, 논증(argumentation) 구조에 특화되어 있다. `$ARGUMENTS`에 옵션이 전달된다.
 
 ## 인자 파싱

@@ -113,6 +113,78 @@ Standard format for presenting next steps after any sowhat command completes.
 ---
 ```
 
+### After autonomous:
+```
+---
+
+## ▶ 다음
+
+**전체 논증 검증 완료** — challenge 결과 확인
+
+`/sowhat:draft` 또는 `/sowhat:steelman`
+
+<sub>`/clear` 후 실행</sub>
+
+---
+```
+
+### After steelman:
+```
+---
+
+## 🔴 취약점 발견
+
+[1] {section} — 반론이 더 강함
+[2] {section} — 대등 (추가 근거 필요)
+
+`/sowhat:revise {weakest_section}`
+
+<sub>`/clear` 후 실행</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:debate {section}` — 변증법 강화
+- `/sowhat:inject {section}` — 근거 보강
+
+---
+```
+
+### After branch create:
+```
+---
+
+## ▶ 다음
+
+**{alternative-branch}** — 대안 논증 전개
+
+`/sowhat:expand {section}`
+
+<sub>`/clear` 후 실행</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:branch compare {section}` — 분기 비교
+
+---
+```
+
+### After branch merge:
+```
+---
+
+## ▶ 다음
+
+**{section}** — 채택된 논증 확정
+
+`/sowhat:settle {section}`
+
+<sub>`/clear` 후 실행</sub>
+
+---
+```
+
 ### After challenge (no issues):
 ```
 ---

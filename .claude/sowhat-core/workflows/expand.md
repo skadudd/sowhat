@@ -1,5 +1,28 @@
 # /sowhat:expand — 섹션 Bottom-Up 전개
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "stasis 유형 선택 (Step 1.5)"
+  - type: decision
+    when: "scheme 선택 (Step 2)"
+  - type: decision
+    when: "claim 후보 중 선택 (Step 3)"
+  - type: human-input
+    when: "내부 데이터 요청 가능 (Step 4 Grounds)"
+  - type: decision
+    when: "qualifier 자동 추정과 다를 때 (Step 6)"
+  - type: decision
+    when: "rebuttal 후보 중 선택 (Step 8)"
+config_reads: [layer, sections, features]
+config_writes: [sections]
+continuation:
+  primary: "/sowhat:settle {section}"
+  alternatives: ["/sowhat:debate {section}", "/sowhat:challenge"]
+status_transitions: ["draft → discussing", "needs-revision → discussing"]
+-->
+
 이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Toulmin Model 전체 구조(Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
 ## 사전 검증 (1회만 실행 — 이후 재로드 금지)

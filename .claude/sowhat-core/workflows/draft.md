@@ -1,5 +1,20 @@
 # /sowhat:draft — 문서 초안 생성
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "형식 선택 (Step 1)"
+  - type: decision
+    when: "독자 설정 (Step 2)"
+config_reads: [layer, sections]
+config_writes: []
+continuation:
+  primary: "/sowhat:finalize"
+  alternatives: ["/sowhat:debate {section}"]
+status_transitions: []
+-->
+
 이 커맨드는 settled된 섹션들을 종합하여 실제 인간이 읽을 수 있는 문서를 생성한다.
 `$ARGUMENTS`에 `--format N`과 `--output all|document|prd|argument-map`이 전달될 수 있다.
 

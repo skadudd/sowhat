@@ -1,5 +1,16 @@
 # /sowhat:resume — 세션 재개
 
+<!--
+@metadata
+checkpoints: []
+config_reads: [project, layer, sections, research]
+config_writes: []
+continuation:
+  primary: "(세션 복원 후 이전 커맨드 재개)"
+  alternatives: ["/sowhat:progress"]
+status_transitions: []
+-->
+
 세션이 강제로 끊어진 후 재개할 때 사용한다. 중단된 작업을 감지하고, 어떤 내용이었는지 복구하여 바로 이어서 진행할 수 있도록 안내한다.
 
 인수 없음. 세션 시작 시 호출한다.

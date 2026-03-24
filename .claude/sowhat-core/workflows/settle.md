@@ -1,5 +1,18 @@
 # /sowhat:settle — 완료 선언
 
+<!--
+@metadata
+checkpoints:
+  - type: verify-argument
+    when: "자동 검증 후 settle 승인"
+config_reads: [layer, sections]
+config_writes: [sections]
+continuation:
+  primary: "/sowhat:expand {next}"
+  alternatives: ["/sowhat:challenge", "/sowhat:debate {section}"]
+status_transitions: ["discussing → settled"]
+-->
+
 이 커맨드는 섹션의 status를 settled로 전환한다. `$ARGUMENTS`에 섹션 이름, 번호, 또는 `thesis`가 전달된다.
 
 ## 대상 파일 결정

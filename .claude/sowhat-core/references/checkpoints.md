@@ -149,6 +149,35 @@ Claude가 접근할 수 없는 내부 데이터, 전문 지식, 경험적 판단
 | challenge 통과 후 | 진행 승인 | verify-argument |
 | force export 선택 시 | 알려진 문제 인지하고 진행 | decision |
 
+### inject
+
+| 시점 | Checkpoint | 유형 |
+|------|-----------|------|
+| 필드 매핑 선택 | Grounds/Backing/Rebuttal/Warrant 중 선택 | decision |
+| settled 섹션 강등 확인 | 주입 시 needs-revision 전환 | decision |
+
+### autonomous
+
+| 시점 | Checkpoint | 유형 |
+|------|-----------|------|
+| Thesis 방향 변경 필요 | Stage 1 실패 시 | decision |
+| Critical issue 발견 | challenge에서 critical 발견 | decision |
+| Claim 뒤집힘 | debate에서 broken 판정 | decision |
+| 3회 연속 settle 실패 | 사용자 개입 필요 | decision |
+
+### steelman
+
+| 시점 | Checkpoint | 유형 |
+|------|-----------|------|
+| Counter-narrative 결과 확인 | 생성 후 취약점 리포트 검토 | verify-argument |
+
+### branch
+
+| 시점 | Checkpoint | 유형 |
+|------|-----------|------|
+| 분기 이름 설정 | 원본/대안 이름 지정 | decision |
+| 분기 채택 결정 | merge 시 어느 분기 선택 | decision |
+
 ---
 
 ## Checkpoint와 Session의 관계

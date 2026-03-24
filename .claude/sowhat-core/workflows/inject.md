@@ -1,5 +1,20 @@
 # /sowhat:inject — 증거 직접 주입
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "필드 매핑 선택 (Grounds/Backing/Rebuttal/Warrant)"
+  - type: decision
+    when: "settled 섹션 강등 확인"
+config_reads: [layer, sections, research, credibility]
+config_writes: [sections, research]
+continuation:
+  primary: "/sowhat:expand {section} 또는 /sowhat:settle {section}"
+  alternatives: ["/sowhat:challenge {section}", "/sowhat:debate {section}"]
+status_transitions: ["settled → needs-revision (주입 시)"]
+-->
+
 이 커맨드는 외부 자료(URL, 파일, 텍스트)를 특정 섹션의 특정 Toulmin 필드에 직접 주입한다.
 research와 달리 "어떤 섹션의 어떤 필드"에 넣을지 사용자가 지정한다.
 

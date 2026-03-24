@@ -1,5 +1,20 @@
 # /sowhat:revise — 논증 수정 + 영향 전파
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "역전파 범위 결정"
+  - type: human-input
+    when: "수정할 필드 내용 제공"
+config_reads: [layer, sections]
+config_writes: [sections]
+continuation:
+  primary: "/sowhat:settle {section}"
+  alternatives: ["/sowhat:challenge", "/sowhat:debate {section}"]
+status_transitions: ["settled → needs-revision", "(cascading) → invalidated"]
+-->
+
 settled 또는 discussing 섹션의 논증을 수정하고, 영향받는 논증을 자동으로 점검한다. `$ARGUMENTS`
 
 워크플로우: **요약 → 수정 → 저장 → 스코프 challenge → 오염 섹션 표시**

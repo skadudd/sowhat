@@ -1,5 +1,20 @@
 # /sowhat:branch — 논증 분기 탐색
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "분기 이름 설정"
+  - type: decision
+    when: "분기 채택 (merge) 결정"
+config_reads: [sections]
+config_writes: []
+continuation:
+  primary: "/sowhat:expand {section} (새 분기에서)"
+  alternatives: ["/sowhat:branch compare {section}"]
+status_transitions: []
+-->
+
 이 커맨드는 하나의 섹션에서 대안적 논증 경로를 생성·비교·병합한다. Git 브랜치처럼 현재 작업을 보존하면서 다른 방향의 논증을 탐색할 수 있다. `$ARGUMENTS`에 서브커맨드와 섹션/브랜치 이름이 전달된다.
 
 ## 핵심 개념

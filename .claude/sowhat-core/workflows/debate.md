@@ -1,5 +1,22 @@
 # /sowhat:debate — 변증법적 논증 루프
 
+<!--
+@metadata
+checkpoints:
+  - type: verify-argument
+    when: "각 라운드 판정 후"
+  - type: decision
+    when: "thesis-threatened 에스컬레이션"
+  - type: decision
+    when: "Post-debate merge/cherry-pick/보류/삭제"
+config_reads: [layer, sections]
+config_writes: []
+continuation:
+  primary: "/sowhat:settle {section}"
+  alternatives: ["/sowhat:expand {section}", "/sowhat:challenge"]
+status_transitions: []
+-->
+
 이 커맨드는 3-에이전트 변증법 구조로 섹션(또는 전체 트리)을 공격·방어한다. `$ARGUMENTS`를 파싱하여 대상과 종료 조건을 결정한다.
 
 Thesis가 위협받을 수 있으며, 그것이 논리적으로 정당하면 **무너뜨리는 것이 올바른 결과다.**

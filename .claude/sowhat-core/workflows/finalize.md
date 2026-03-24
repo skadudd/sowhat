@@ -1,5 +1,20 @@
 # /sowhat:finalize — GSD Export 생성
 
+<!--
+@metadata
+checkpoints:
+  - type: verify-argument
+    when: "challenge 통과 확인 후 진행 승인"
+  - type: decision
+    when: "force export 시 알려진 문제 인지"
+config_reads: [layer, sections]
+config_writes: [layer]
+continuation:
+  primary: "(프로젝트 완료)"
+  alternatives: ["/sowhat:draft --output all"]
+status_transitions: ["layer: spec → finalized"]
+-->
+
 이 커맨드는 명세 레이어를 완료하고 GSD가 소비할 export 파일을 생성한다.
 
 ## 사전 검증

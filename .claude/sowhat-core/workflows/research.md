@@ -1,5 +1,20 @@
 # /sowhat:research — 외부 리서치 + 섹션 제안
 
+<!--
+@metadata
+checkpoints:
+  - type: decision
+    when: "자율 모드 검색 계획 승인"
+  - type: decision
+    when: "파인딩 accept/reject"
+config_reads: [research, features, credibility]
+config_writes: [research]
+continuation:
+  primary: "/sowhat:research review"
+  alternatives: ["/sowhat:expand {section}", "/sowhat:challenge"]
+status_transitions: []
+-->
+
 이 커맨드는 외부 정보를 조사하여 기존 논리 트리(기획/명세)에 대한 수정 및 추가를 제안한다.
 
 **예외 원칙**: 이 커맨드에서만 Claude가 정보를 가져온다. 단, 결정은 여전히 인간이 한다.

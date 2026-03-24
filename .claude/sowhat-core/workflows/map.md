@@ -1,5 +1,16 @@
 # /sowhat:map — 논증 흐름 시각화
 
+<!--
+@metadata
+checkpoints: []
+config_reads: [sections]
+config_writes: []
+continuation:
+  primary: "(맵 출력 후 이전 작업 재개)"
+  alternatives: []
+status_transitions: []
+-->
+
 논증의 흐름을 **Mermaid 다이어그램**으로 즉시 시각화하여 응답에 출력한다. `$ARGUMENTS`
 
 파일 저장이 아닌 **지금 바로 보는 것**이 목적이다.
