@@ -29,6 +29,22 @@ description: 특정 섹션을 Toulmin 구조로 bottom-up 전개한다. "섹션 
    ```bash
    mkdir -p logs maps/local maps/snapshots maps/debate
    ```
+7. `logs/session.md` 저장:
+   ```markdown
+   ---
+   command: expand
+   section: {N}-{section}
+   step: stasis
+   status: in_progress
+   saved: {current_datetime}
+   ---
+
+   ## 마지막 컨텍스트
+   expand 시작 — {N}-{section} 전개 중. 현재 스텝: stasis+scheme 정의.
+
+   ## 재개 시 첫 질문
+   이 섹션이 다루는 논쟁의 유형(stasis)은 무엇입니까?
+   ```
 
 > **로드 원칙**: 이후 스텝에서 배너·질문·판단에 필요한 값은 모두 위에서 추출한 변수를 사용한다.
 > 섹션 파일 재로드는 **사용자가 필드를 수정한 직후 저장 확인 시에만** 허용한다.

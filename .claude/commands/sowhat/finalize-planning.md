@@ -166,6 +166,32 @@ git add -A
 git commit -m "planning-complete: generate spec layer"
 ```
 
+## logs/argument-log.md 추가
+
+```markdown
+## [{current_datetime}] finalize-planning
+  Action: layer planning → spec
+  Sections created: 04-actors, 05-functional-requirements, 06-data-model, 07-api-contract, 08-edge-cases, 09-acceptance-criteria
+  Status: all draft
+```
+
+## logs/session.md 업데이트
+
+```markdown
+---
+command: finalize-planning
+step: complete
+status: complete
+saved: {current_datetime}
+---
+
+## 마지막 컨텍스트
+finalize-planning 완료 — 기획 레이어 → 명세 레이어 전환. 6개 명세 섹션(04~09) draft 생성 완료.
+
+## 재개 시 첫 질문
+/sowhat:spec 04 → 04-actors 섹션 핑퐁 시작
+```
+
 ## 완료 안내
 
 ```

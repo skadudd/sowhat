@@ -381,6 +381,33 @@ git commit -m "draft: generate argument map"
 파일은 export/ 디렉터리에 저장되었습니다. 수동으로 커밋하세요.
 ```
 
+## logs/argument-log.md 추가
+
+```markdown
+## [{current_datetime}] draft
+  Format: {SELECTED_FORMAT}
+  Audience: {TARGET_AUDIENCE}
+  Sections: {N}개 settled 반영
+  Output: export/DOCUMENT.md
+```
+
+## logs/session.md 업데이트
+
+```markdown
+---
+command: draft
+step: complete
+status: complete
+saved: {current_datetime}
+---
+
+## 마지막 컨텍스트
+draft 완료 — {SELECTED_FORMAT} 형식으로 {TARGET_AUDIENCE} 대상 문서 생성. export/DOCUMENT.md 저장.
+
+## 재개 시 첫 질문
+/sowhat:finalize → GSD export 생성
+```
+
 ## 완료 출력
 
 ```

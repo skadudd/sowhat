@@ -90,6 +90,16 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 - `updated`를 현재 datetime으로 변경
 - 인간의 답변을 해당 섹션에 구조화하여 기록
 
+## Argument Log 업데이트
+
+각 핑퐁 라운드 완료 후 `logs/argument-log.md`에 append:
+
+```markdown
+## [{datetime}] spec({section})
+  Step: {현재 스텝: actors|requirements|data-model|api|edge-cases|acceptance}
+  Decided: {이번 라운드에서 확정된 내용 한 줄}
+```
+
 ## 세션 저장
 
 각 핑퐁 질문 제시 후 `logs/session.md`를 Write 도구로 덮어쓴다:

@@ -41,9 +41,19 @@ GitHub Issue의 label이 로컬 status와 다르면:
 - 섹션 파일의 frontmatter `status` 업데이트
 - config.json의 해당 섹션 `status` 업데이트
 
-**역전파 처리**: `needs-revision`이나 `invalidated`로 변경된 경우:
-- 하위 의존 섹션도 `invalidated`로 변경
-- 해당 GitHub Issues도 label 변경
+**역전파 처리**: `needs-revision`이나 `invalidated`로 변경된 경우, 하위 의존 섹션이 존재하면 자동 invalidate 전에 확인한다:
+
+```
+⚠️  역전파 감지: {섹션}이 {이전 status} → {새 status}로 변경됩니다.
+    영향받는 하위 섹션: {목록}
+
+[1] 자동 invalidate — 하위 섹션도 invalidated로 변경
+[2] 건너뜀 — 하위 섹션은 현재 상태 유지
+```
+
+선택 후 진행:
+- `[1]`: 하위 섹션 `invalidated`로 변경 + 해당 GitHub Issues도 label 변경
+- `[2]`: 현재 섹션만 업데이트, 하위 섹션 유지
 
 #### 댓글 추가 → Open Questions에 append
 

@@ -39,6 +39,22 @@ Field 값: `claim` / `grounds` / `warrant` / `qualifier` / `rebuttal` / `backing
    - `draft` → `❌ draft 상태입니다. /sowhat:expand로 먼저 전개하세요.`
    - `invalidated` → 수정 가능 (오히려 수정이 목적)
    - `settled`, `discussing`, `needs-revision` → 정상 진행
+5. `logs/session.md` 저장:
+   ```markdown
+   ---
+   command: revise
+   section: {N}-{section}
+   step: field-selection
+   status: in_progress
+   saved: {current_datetime}
+   ---
+
+   ## 마지막 컨텍스트
+   revise 시작 — {N}-{section} 수정 중. 현재 논증 구조 출력 완료. 수정할 필드 선택 대기 중.
+
+   ## 재개 시 첫 질문
+   어떤 부분을 수정하시겠습니까?
+   ```
 
 ---
 
