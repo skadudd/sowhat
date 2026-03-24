@@ -79,6 +79,23 @@ git checkout -b "$BRANCH"
   이미 존재하면: git branch -D {BRANCH} 후 재실행
 ```
 
+## Qualifier 서열 척도 (공유 기준)
+
+모든 판정에서 아래 척도를 사용한다. 단계는 정수로 표현.
+
+| 단계 | Qualifier | 의미 |
+|------|-----------|------|
+| 0 | `definitely` | 예외 없이 참 |
+| 1 | `usually` | 대부분의 경우 참 |
+| 2 | `in most cases` | 많은 경우 참 |
+| 3 | `presumably` | 가정적으로 참 |
+| 4 | `possibly` | 가능성 있음 |
+
+- **2단계 이상 하락** = 예: definitely(0) → presumably(3) = 3단계 하락 → `broken`
+- **1단계 하락** = `modified` 허용 범위
+
+---
+
 ## 3-에이전트 역할
 
 ### Con-Agent (claude-opus-4-6)

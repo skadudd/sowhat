@@ -22,6 +22,19 @@ description: 전체 논증 트리를 7단계 논리 검증으로 공격한다(To
    mkdir -p logs
    ```
 
+6. `logs/session.md` 저장:
+   ```markdown
+   ---
+   command: challenge
+   step: verification
+   status: in_progress
+   saved: {current_datetime}
+   ---
+
+   ## 마지막 컨텍스트
+   challenge 시작 — 7단계 검증 진행 중
+   ```
+
 > **로드 원칙**: 이후 [1단계]~[7단계] 검증은 모두 위에서 추출한 메모리 값을 참조한다. 섹션 파일 재로드 금지.
 
 ---
@@ -108,6 +121,16 @@ scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되
 ### [6단계] Qualifier 보정 (NEW)
 
 각 섹션의 Qualifier와 근거 강도의 균형을 검증한다.
+
+**Qualifier 서열 척도 (debate.md와 공유):**
+
+| 단계 | Qualifier |
+|------|-----------|
+| 0 | `definitely` |
+| 1 | `usually` |
+| 2 | `in most cases` |
+| 3 | `presumably` |
+| 4 | `possibly` |
 
 검증 기준:
 
@@ -232,10 +255,24 @@ date -u +"%Y%m%d-%H%M"
 
 ### 수용하는 경우 (Pragma-Dialectics: concession move)
 
-역전파를 즉시 실행한다:
+역전파 전 반드시 확인한다:
+
+```
+⚠️  역전파 확인
+
+  수정 대상: {섹션}
+  영향받는 섹션: {하위 의존 섹션 목록}
+
+  [1] 역전파 실행 (위 섹션들 needs-revision으로 강등)
+  [2] 해당 섹션만 수정 (역전파 생략)
+  [3] 취소
+```
+
+[1] 선택 시에만 역전파를 실행한다:
 
 1. 해당 섹션 `status: needs-revision`
-2. 하위 의존 섹션 (thesis_argument가 같은 섹션들 중 이 섹션에 의존하는 것) `status: invalidated`
+2. 하위 의존 섹션 (thesis_argument가 같은 섹션들 중 이 섹션에 의존하는 것) `status: needs-revision`
+   - `invalidated`는 사용하지 않는다 — 재전개 여부는 사용자가 결정
 3. GitHub Issue reopen + label 변경:
    ```bash
    gh issue reopen {issue_number}
