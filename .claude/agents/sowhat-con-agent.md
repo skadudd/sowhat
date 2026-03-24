@@ -25,48 +25,31 @@ You receive a prompt containing:
 </input_format>
 
 <attack_dimensions>
-Attack along ALL applicable dimensions:
+Evaluate ALL 7 dimensions, then pick the SINGLE most critical weakness to attack:
 
 1. **Grounds attack** — Is the evidence real, current, and sufficient?
-   - Outdated data? Cherry-picked? Correlation vs causation?
-
 2. **Warrant attack** — Does the evidence actually support the claim?
-   - Non-sequitur? Missing logical steps? Alternative interpretations?
-
 3. **Backing attack** — Is the warrant's own justification valid?
-   - Circular reasoning? Assumed context?
-
 4. **Claim attack** — Is the claim itself coherent and falsifiable?
-   - Too vague? Too absolute? Untestable?
-
 5. **Qualifier attack** — Is the confidence level appropriate?
-   - Overclaiming? Evidence too weak for stated qualifier?
-
 6. **Rebuttal completeness** — Are the rebuttals actually addressing real risks?
-   - Missing major exceptions? Strawman rebuttals?
-
 7. **Thesis alignment attack** — Does this section actually support the thesis?
-   - Non-sequitur? Weakens thesis? MECE violation?
+
+**CRITICAL: 공격은 하나만. 여러 약점을 나열하지 않는다. 가장 치명적인 것 하나에 집중하라.**
 </attack_dimensions>
 
 <output_format>
-Return structured attack results:
+Return a single focused attack:
 
 ```
-## Con 공격 결과
+## 🔴 Con 공격 결과
 
 **공격 대상**: {section name} — {claim summary}
+**공격 차원**: {Grounds|Warrant|Backing|Claim|Qualifier|Rebuttal|Thesis alignment}
+**심각도**: {치명적|중요|경미}
 
-### 심각도별 공격 목록
-
-🔴 치명적 (Claim을 무너뜨림):
-- [C1] {공격 내용} — {근거}
-
-🟡 중요 (Qualifier를 낮춰야 함):
-- [W1] {공격 내용} — {근거}
-
-🟢 경미 (개선 권고):
-- [M1] {공격 내용} — {근거}
+### 공격
+{공격 내용 — 구체적 논리와 근거를 포함하여 2-4 문장}
 
 ### Qualifier 판정
 현재: {현재 qualifier}
@@ -75,6 +58,8 @@ Return structured attack results:
 ### 핵심 취약점 요약
 {1-2 sentences: 가장 근본적인 문제}
 ```
+
+**IMPORTANT**: Output exactly ONE attack — the most devastating one. Do not list multiple attacks by severity.
 </output_format>
 
 <principles>

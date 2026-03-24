@@ -79,5 +79,5 @@ flowchart LR
 | `draft` | expand | settle, debate, revise |
 | `discussing` | expand, debate, settle, research | — |
 | `settled` | revise, debate, challenge | expand |
-| `needs-revision` | expand, revise | settle, debate |
-| `invalidated` | expand (상위 해결 후) | settle, debate, revise |
+| `needs-revision` | expand, revise, debate | settle |
+| `invalidated` | expand (상위 해결 후), revise | settle, debate |

@@ -175,7 +175,7 @@ Claude가 초안을 제안할 수 있지만, 최종 결정은 인간이 한다.
 ### 7. 디렉터리 생성
 
 ```bash
-mkdir -p logs maps/local maps/snapshots maps/debate research planning
+mkdir -p logs maps/local research planning
 ```
 
 ### 8. 파일 생성
@@ -314,8 +314,22 @@ init 완료 — {project-name} 프로젝트 초기화. Thesis draft 생성. Answ
   - Issues: #{numbers}
   - logs/session.md 생성
 
-다음: /sowhat:settle thesis → thesis를 settled로 전환
-      /sowhat:expand {section} → 섹션 전개 시작
+---
+
+## ▶ 다음
+
+**00-thesis: Thesis 확정** — Thesis를 settled로 전환
+
+`/sowhat:settle thesis`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:expand {section}` — 섹션 전개 시작
+
+---
 ```
 
 ## 핵심 원칙

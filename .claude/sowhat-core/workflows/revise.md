@@ -237,18 +237,29 @@ config.json, 00-thesis.md 체크박스 해제 (해당되는 경우) 업데이트
 ## 완료 안내
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ revise 완료: {section}
   수정: {field} 변경
   상태: {이전} → {이후}
   오염: {N}개 섹션 처리됨
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-다음:
-  /sowhat:expand {오염섹션}     → 오염 섹션 재전개
-  /sowhat:debate {section}      → 수정 내용 논증 강화
-  /sowhat:challenge             → 전체 트리 재검증
-  /sowhat:revise {section}      → 추가 수정
+---
+
+## ▶ 다음
+
+**{오염섹션}: 재전개** — 오염된 섹션을 재전개
+
+`/sowhat:expand {오염섹션}`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:debate {section}` — 수정 내용 논증 강화
+- `/sowhat:challenge` — 전체 트리 재검증
+- `/sowhat:revise {section}` — 추가 수정
+
+---
 ```
 
 ---

@@ -9,7 +9,6 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
-  - AskUserQuestion
 ---
 <objective>
 지정된 명세 섹션(04~09)을 섹션별 가이드라인에 따라 핑퐁 방식으로 전개한다. 기획 내용과의 정합성을 유지하며 구체적이고 검증 가능한 형태로 구조화한다.
@@ -18,6 +17,7 @@ allowed-tools:
 <execution_context>
 @.claude/sowhat-core/workflows/spec.md
 @.claude/sowhat-core/references/session-protocol.md
+@.claude/sowhat-core/references/continuation-format.md
 @.claude/sowhat-core/references/toulmin-model.md
 </execution_context>
 

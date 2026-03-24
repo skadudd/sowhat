@@ -1,7 +1,7 @@
 ---
 name: sowhat:map
 description: 논증 흐름을 Mermaid 다이어그램으로 즉시 시각화한다. "논증 맵", "시각화", "map", "다이어그램", "구조 보기", "흐름 보여줘", "어떻게 연결돼", "트리 그려줘" 등 현재 논증 구조를 한눈에 확인하고 싶을 때 사용. 전체 트리 또는 특정 섹션 상세 맵 선택 가능.
-argument-hint: "[section] [--detail]"
+argument-hint: "[section] [--save]"
 allowed-tools:
   - Read
   - Bash

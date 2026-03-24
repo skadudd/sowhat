@@ -431,7 +431,6 @@ draft 완료 — {SELECTED_FORMAT} 형식으로 {TARGET_AUDIENCE} 대상 문서 
 ## 완료 출력
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ 문서 생성 완료
 
   export/DOCUMENT.md     ({SELECTED_FORMAT} 형식, {TARGET_AUDIENCE} 대상)
@@ -441,10 +440,22 @@ draft 완료 — {SELECTED_FORMAT} 형식으로 {TARGET_AUDIENCE} 대상 문서 
   Settled 섹션 반영: {N}개
   미반영 섹션: {M}개 ({status 이유})
 
-다음:
-  /sowhat:finalize       → GSD export 생성 + 최종 완료
-  /sowhat:debate {section} → 논증 추가 강화
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
+
+## ▶ 다음
+
+**GSD export** — GSD export 생성 + 최종 완료
+
+`/sowhat:finalize`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:debate {section}` — 논증 추가 강화
+
+---
 ```
 
 PRD.md가 생략된 경우: 해당 줄에 "(생략 — planning 레이어)" 표시.

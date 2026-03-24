@@ -227,7 +227,23 @@ finalize 완료 — GSD export 생성됨. export/PROJECT.md + export/REQUIREMENT
   - export/PRD.md
   - export/ARGUMENT-MAP.md
 
-GSD 인계: /gsd:new-project 에서 export/PROJECT.md와 export/REQUIREMENTS.md를 소비합니다.
+---
+
+## ▶ 다음
+
+**GSD 인계** — export artifacts로 GSD 프로젝트 시작
+
+`/gsd:new-project`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:draft --output all` — 최종 문서 재생성
+- `/sowhat:challenge` — 최종 검증 재실행
+
+---
 ```
 
 ## 핵심 원칙

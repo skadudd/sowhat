@@ -127,9 +127,23 @@ saved: {current_datetime}
 ```
 ✅ 명세 섹션 {N}-{name} 전개 완료 (status: discussing)
 
-다음: /sowhat:settle {section} → 이 섹션 완료 선언
-      /sowhat:spec {other} → 다른 명세 섹션 전개
-      /sowhat:challenge → 전체 트리 검증
+---
+
+## ▶ 다음
+
+**{N}-{name}: 명세 확정** — 이 섹션 완료 선언
+
+`/sowhat:settle {section}`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:spec {other}` — 다른 명세 섹션 전개
+- `/sowhat:challenge` — 전체 트리 검증
+
+---
 ```
 
 ## 핵심 원칙

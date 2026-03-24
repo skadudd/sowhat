@@ -42,6 +42,15 @@ saved: {current_datetime_ISO8601}
 {next suggested command}
 ```
 
+## Optional Extension Fields
+
+Workflows may add extra frontmatter fields beyond the base schema:
+
+| Field | Used by | Meaning |
+|-------|---------|---------|
+| `sub_research_pending` | expand | `true` if Sub-Research agent was triggered and results are pending |
+| `checkpoint_type` | settle, challenge | `verify-argument`, `decision`, or `human-input` when status is `awaiting_checkpoint` |
+
 ## Rules
 
 - Always overwrite (not append) — session.md is a single-slot checkpoint

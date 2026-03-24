@@ -17,6 +17,7 @@ GitHub Issues의 label/status 변경을 감지하고 로컬 섹션 파일에 반
 <execution_context>
 @.claude/sowhat-core/workflows/sync.md
 @.claude/sowhat-core/references/session-protocol.md
+@.claude/sowhat-core/references/continuation-format.md
 </execution_context>
 
 <context>

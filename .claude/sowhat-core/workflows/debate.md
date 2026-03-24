@@ -612,27 +612,52 @@ outcome에 따라 다음 안내를 표시한다:
 
 **strengthened / modified** (섹션 유효):
 ```
-⚠️  /clear 전에 반드시 완료하세요:
-  → /sowhat:settle {section}
+---
 
-  /clear 후에는 이 안내가 사라집니다.
-  settle을 건너뛰면 다음 세션에서 섹션이 unsettled 상태로 남습니다.
+## ▶ 다음
+
+**{section}: 논증 확정** — 강화된 섹션을 settled로 전환
+
+`/sowhat:settle {section}`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
 ```
 
 **weakened** (needs-revision):
 ```
-이 섹션은 needs-revision 상태입니다.
-  → /sowhat:expand {section} 으로 먼저 논거를 보강하세요
-  → 보강 후 /sowhat:settle {section}
+---
 
-  /clear 전에 expand + settle을 완료하는 것을 권장합니다.
+## ▶ 다음
+
+**{section}: 논거 보강** — needs-revision 상태, 재전개 필요
+
+`/sowhat:expand {section}`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:revise {section}` — 특정 필드만 수정
+
+---
 ```
 
 **broken / invalidated**:
 ```
-이 섹션은 invalidated 상태입니다.
-  → 상위 Key Argument를 먼저 revision하거나 thesis를 수정하세요.
-  다음: /sowhat:expand {section} → /sowhat:init (thesis 수정)
+---
+
+## 🔴 섹션 invalidated
+
+**{section}: 상위 논거 수정 필요** — thesis 또는 Key Argument revision 후 재전개
+
+`/sowhat:expand {section}` 또는 `/sowhat:init` (thesis 수정)
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
 ```
 
 ## Debate 브랜치 Lifecycle

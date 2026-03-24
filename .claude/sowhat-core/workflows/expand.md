@@ -23,7 +23,7 @@
      `ℹ️ 이 섹션과 관련된 미검토 리서치가 {N}건 있습니다. /sowhat:research review {section}`
 6. 로그 디렉터리 확인:
    ```bash
-   mkdir -p logs maps/local maps/snapshots maps/debate
+   mkdir -p logs maps/local
    ```
 7. `logs/session.md` 저장:
    ```markdown
@@ -496,10 +496,10 @@ Warrant는 Grounds와 Claim 사이의 논리적 연결고리다. **이 스텝이
   "대부분의 경우 (in most cases)" → 현실적이고 방어하기 쉬움.
 
 ──── 선택 ────
-  [1] definitely    — 항상, 예외 없음 (⚠️ 가장 공격받기 쉬움)
-  [2] usually       — 일반적으로
-  [3] presumably    — 아마도, 추정상
-  [4] in most cases — 대부분의 경우 (권장)
+  [1] definitely    — 확실히, 예외 없음 (⚠️ 가장 공격받기 쉬움)
+  [2] usually       — 대체로, 일반적으로
+  [3] in most cases — 대부분의 경우 (권장)
+  [4] presumably    — 추정컨대, 아마도
   [5] possibly      — 가능성 있음 (약한 주장)
 ```
 
@@ -773,10 +773,24 @@ git commit -m "expand({section}): complete toulmin structure"
   status: discussing
   커밋: {N}회
 
-다음: /sowhat:settle {section}      → 완료 선언
-      /sowhat:debate {section}      → 논증 자동 강화
-      /sowhat:map {section}         → 논증 시각화
-      /sowhat:challenge             → 전체 트리 검증
+---
+
+## ▶ 다음
+
+**{N}-{name}: 논증 검토 후 확정** — 섹션 완료 선언
+
+`/sowhat:settle {section}`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:debate {section}` — 변증법 검증으로 논거 강화
+- `/sowhat:map {section}` — 논증 시각화
+- `/sowhat:challenge` — 전체 트리 검증
+
+---
 ```
 
 ---

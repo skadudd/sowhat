@@ -17,6 +17,7 @@ allowed-tools:
 <execution_context>
 @.claude/sowhat-core/workflows/settle.md
 @.claude/sowhat-core/references/session-protocol.md
+@.claude/sowhat-core/references/continuation-format.md
 @.claude/sowhat-core/references/toulmin-model.md
 @.claude/sowhat-core/references/checkpoints.md
 </execution_context>

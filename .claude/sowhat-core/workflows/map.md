@@ -130,7 +130,7 @@ flowchart TD
 **{settled}/{total} settled** | needs-revision: {목록 또는 없음}
 ````
 
-`--save` 플래그 있을 때만 `maps/overview.md`에 추가 저장 후:
+`--save` 플래그 있을 때: `mkdir -p maps/local` 후 `maps/overview.md`에 추가 저장:
 ```
 💾 maps/overview.md 저장 완료
 ```

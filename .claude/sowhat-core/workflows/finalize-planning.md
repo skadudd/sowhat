@@ -28,7 +28,7 @@
 명세 레이어 진입 전, 필요한 디렉터리가 있는지 확인하고 없으면 생성한다:
 
 ```bash
-mkdir -p logs maps/local maps/snapshots maps/debate research planning
+mkdir -p logs maps/local research planning
 ```
 
 (init에서 이미 생성되었으면 무시된다)
@@ -200,7 +200,23 @@ finalize-planning 완료 — 기획 레이어 → 명세 레이어 전환. 6개 
   - 09-acceptance-criteria.md (draft)
   - Issues: #{numbers}
 
-다음: /sowhat:spec {section} → 명세 섹션 핑퐁
+---
+
+## ▶ 다음
+
+**04-actors: Actors 정의** — 첫 명세 섹션 핑퐁 시작
+
+`/sowhat:spec 04`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:spec {other}` — 다른 명세 섹션부터 시작
+- `/sowhat:progress` — 전체 현황 확인
+
+---
 ```
 
 ## 핵심 원칙

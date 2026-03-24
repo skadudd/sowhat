@@ -10,7 +10,7 @@ All sowhat sections use the Toulmin Model with 6 mandatory fields.
 | **Grounds** | 근거 | Factual evidence supporting the Claim. Data, observations, facts. | "2023 IDC 보고서: TAM $4.2B" |
 | **Warrant** | 논리적 연결 | The reasoning that connects Grounds to Claim. Why the evidence matters. | "시장 성장률은 진입 타이밍의 적절성을 증명한다" |
 | **Backing** | 보강 | Evidence supporting the Warrant itself. Meta-justification. | "McKinsey: 성장기 시장 진입이 성숙기보다 3x 생존율" |
-| **Qualifier** | 한정어 | Confidence level. How certain is the Claim. | "probably" (2등급) |
+| **Qualifier** | 한정어 | Confidence level. How certain is the Claim. | "usually" (1등급) |
 | **Rebuttal** | 반박 조건 | Conditions under which the Claim would be false. | "단, 규제 환경이 급변하지 않는 한" |
 
 ## Qualifier Scale (5-level)
@@ -20,10 +20,10 @@ Used in both expand and challenge/debate to express argument strength:
 | Level | Korean | English | Meaning |
 |-------|--------|---------|---------|
 | 0 | 확실히 | definitely | No meaningful counterargument exists |
-| 1 | 아마도 | probably | Strong evidence, minor exceptions possible |
-| 2 | 추정컨대 | presumably | Reasonable inference, moderate uncertainty |
-| 3 | 그럴 수 있다 | possibly | Plausible but significant uncertainty |
-| 4 | 어쩌면 | conceivably | Speculative, weak evidence |
+| 1 | 대체로 | usually | Strong evidence, minor exceptions possible |
+| 2 | 대부분의 경우 | in most cases | Reasonable inference, moderate uncertainty |
+| 3 | 추정컨대 | presumably | Plausible but significant uncertainty |
+| 4 | 그럴 수 있다 | possibly | Speculative, weak evidence |
 
 ## Scheme (Argument Scheme)
 

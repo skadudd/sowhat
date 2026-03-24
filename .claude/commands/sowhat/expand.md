@@ -9,7 +9,7 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
-  - AskUserQuestion
+  - Task
 ---
 <objective>
 지정된 섹션을 Toulmin 9단계 구조(stasis→scheme→claim→grounds→warrant→backing→qualifier→rebuttal→scope)로 핑퐁 전개한다. Sub-Research Semi-Async 패턴으로 근거를 수집한다.
@@ -18,6 +18,7 @@ allowed-tools:
 <execution_context>
 @.claude/sowhat-core/workflows/expand.md
 @.claude/sowhat-core/references/session-protocol.md
+@.claude/sowhat-core/references/continuation-format.md
 @.claude/sowhat-core/references/toulmin-model.md
 </execution_context>
 

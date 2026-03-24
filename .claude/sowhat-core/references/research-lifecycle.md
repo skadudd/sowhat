@@ -36,7 +36,7 @@ stateDiagram-v2
 ### 트리거
 - `/sowhat:research URL` — URL 분석
 - `/sowhat:research {topic}` — 토픽 검색
-- `/sowhat:research auto` — 자율 리서치
+- `/sowhat:research` (인자 없음) — 자율 리서치
 - debate 중 Research-Agent 자동 트리거
 
 ### 파일 생성 규칙

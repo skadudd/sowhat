@@ -339,9 +339,23 @@ URL 모드와 동일.
   - 파인딩: {N}건 생성
   - 수용: {N}건 / 거부: {N}건 / 미검토: {N}건
 
-다음: /sowhat:research review → 미검토 파인딩 확인
-      /sowhat:expand {section} → 리서치 기반 섹션 전개
-      /sowhat:challenge → 전체 트리 검증
+---
+
+## ▶ 다음
+
+**리서치 리뷰** — 미검토 파인딩 확인 및 수용/거부
+
+`/sowhat:research review`
+
+<sub>`/clear` 후 실행 → 컨텍스트 초기화</sub>
+
+---
+
+**또한 가능:**
+- `/sowhat:expand {section}` — 리서치 기반 섹션 전개
+- `/sowhat:challenge` — 전체 트리 검증
+
+---
 ```
 
 ---
