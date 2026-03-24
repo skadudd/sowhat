@@ -52,6 +52,30 @@ description: settled 섹션들을 종합해 인간이 읽는 문서를 생성한
    - status가 `invalidated`인 섹션은 제외
    - [2] 선택 시 `draft`, `discussing`, `needs-revision` 상태인 섹션도 제외
 
+## session.md 저장 (사전 검증 완료 후)
+
+```bash
+date -u +"%Y-%m-%dT%H:%M:%SZ"
+```
+
+`logs/session.md`를 Write 도구로 덮어쓴다:
+
+```markdown
+---
+command: draft
+section: export
+step: format-selection
+status: in_progress
+saved: {current_datetime}
+---
+
+## 마지막 컨텍스트
+draft 시작 — 사전 검증 완료. 형식 선택 대기 중.
+
+## 재개 시 첫 질문
+/sowhat:draft → 형식 선택부터 재시작
+```
+
 ## Step 1: 형식 선택
 
 `--format N` 인수가 없을 경우 질문:

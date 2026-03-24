@@ -37,6 +37,23 @@ description: 외부 리서치를 수행하고 결과를 섹션에 반영한다. 
    - `research/` 내 `NNN-*.md` 파일 카운트 + 1
    - 3자리 zero-pad (001, 002, ...)
 
+6. 자율 리서치 모드(`$ARGUMENTS` 없음)인 경우 `logs/session.md` 저장:
+   ```markdown
+   ---
+   command: research
+   section: (auto)
+   step: planning
+   status: in_progress
+   saved: {current_datetime}
+   ---
+
+   ## 마지막 컨텍스트
+   research 자율 모드 시작 — 기획 상태 분석 중. 검색 계획 제안 전.
+
+   ## 재개 시 첫 질문
+   /sowhat:research → 자율 리서치 재시작
+   ```
+
 ---
 
 ## URL 분석 모드
