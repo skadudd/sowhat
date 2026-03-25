@@ -79,6 +79,39 @@ Layer 1: Toulmin Model (기본 단위)
 
 ---
 
+## Content-Critique 모드
+
+sowhat은 두 가지 모드를 지원한다.
+
+### idea 모드 (기본)
+
+사용자의 아이디어에서 시작하여 논증을 구축한다. 기존 동작.
+
+### content-critique 모드 (`--from`)
+
+외부 콘텐츠(글, 기사, 보고서)를 분석 대상으로 삼아, 사용자가 이에 대한 입장을 논증으로 구축한다.
+
+```
+/sowhat:init --from <url|file>
+  → 대상 콘텐츠 Toulmin 분석 (Claim/Grounds/Warrant/Qualifier/Rebuttal 추출)
+  → 입장 선택 (반박 / 비평 / 대안 제시 / 부분 동의)
+  → SCQ 핑퐁 (대상 콘텐츠 기반)
+  → 00-thesis.md 생성 (Source Content 섹션 포함)
+
+/sowhat:critic
+  → 대상 콘텐츠 5차원 비평 (완전성/Warrant/근거품질/Qualifier/Rebuttal)
+  → critic/CRITIQUE-REPORT.md 생성
+  → 약점 → 사용자 섹션 주입 제안
+
+/sowhat:debate --stance <persuade|consensus>
+  → persuade: 기존 debate + 대상 콘텐츠를 Con/Pro 참고 소재로 제공
+  → consensus: 양측 통합 제안 vs 피상성 공격
+```
+
+config.json 추가 필드: `mode`, `source` (config-schema.md 참조)
+
+---
+
 ## 아키텍처
 
 ```
@@ -117,6 +150,9 @@ Layer 1: Toulmin Model (기본 단위)
 │   ├── 07-api-contract.md
 │   ├── 08-edge-cases.md
 │   └── 09-acceptance-criteria.md
+├── critic/                          ← /sowhat:critic 생성 (content-critique 모드)
+│   ├── CRITIQUE-REPORT.md           ← 대상 콘텐츠 5차원 비평 리포트
+│   └── DEBATE-ANALYSIS.md           ← debate --stance critique 결과 (선택적)
 └── export/
     ├── DOCUMENT.md                   ← /sowhat:draft 생성 (인간용 서술)
     ├── PRD.md                        ← /sowhat:draft 생성
@@ -273,7 +309,8 @@ draft → discussing → settled
 
 | 커맨드 | 역할 |
 |--------|------|
-| `/sowhat:debate [section]` | Git branch 기반 변증법적 토론 루프 |
+| `/sowhat:debate [section]` | Git branch 기반 변증법적 토론 루프. `--stance` 옵션으로 설득/합의/비평 모드 선택 |
+| `/sowhat:critic` | 대상 콘텐츠 5차원 비평 (content-critique 모드 전용) |
 | `/sowhat:draft [type]` | 인간용 문서 합성 (DOCUMENT.md / PRD.md / ARGUMENT-MAP.md) |
 
 ### 인프라

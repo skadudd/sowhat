@@ -8,14 +8,28 @@ checkpoints:
   - type: decision
     when: "Key Arguments 구성"
 config_reads: []
-config_writes: [project, github, layer, sections, last_sync, features]
+config_writes: [project, mode, source, github, layer, sections, last_sync, features]
 continuation:
   primary: "/sowhat:expand 01-{section}"
   alternatives: ["/sowhat:progress"]
 status_transitions: ["(none) → draft"]
 -->
 
-이 커맨드는 sowhat 프로젝트를 초기화한다. 인간이 project name과 rough idea를 입력하면, Claude가 핑퐁을 통해 thesis를 도출한다.
+이 커맨드는 sowhat 프로젝트를 초기화한다. 두 가지 모드를 지원한다:
+- **idea 모드** (기본): 인간이 project name과 rough idea를 입력하면, Claude가 핑퐁을 통해 thesis를 도출한다.
+- **content-critique 모드** (`--from`): 외부 콘텐츠를 분석 대상으로 삼아, 인간이 그에 대한 입장을 세운다.
+
+## 인자 파싱
+
+`$ARGUMENTS`에서 `--from` 플래그를 확인한다:
+
+| 인자 패턴 | 모드 | 설명 |
+|-----------|------|------|
+| `--from https://...` | content-critique (URL) | URL에서 콘텐츠를 가져옴 |
+| `--from file:{path}` 또는 `--from {local-path}` | content-critique (파일) | 로컬 파일을 읽음 |
+| (없음 또는 --from 없음) | idea | 기존 동작 그대로 |
+
+모드를 결정하고 이후 단계에서 조건 분기한다. `--from` 외 나머지 인자는 기존대로 처리한다.
 
 ## 실행 절차
 
@@ -63,16 +77,88 @@ agent-browser --version
 
 ### 1. 입력 수집
 
+#### idea 모드 (기본)
+
 인간에게 다음을 요청한다:
 - **프로젝트 이름** (영문 kebab-case)
 - **대략적인 아이디어** (자유 형식)
 
 입력이 `$ARGUMENTS`에 포함되어 있으면 그것을 사용한다.
 
-### 2. IBIS Issue 프레이밍 (NEW)
+#### content-critique 모드 (`--from`)
+
+인간에게 **프로젝트 이름** (영문 kebab-case)만 요청한다.
+
+그 후 대상 콘텐츠를 가져온다:
+- **URL**: `WebFetch`로 콘텐츠를 가져온다.
+- **파일**: `Read`로 파일을 읽는다 (PDF, markdown, text 지원).
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 대상 콘텐츠를 가져왔습니다
+
+  출처: {URL 또는 파일 경로}
+  길이: ~{단어 수}자
+  요약: {콘텐츠의 3문장 요약}
+
+  [1] 확인 — 분석 시작
+  [2] 다시 가져오기
+  [3] 취소 — idea 모드로 전환
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+URL fetch 실패 시:
+```
+❌ URL을 가져올 수 없습니다: {error}
+  [1] 다른 URL 입력
+  [2] file: 모드로 로컬 파일 직접 제공
+  [3] idea 모드로 전환
+```
+
+### 1.5. 대상 콘텐츠 Toulmin 분석 (content-critique 모드 전용)
+
+가져온 콘텐츠를 Toulmin 구조로 분석한다. Claude가 분석하고 인간이 확인한다:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 대상 콘텐츠 Toulmin 분석
+
+  Claim:     {대상의 핵심 주장}
+  Grounds:   {주요 근거 1-3개}
+  Warrant:   {논리적 연결 — 암묵적이면 "(암묵적)" 표기}
+  Qualifier: {주장의 확실성 수준}
+  Rebuttal:  {대상이 인정한 제한 조건 — 없으면 "(없음)"}
+
+  [1] 분석 확인 — 다음 단계로
+  [2] 분석 수정 필요
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+[2] 선택 시 인간이 수정할 부분을 지시하면 Claude가 반영한다. 확정될 때까지 반복.
+
+분석 결과를 변수로 저장: `target_claim`, `target_grounds`, `target_warrant`, `target_qualifier`, `target_rebuttal`
+
+### 1.6. 입장 선택 (content-critique 모드 전용)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❓ 이 콘텐츠에 대한 당신의 입장은?
+
+  [1] 반박 (refute) — 대상의 주장이 틀렸다
+  [2] 비평 (critique) — 대상의 주장에 약점이 있다
+  [3] 대안 제시 (alternative) — 더 나은 방법이 있다
+  [4] 부분 동의 (partial) — 일부만 동의한다
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+선택한 입장을 `stance` 변수로 저장한다. 이후 SCQ 핑퐁에서 대상 콘텐츠와 입장이 컨텍스트로 사용된다.
+
+### 2. IBIS Issue 프레이밍
 
 SCQ 구조화 전에, 먼저 핵심 Issue(문제)를 명확히 한다.
 IBIS 방법론에서 모든 논의는 핵심 Issue 질문에서 시작한다.
+
+**content-critique 모드**: Issue 제안 시 대상 콘텐츠의 Claim과 사용자의 stance를 반영한다. 예: stance=refute → "대상의 주장 '{target_claim}'은 정당한가?", stance=alternative → "'{target_claim}'보다 더 나은 접근은 무엇인가?"
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -98,6 +184,11 @@ IBIS 방법론에서 모든 논의는 핵심 Issue 질문에서 시작한다.
 Issue를 기반으로 Situation/Complication/Question을 도출하기 위해 **질문만** 한다. 절대 내용을 대신 채우지 않는다.
 
 **한 번에 하나의 질문**만 한다. 인간의 답변을 듣고 다음 질문을 결정한다.
+
+**content-critique 모드**: 질문이 대상 콘텐츠를 참조한다. 예:
+- "대상이 '{target_grounds}'를 근거로 들었는데, 이에 대한 당신의 반응은?"
+- "대상의 Warrant '{target_warrant}'가 성립하지 않는 경우는?"
+- "대상이 놓치고 있는 핵심 맥락은 무엇인가?"
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -239,6 +330,23 @@ updated: {current_datetime}
 - [ ]
 ```
 
+**content-critique 모드 전용**: `## Issue (IBIS)` 바로 다음에 `## Source Content` 섹션을 추가한다. idea 모드에서는 이 섹션을 **생성하지 않는다**.
+
+```markdown
+## Source Content
+> 분석 대상: {URL 또는 파일 경로}
+> 입장: {반박|비평|대안 제시|부분 동의}
+
+### 대상 Toulmin 분석
+| Field | Content |
+|-------|---------|
+| Claim | {target_claim} |
+| Grounds | {target_grounds} |
+| Warrant | {target_warrant} |
+| Qualifier | {target_qualifier} |
+| Rebuttal | {target_rebuttal} |
+```
+
 ### 9. Git 초기화
 
 ```bash
@@ -262,9 +370,11 @@ Issue 번호를 기록한다.
 
 ### 11. planning/config.json 생성
 
+**idea 모드:**
 ```json
 {
   "project": "{project-name}",
+  "mode": "idea",
   "github": {
     "repo": "{owner}/{project-name}",
     "token_env": "GITHUB_TOKEN"
@@ -284,6 +394,31 @@ Issue 번호를 기록한다.
     "sub_research_engine": "agent-browser",
     "sub_research_fallback": "websearch"
   }
+}
+```
+
+**content-critique 모드** (위에 추가):
+```json
+{
+  "project": "{project-name}",
+  "mode": "content-critique",
+  "source": {
+    "type": "url",
+    "url": "{source_url}",
+    "stance": "{refute|critique|alternative|partial}",
+    "fetched": "{current_datetime}"
+  },
+  ...
+}
+```
+
+`source.type`이 `"file"`이면 `"url"` 대신 `"path"` 필드를 사용한다:
+```json
+"source": {
+  "type": "file",
+  "path": "{file_path}",
+  "stance": "{stance}",
+  "fetched": "{current_datetime}"
 }
 ```
 
@@ -343,8 +478,16 @@ init 완료 — {project-name} 프로젝트 초기화. Thesis draft 생성. Answ
 
 **또한 가능:**
 - `/sowhat:expand {section}` — 섹션 전개 시작
+- `/sowhat:critic` — 대상 콘텐츠 비평 (content-critique 모드)
 
 ---
+```
+
+content-critique 모드에서는 추가로 안내:
+```
+💡 content-critique 모드 활성화됨
+  - /sowhat:critic — 대상 콘텐츠의 약점을 체계적으로 분석
+  - /sowhat:debate {section} --stance persuade — 설득 모드 토론
 ```
 
 ## 핵심 원칙

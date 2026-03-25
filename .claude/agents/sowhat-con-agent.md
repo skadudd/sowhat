@@ -22,6 +22,10 @@ You receive a prompt containing:
 - `<depth>`: Attack depth (1=surface, 3=deep, 5=exhaustive)
 - `<previous_rounds>`: (optional) Previous round results — avoid repeating same attacks
 - `<research_findings>`: (optional) Research-Agent findings from previous rounds — use counter-evidence to strengthen attacks
+- `<target_content>`: (optional, content-critique mode) The target content's Toulmin analysis — use in stance-based debates
+- `<stance_instruction>`: (optional, content-critique mode) Stance-specific instructions that override default behavior:
+  - persuade: Attack user's argument from target author's perspective, using target's Grounds/Warrant
+  - consensus: Attack superficiality of proposed synthesis
 </input_format>
 
 <attack_dimensions>
