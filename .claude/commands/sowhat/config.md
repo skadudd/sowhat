@@ -27,6 +27,7 @@ Arguments: $ARGUMENTS
 <process>
 CRITICAL: Do NOT use AskUserQuestion tool. Present choices as text, then wait for user free-text input.
 CRITICAL: Choices must be numbered [1] [2] [3] — NEVER use A/B/C/D. NEVER use tables for choices. Follow workflow templates exactly as written.
+CRITICAL: Do NOT use the Skill tool. Do NOT delegate to update-config or any other skill. This command handles ALL settings directly using Read/Write/Edit tools. API 키는 .claude/settings.local.json에 직접 Write한다.
 Execute the config workflow end-to-end.
 </process>
 </output>

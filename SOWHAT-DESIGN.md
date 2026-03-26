@@ -378,6 +378,7 @@ draft → discussing → settled
 | `/sowhat:progress` | 현재 상태 대시보드 + 논증 부채 추적 + 다음 액션 안내 |
 | `/sowhat:resume` | 세션 재개 (handoff.json → session.md → git log 우선순위) |
 | `/sowhat:config` | API 키·기능 토글·모델 설정. 단계적 메뉴 안내 |
+| `/sowhat:character` | 글쓰기 캐릭터(Voice DNA) 생성·관리. 레퍼런스 텍스트에서 7차원 분석으로 추출. draft 시 적용 |
 
 ---
 
@@ -678,6 +679,17 @@ Perplexity API를 활용한 심층 리서치. `PERPLEXITY_API_KEY` 환경변수 
 - **기존 파이프라인 통합**: Finding 형식·Tier 분류·accept/reject 워크플로우 동일
 - **Graceful fallback**: API 키 없으면 기본 WebSearch로 동작, 사용자에게 설정 안내
 - **핵심 인용 검증**: Perplexity 응답의 T1/T2 출처를 WebFetch로 spot-check (최대 2개)
+
+### Character System (character, draft)
+
+레퍼런스 텍스트에서 Voice DNA를 추출하여 draft 산출물에 일관된 작가 톤을 적용.
+
+- **5층 캐릭터 정의**: 대표 문단(few-shot) + 문장 골격(구조) + 어휘 팔레트(단어) + 대조쌍(차이) + 사고 습관(배치)
+- **3차원 분석**: Voice(문장), Flow(문단), Persona(관계)
+- **2-pass 생성**: Pass 1(내용 정확성, 캐릭터 없이) → Pass 2(캐릭터 리라이트). 관심사 분리로 드리프트 원천 차단
+- **캘리브레이션**: 짧은 샘플(3문단) + 긴 샘플(10문단) 2단계 검증. 후반부 톤 유지 확인
+- **붕괴 방지**: 2-pass 분리 + 사후 감사(금기어 grep + 톤 비교) + 사용자 피드백 루프
+- **저장**: `~/.claude/sowhat-characters/{name}/` (전역, 프로젝트 독립)
 
 ### Structured Handoff (session-protocol, resume)
 
