@@ -44,6 +44,7 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 5. `research/` 디렉터리 확인:
    - 해당 섹션과 관련된 `status: unreviewed` 파인딩이 있으면:
      `ℹ️ 이 섹션과 관련된 미검토 리서치가 {N}건 있습니다. /sowhat:research review {section}`
+   - **research 모드 프로젝트** (`config.json`의 `mode === "research"`): 해당 섹션에 매핑된 `accepted` 파인딩을 로드하여 `mapped_findings[]` 변수에 저장. 스텝 4(Grounds)에서 자동 제시에 사용.
 6. 로그 디렉터리 확인:
    ```bash
    mkdir -p logs maps/local
@@ -307,6 +308,36 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 ### 스텝 4: Grounds 핑퐁
 
 **이 스텝은 SUB-RESEARCH 트리거 시 Semi-Async로 전환될 수 있다.**
+
+**Research 모드 프로젝트** (`mapped_findings[]`가 비어있지 않으면):
+스텝 4 시작 시 매핑된 파인딩을 먼저 제시한다:
+
+```
+> [expand {section} > 스텝 4/9 Grounds — Research 모드]
+> Claim: "{Claim 40자}"
+
+ℹ️ 이 섹션에 매핑된 리서치 파인딩 {N}건:
+
+  [R1] #{NNN}: {핵심 발견 한 줄} (T{N}, {source})
+  [R2] #{NNN}: {핵심 발견 한 줄} (T{N}, {source})
+  [R3] #{NNN}: {핵심 발견 한 줄} (T{N}, {source})
+
+이 파인딩을 Grounds에 활용하시겠습니까?
+
+  [1] 전부 활용 — 위 파인딩을 Grounds로 구성
+  [2] 선택적 활용 — 번호 선택 (예: R1 R3)
+  [3] 직접 작성 (파인딩 무시) — 아래 일반 Grounds 핑퐁 진행
+  [4] 파인딩 + 직접 작성 혼합
+```
+
+- [1] 선택: 모든 파인딩을 Grounds 항목으로 구성. 출처/Tier를 함께 기록.
+- [2] 선택: 선택된 파인딩만 Grounds에 포함, 나머지는 Backing 또는 버림.
+- [3] 선택: 파인딩 무시, 아래 일반 Grounds 핑퐁으로 진행.
+- [4] 선택: 파인딩 + 직접 작성을 결합. 파인딩 먼저 Grounds에 배치 후 추가 근거 요청.
+
+파인딩 활용 시: 파인딩 파일의 `status`를 `applied`로 변경, `applied_to` 필드 업데이트.
+
+파인딩이 없으면 (idea 모드 또는 미매핑) 아래 일반 흐름으로 진행:
 
 scheme에 따라 다른 근거 유형을 안내한다.
 

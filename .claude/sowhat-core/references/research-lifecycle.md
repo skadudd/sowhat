@@ -9,6 +9,9 @@
 ```mermaid
 stateDiagram-v2
     [*] --> unreviewed: /sowhat:research 실행
+    [*] --> pre_thesis: /sowhat:init --research 수집
+    pre_thesis --> accepted: thesis 도출 후 매핑됨
+    pre_thesis --> unreviewed: thesis 도출 후 미매핑
     unreviewed --> accepted: /sowhat:research accept N
     unreviewed --> rejected: /sowhat:research reject N
     accepted --> applied: Grounds/Backing에 반영됨
@@ -23,6 +26,7 @@ stateDiagram-v2
 
 | Status | 의미 | 파인딩 파일 frontmatter |
 |--------|------|----------------------|
+| `pre-thesis` | init --research에서 thesis 도출 전 수집됨 | `status: pre-thesis` |
 | `unreviewed` | 생성됨, 인간 미검토 | `status: unreviewed` |
 | `accepted` | 인간이 유효하다고 판단 | `status: accepted` |
 | `rejected` | 인간이 무관하거나 신뢰 불가로 판단 | `status: rejected` |

@@ -15,21 +15,29 @@ continuation:
 status_transitions: ["(none) → draft"]
 -->
 
-이 커맨드는 sowhat 프로젝트를 초기화한다. 두 가지 모드를 지원한다:
-- **idea 모드** (기본): 인간이 project name과 rough idea를 입력하면, Claude가 핑퐁을 통해 thesis를 도출한다.
+이 커맨드는 sowhat 프로젝트를 초기화한다. 세 가지 모드를 지원한다:
+- **idea 모드** (기본): 인간이 project name과 rough idea를 입력하면, Claude가 핑퐁을 통해 thesis를 도출한다. Top-down.
 - **content-critique 모드** (`--from`): 외부 콘텐츠를 분석 대상으로 삼아, 인간이 그에 대한 입장을 세운다.
+- **research 모드** (`--research`): 자료를 먼저 수집·분석하여 패턴과 인사이트를 발견하고, 근거로부터 thesis를 bottom-up으로 도출한다. "자료는 있는데 무슨 주장을 해야 할지 모르겠다"는 상황에 적합.
 
 ## 인자 파싱
 
-`$ARGUMENTS`에서 `--from` 플래그를 확인한다:
+`$ARGUMENTS`에서 `--from` 또는 `--research` 플래그를 확인한다:
 
 | 인자 패턴 | 모드 | 설명 |
 |-----------|------|------|
 | `--from https://...` | content-critique (URL) | URL에서 콘텐츠를 가져옴 |
 | `--from file:{path}` 또는 `--from {local-path}` | content-critique (파일) | 로컬 파일을 읽음 |
-| (없음 또는 --from 없음) | idea | 기존 동작 그대로 |
+| `--research <source> [<source> ...]` | research (bottom-up) | 자료 수집 → 분석 → thesis 도출 |
+| (없음) | idea | 기존 동작 그대로 |
 
-모드를 결정하고 이후 단계에서 조건 분기한다. `--from` 외 나머지 인자는 기존대로 처리한다.
+`--research` 뒤의 source는 복수 가능하며 혼합 가능:
+- URL: `https://...`
+- 파일: `file:{path}` 또는 `{path}` (확장자로 판별)
+- 폴더: `dir:{path}` (선택적 `--glob {pattern}`)
+- 토픽: 위에 해당하지 않는 텍스트 → WebSearch로 검색
+
+모드를 결정하고 이후 단계에서 조건 분기한다.
 
 ## 실행 절차
 
@@ -454,10 +462,273 @@ content-critique 모드에서는 추가로 안내:
   - /sowhat:debate {section} --stance persuade — 설득 모드 토론
 ```
 
+---
+
+## Research 모드 (`--research`) — 자료 기반 Bottom-Up Thesis 도출
+
+**idea 모드와의 핵심 차이**: idea 모드는 "주장이 먼저, 근거는 나중" (top-down). research 모드는 "근거가 먼저, 주장은 근거에서 도출" (bottom-up).
+
+### R-0. 프로젝트 이름 + 관심 영역 입력
+
+```
+❓ 프로젝트 이름은? (영문 kebab-case)
+```
+
+```
+❓ 어떤 영역/주제에 대한 논증을 만들고 싶습니까?
+   (thesis는 아직 없어도 됩니다. 관심 영역만 알려주세요)
+
+  예) "국내 SaaS 시장의 현재 상태"
+  예) "원격근무가 생산성에 미치는 영향"
+  예) "우리 팀의 기술 부채 문제"
+```
+
+인간이 관심 영역을 제시하면 `topic` 변수에 저장한다.
+
+### R-1. 자료 수집 (Collect Phase)
+
+`--research` 뒤에 소스가 지정되어 있으면 해당 소스를 수집한다. 없으면 대화로 수집:
+
+```
+----------------------------------------
+📚 자료 수집
+
+  현재 관심 영역: "{topic}"
+
+  자료를 추가하세요. 혼합 가능합니다:
+
+  [1] URL 입력 (논문, 기사, 보고서)
+  [2] 파일 경로 (file:{path})
+  [3] 폴더 경로 (dir:{path})
+  [4] 토픽 검색 (WebSearch로 자동 수집)
+  [5] 수집 완료 — 분석으로 진행
+----------------------------------------
+```
+
+사용자가 [5]를 선택할 때까지 반복. 각 소스 추가 시 즉시 확인:
+
+```
+✅ 추가됨: {source} ({type})
+   현재 {N}개 소스 수집됨
+
+  [1] 추가  [5] 수집 완료
+```
+
+**최소 1개 소스 필수.** 0개에서 [5] 선택 시: `❌ 최소 1개 이상의 자료가 필요합니다.`
+
+소스 목록을 `collected_sources[]` 배열에 저장한다.
+
+### R-2. 자료 분석 (Analysis Phase)
+
+각 소스를 분석한다. 기존 research 워크플로의 분석 로직을 재사용:
+
+- **URL**: `WebFetch`로 내용 추출 + Tier 판정
+- **파일**: `Read`로 내용 추출 + Tier 판정
+- **폴더**: `Glob` + `Read`로 파일별 분석 + 종합
+- **토픽**: `WebSearch` + 상위 3~5개 `WebFetch` + Tier 판정
+
+각 소스에서 추출:
+1. **핵심 데이터 포인트** (수치, 통계, 사실)
+2. **주요 주장** (소스 저자의 claim)
+3. **근거** (주장을 뒷받침하는 evidence)
+4. **출처 신뢰도** (Tier 판정)
+
+`research/` 디렉터리에 파인딩 파일로 저장한다 (기존 research 워크플로와 동일 형식).
+단, `status: pre-thesis` (thesis 도출 전이므로 `relevant_sections`는 비워둠).
+
+분석 진행 중 대시보드:
+```
+📊 분석 중... [{완료}/{전체}]
+  ✅ {source_1} — {Tier}, {N}건 발견
+  🔄 {source_2} — 분석 중...
+  ⬜ {source_3} — 대기
+```
+
+### R-3. 종합 (Synthesis Phase)
+
+모든 소스 분석이 완료되면 종합한다:
+
+1. **데이터 포인트 합산**: 전체 소스에서 추출된 사실/수치 통합
+2. **합의점 식별**: 여러 소스가 동의하는 것 (convergent evidence)
+3. **충돌점 식별**: 소스 간 상반되는 주장
+4. **패턴 발견**: 데이터에서 도출할 수 있는 추세/패턴
+5. **갭 식별**: 자료에서 다루지 않지만 중요한 빈 영역
+6. **근거 강도 평가**: Tier 분포, 데이터 양, 합의 수준
+
+종합 결과를 `research/SYNTHESIS.md`에 저장:
+
+```markdown
+---
+type: synthesis
+sources: {N}
+created: {datetime}
+---
+
+# Research Synthesis: {topic}
+
+## 핵심 데이터 포인트
+1. {수치/사실} — {출처} (T{N})
+2. {수치/사실} — {출처} (T{N})
+
+## 합의점 (여러 소스 동의)
+- {합의 사항} — {소스 수}개 소스 확인
+
+## 충돌점
+- {소스A}: "{주장}" vs {소스B}: "{반대 주장}"
+
+## 발견된 패턴
+- {패턴 설명}
+
+## 정보 갭
+- {누락 영역}
+
+## Tier 분포
+T1: {N} | T2: {N} | T3: {N} | T4: {N}
+```
+
+### R-4. Thesis 후보 제안 (Thesis Emergence)
+
+종합 결과를 인간에게 보여주고, 근거로부터 도출 가능한 thesis 후보를 제안한다:
+
+```
+----------------------------------------
+📊 자료 종합 완료
+
+  소스: {N}개 분석  |  데이터 포인트: {M}개
+  합의점: {N}건  |  충돌점: {N}건
+  Tier 분포: T1:{N} T2:{N} T3:{N} T4:{N}
+
+  핵심 합의점:
+  - {합의 1}
+  - {합의 2}
+
+  핵심 충돌점:
+  - {충돌 1}
+----------------------------------------
+
+❓ 이 자료들이 시사하는 핵심 주장은 무엇입니까?
+
+  자료에서 도출 가능한 Thesis 후보:
+
+  [1] "{합의점 기반 Thesis}" — {뒷받침 근거 요약}
+      근거 강도: {T1 {N}건 + T2 {N}건}
+
+  [2] "{패턴 기반 Thesis}" — {뒷받침 근거 요약}
+      근거 강도: {T1 {N}건 + T2 {N}건}
+
+  [3] "{충돌점 해소 Thesis}" — {뒷받침 근거 요약}
+      근거 강도: {T1 {N}건 + T2 {N}건}
+
+  [4] 직접 작성
+  [5] 추가 자료 수집 필요 → R-1로 돌아감
+```
+
+**Thesis 후보 제안 원칙:**
+- 수집된 근거가 **실제로 뒷받침하는** 주장만 제안 (근거 없는 추측 금지)
+- 각 후보에 뒷받침하는 구체적 데이터 포인트 수와 Tier를 표시
+- 근거가 약한 방향은 명시: `⚠️ 이 방향은 T3/T4 자료만 있어 추가 리서치 필요`
+
+인간이 선택하면 `thesis_answer` 변수에 저장.
+
+### R-5. Key Arguments 자동 매핑 (Evidence Mapping)
+
+선택된 thesis를 뒷받침하는 근거들을 **자동으로** Key Arguments에 그룹핑한다:
+
+1. 수집된 데이터 포인트를 thesis와의 관련성으로 분류
+2. 관련 데이터 포인트를 주제별로 클러스터링 → Key Argument 후보
+3. 각 Key Argument에 매핑된 파인딩 번호를 기록
+
+```
+❓ 자료에서 도출된 Key Arguments 구조:
+
+  [1] "{논거 1}" — 근거: 파인딩 #{N}, #{M} ({Tier 분포})
+  [2] "{논거 2}" — 근거: 파인딩 #{N}, #{M} ({Tier 분포})
+  [3] "{논거 3}" — 근거: 파인딩 #{N} ({Tier 분포})
+
+  ⚠️ 미매핑 파인딩: #{N}, #{M} — 관련 Key Argument 없음
+
+  [확정] 이 구조로 진행
+  [수정] Key Argument 추가/수정
+  [리서치] 미매핑 파인딩 기반으로 추가 Key Argument 제안
+```
+
+### R-6. SCQ 역도출 (Reverse SCQ)
+
+idea 모드는 SCQ → Answer 순서지만, research 모드는 Answer(thesis)가 이미 있으므로 **역순**으로 SCQ를 구성한다:
+
+```
+❓ Thesis(Answer)로부터 SCQ를 역구성합니다:
+
+  Answer: "{thesis_answer}"
+
+  역도출된 SCQ:
+  Situation:    {Answer가 전제하는 현재 상황}
+  Complication: {이 상황에서의 문제/긴장}
+  Question:     {이 Answer가 답하는 질문}
+
+  [1] 확정
+  [2] 수정 필요
+```
+
+이후 IBIS Issue도 역도출:
+```
+  Issue: {Question에서 파생된 핵심 Issue}
+```
+
+### R-7. 이후 기존 흐름으로 합류
+
+Step 7(디렉터리 생성) 이후는 idea 모드와 동일하게 진행한다. 차이점:
+
+1. **`00-thesis.md`에 `## Research Base` 섹션 추가**:
+   ```markdown
+   ## Research Base
+   > 모드: research (bottom-up)
+   > 소스: {N}개
+   > 파인딩: {M}건
+   > Synthesis: research/SYNTHESIS.md
+   ```
+
+2. **파인딩 파일 `relevant_sections` 업데이트**: 매핑된 Key Argument에 따라 각 파인딩의 `relevant_sections`를 채움
+
+3. **파인딩 `status`를 `pre-thesis` → `accepted`로 전환**: thesis와 매핑된 파인딩만 전환. 미매핑은 `unreviewed`로.
+
+4. **config.json에 `mode: "research"` 기록**:
+   ```json
+   {
+     "mode": "research",
+     "research_sources": [
+       { "type": "url", "source": "..." },
+       { "type": "file", "source": "..." }
+     ],
+     ...
+   }
+   ```
+
+5. **expand 시 파인딩 자동 참조**: research 모드 프로젝트에서 expand를 실행하면, 해당 섹션에 매핑된 파인딩을 Grounds 후보로 자동 제시. expand 스텝 4(Grounds) 시작 시:
+   ```
+   ℹ️ 이 섹션에 매핑된 리서치 파인딩 {N}건:
+     [R1] #{NNN}: {핵심 발견} (T{N})
+     [R2] #{NNN}: {핵심 발견} (T{N})
+
+   이 파인딩을 Grounds에 활용하시겠습니까?
+   [1] 전부 활용
+   [2] 선택적 활용
+   [3] 직접 작성 (파인딩 무시)
+   ```
+
+### R-8. 추가 자료 수집 (init 이후)
+
+프로젝트 초기화 후에도 `/sowhat:research`로 추가 자료를 수집할 수 있다. research 모드 프로젝트는 기존 research 워크플로와 완전히 호환된다.
+
+---
+
 ## 핵심 원칙
 
-- **IBIS Issue 먼저** — SCQ 전에 핵심 문제를 하나의 질문으로 확정한다
+- **IBIS Issue 먼저** — SCQ 전에 핵심 문제를 하나의 질문으로 확정한다 (idea 모드)
+- **근거가 먼저** — thesis는 근거에서 도출한다 (research 모드)
 - **Claude는 질문만 한다** — 내용을 대신 채우지 않는다
 - **인간이 답한 것을 구조화한다** — 인간의 말을 재구성하되 의미를 바꾸지 않는다
 - **Answer 확정 전까지 thesis settled 불가**
 - **모호한 Answer는 재핑퐁** — 명확해질 때까지
+- **근거 없는 thesis 제안 금지** — research 모드에서 실제 데이터가 뒷받침하지 않는 주장은 제안하지 않는다
+- **파인딩 매핑은 인간이 확정** — 자동 매핑은 제안일 뿐, 최종 결정은 인간
