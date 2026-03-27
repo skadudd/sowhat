@@ -51,10 +51,16 @@ flowchart LR
         RESUME["/sowhat:resume<br/>세션 재개"]
     end
 
-    subgraph 조회
+    subgraph 조회·산출
         PROGRESS["/sowhat:progress<br/>대시보드"]
         MAP["/sowhat:map<br/>논증 시각화"]
         DRAFT["/sowhat:draft<br/>문서 생성"]
+        NOTE["/sowhat:note<br/>아이디어 메모"]
+    end
+
+    subgraph 콘텐츠 분석
+        CRITIC["/sowhat:critic<br/>대상 5차원 비평"]
+        CHARACTER["/sowhat:character<br/>글쓰기 캐릭터"]
     end
 ```
 
@@ -90,6 +96,9 @@ flowchart LR
 | debate | merge 후 | settle 또는 expand |
 | revise | 수정 후 | expand (역전파된 섹션) |
 | research | accept 후 | expand (해당 섹션 Grounds 보강) |
+| character | 캐릭터 완성 후 | draft (캐릭터 적용) |
+| critic | 비평 완료 후 | expand 또는 debate (약점 주입) |
+| note | promote 후 | expand (해당 섹션 Open Question) |
 
 ## 섹션 Status와 사용 가능 커맨드
 

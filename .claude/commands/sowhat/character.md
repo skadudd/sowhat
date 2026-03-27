@@ -11,7 +11,7 @@ allowed-tools:
   - Grep
 ---
 <objective>
-레퍼런스 텍스트를 심층 분석하여 작가의 Voice DNA(리듬, 어휘, 전개, 감정, 시그니처)를 추출하고, draft 산출물에 일관되게 적용할 수 있는 캐릭터 프로파일을 생성·관리한다.
+레퍼런스 텍스트를 3차원(Voice/Flow/Persona) 분석하여 작가의 Voice DNA를 추출하고, 5층 캐릭터 프로파일을 생성·관리한다. draft 산출물에 일관된 톤과 스타일을 적용한다.
 </objective>
 
 <execution_context>
@@ -45,7 +45,7 @@ CRITICAL: Do NOT use the Skill tool. Handle all file operations directly.
 [2] 선택 시: 캐릭터 선택 → 레퍼런스 추가, 캘리브레이션, 감사 등
 [3] 선택 시: ~/.claude/sowhat-characters/ 스캔 → 목록 표시
 
-레퍼런스 분석은 character-system.md에 정의된 7차원 분석을 빠짐없이 수행한다.
+레퍼런스 분석은 character-system.md에 정의된 3차원 분석(Voice/Flow/Persona)을 빠짐없이 수행한다.
 교차 검증, 캘리브레이션, drift-anchors 생성까지 완료해야 캐릭터가 저장된다.
 </process>
 </output>
