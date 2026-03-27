@@ -134,9 +134,9 @@ Task(sowhat-expand-agent,
     1. Stasis: thesis context 기반으로 자동 선택
     2. Scheme: claim 유형에 가장 적합한 scheme 자동 선택
     3. Claim: thesis_argument에서 도출
-    4. Grounds: research findings + 기존 컨텍스트에서 구성
-    5. Warrant: Grounds → Claim 연결 논리 명시
-    6. Backing: Warrant 지지 근거 구성
+    4. Grounds: research/ findings만 사용. 부족하면 Research-Agent 스폰 필수. AI 자체 수치 생성 절대 금지.
+    5. Warrant: Grounds → Claim 연결 논리 명시. 수치/통계 포함 금지 — 논리적 원칙만 기술.
+    6. Backing: research findings 또는 Research-Agent 결과만 사용. AI 자체 수치 생성 절대 금지.
     7. Qualifier: 근거 강도에 맞는 수준 설정
     8. Rebuttal: 가장 강한 반론과 대응 구성
     9. Scope: In/Out 경계 명시
@@ -150,10 +150,32 @@ Task(sowhat-expand-agent,
 **자동 전개 원칙:**
 - Stasis/Scheme: thesis_argument의 성격에 따라 AI가 자동 선택 (사실 주장 → statistics/cause-effect, 가치 주장 → principle/consequence 등)
 - Claim: thesis_argument를 검증 가능한 명제로 변환
-- Grounds: `research/` 디렉터리의 기존 findings 우선 활용, 없으면 AI가 구성
-- Warrant/Backing: Grounds → Claim 연결 논리를 명시적으로 작성
+- **Grounds: `research/` 디렉터리의 기존 findings만 사용. findings가 부족하면 Research-Agent를 스폰하여 외부 검색 후 사용. AI가 수치·통계·출처를 자체 생성하는 것은 절대 금지.**
+- **Warrant: Grounds → Claim 연결 논리를 작성하되, 수치·통계를 포함하지 않는다. Warrant는 "왜 이 근거가 이 주장을 지지하는가"의 논리적 원칙만 기술한다.**
+- **Backing: Warrant를 지지하는 추가 근거. Grounds와 마찬가지로 research findings 또는 Research-Agent 결과만 사용. AI 자체 생성 수치 금지.**
 - Qualifier: 근거 강도에 맞게 `definitely` ~ `possibly` 중 선택
 - Rebuttal: AI가 독립적으로 최강 반론을 생성하고 대응
+
+**수치·출처 할루시네이션 방지 (CRITICAL):**
+
+autonomous 모드에서 AI가 Toulmin 필드를 자동 전개할 때, **구체적 수치(%, 배수, 금액, 건수)와 출처(기관명, 보고서명, 연도)**를 AI가 자체 생성하면 할루시네이션이 발생한다. 반드시 다음 규칙을 따른다:
+
+```
+허용:
+  - research/ 디렉터리에 이미 있는 findings의 수치·출처 인용
+  - Research-Agent가 WebSearch/WebFetch로 확인한 수치·출처
+  - 사용자가 직접 입력한 데이터
+
+금지:
+  - AI가 기억/추론으로 생성한 수치 (예: "시장 규모 3.2조원")
+  - AI가 기억으로 구성한 출처 (예: "McKinsey 2024 보고서에 따르면")
+  - 존재 여부가 불확실한 통계 (예: "HubSpot에 따르면 3.5배 증가")
+```
+
+Grounds/Backing에 수치가 필요한데 research findings가 없으면:
+1. **Research-Agent를 스폰**하여 외부 검색 실행
+2. 검색 결과에서 확인된 수치만 사용
+3. 검색으로도 확인 불가 시: **수치 없이 정성적으로 기술** + Qualifier를 `presumably` 이하로 설정
 
 ---
 
@@ -206,10 +228,11 @@ settle_result = Task(sowhat-settle-agent,
     7. Open Questions 없음
     8. scheme 필드 설정
     + scheme별 추가 검증
-    9. **Stub detection** — Grounds에 구체적 출처/수치 없이 일반론만 있는지,
-       Warrant가 Claim 동어반복인지, Rebuttal이 generic한지 검사.
-       autonomous 모드에서 AI가 자동 전개하면 stub이 생기기 쉬움.
-       Stub 발견 시 검증 실패로 처리.
+    9. **Stub detection + 할루시네이션 탐지** —
+       a) Stub: Grounds에 구체적 출처/수치 없이 일반론만 있는지, Warrant가 Claim 동어반복인지, Rebuttal이 generic한지.
+       b) 할루시네이션: Grounds/Backing의 수치·출처가 research/ findings에 존재하는지 대조. research/에 없는 수치·출처가 발견되면 검증 실패.
+       autonomous 모드에서 AI가 자동 전개하면 stub과 할루시네이션이 생기기 쉬움.
+       발견 시 검증 실패로 처리.
     10. **Cross-section regression** — 이 섹션 settle이 기존 settled 섹션과
         논리적으로 충돌하지 않는지 확인. 충돌 시 검증 실패로 처리.
 
