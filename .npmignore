@@ -1,0 +1,7 @@
+# Dev sources (npm gets built output only)
+.claude/
+.git/
+scripts/
+logs/
+SOWHAT-DESIGN.md
+.gitignore

@@ -1,0 +1,41 @@
+{
+  "name": "sowhat-cc",
+  "version": "1.1.0",
+  "description": "Structured argumentation system for Claude Code. Build logic-driven PRDs with Toulmin, Walton, and Minto Pyramid frameworks.",
+  "bin": {
+    "sowhat-cc": "bin/install.js"
+  },
+  "files": [
+    "bin",
+    "commands",
+    "agents",
+    "sowhat-core"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "argumentation",
+    "toulmin",
+    "prd",
+    "planning",
+    "spec-driven",
+    "ai"
+  ],
+  "author": "ynamroot",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ynamroot/sowhat.git"
+  },
+  "homepage": "https://github.com/ynamroot/sowhat",
+  "bugs": {
+    "url": "https://github.com/ynamroot/sowhat/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run build"
+  }
+}
