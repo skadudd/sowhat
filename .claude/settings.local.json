@@ -18,7 +18,9 @@
       "Bash(cp /d/code/sowhat/.claude/commands/sowhat/map.md /c/Users/Owner/.claude/commands/sowhat/map.md)",
       "Bash(cp /d/code/sowhat/.claude/commands/sowhat/expand.md /c/Users/Owner/.claude/commands/sowhat/expand.md)",
       "Bash(cp /d/code/sowhat/.claude/commands/sowhat/debate.md /c/Users/Owner/.claude/commands/sowhat/debate.md)",
-      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/spec.md /c/Users/Owner/.claude/commands/sowhat/spec.md)"
+      "Bash(cp /d/code/sowhat/.claude/commands/sowhat/spec.md /c/Users/Owner/.claude/commands/sowhat/spec.md)",
+      "Bash(npm view:*)",
+      "Bash(find /d/code/sowhat -name package.json -o -name *install* -o -name *setup* -o -name *VERSION* -o -name *.npmrc)"
     ]
   }
 }
