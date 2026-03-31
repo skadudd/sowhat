@@ -1,6 +1,6 @@
 ---
 name: sowhat:series
-description: 시리즈 콘텐츠를 관리한다. 에피소드 간 맥락 연결, 공유 리서치, 용어 일관성, 서사 흐름을 추적한다. "시리즈", "series", "에피소드", "episode", "연재", "시리즈 관리", "맥락 연결", "시리즈 생성", "시리즈 목록" 등 크로스 프로젝트 시리즈 콘텐츠를 관리할 때 사용.
+description: 시리즈 콘텐츠를 관리한다. 에피소드 간 맥락 연결, 공유 리서치, 용어 일관성, 서사 흐름을 추적한다. "시리즈", "series", "에피소드", "episode", "연재", "시리즈 관리", "맥락 연결", "시리즈 생성", "시리즈 목록", "시리즈로 전환", "시리즈 승격", "promote", "이거 시리즈로" 등 크로스 프로젝트 시리즈 콘텐츠를 관리할 때 사용. 기존 프로젝트 안에서 create 실행 시 해당 프로젝트를 Ep 1로 승격.
 argument-hint: "<sub-command> [name]"
 allowed-tools:
   - Read
@@ -14,7 +14,8 @@ allowed-tools:
 시리즈 콘텐츠를 생성·관리한다. 에피소드 간 맥락 연결, 공유 리서치, 용어 일관성, 서사 흐름을 추적한다.
 
 서브커맨드:
-- `/sowhat:series create {name}` — 시리즈 생성
+- `/sowhat:series create {name}` — 시리즈 생성 (기존 프로젝트 안이면 Ep 1 승격)
+- `/sowhat:series promote` — 현재 프로젝트를 시리즈 Ep 1로 승격 (create 단축)
 - `/sowhat:series list` — 시리즈 목록
 - `/sowhat:series add {series-name}` — 현재 프로젝트를 시리즈에 에피소드로 등록
 - `/sowhat:series digest [episode]` — 에피소드 다이제스트 생성/재생성

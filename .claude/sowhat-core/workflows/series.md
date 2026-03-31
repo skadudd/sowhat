@@ -112,7 +112,8 @@ status_transitions: []
 
 | 인자 패턴 | 서브커맨드 | 설명 |
 |-----------|-----------|------|
-| `create {name}` | create | 시리즈 생성 |
+| `create {name}` | create | 시리즈 생성 (기존 프로젝트 안에서 실행하면 승격 모드) |
+| `promote` | create (승격) | 현재 프로젝트를 시리즈 Ep 1로 승격 (`create`의 단축) |
 | `list` | list | 시리즈 목록 |
 | `add {series-name}` | add | 현재 프로젝트를 에피소드로 등록 |
 | `digest [episode]` | digest | 에피소드 다이제스트 생성 |
@@ -126,7 +127,8 @@ status_transitions: []
 ```
 ❓ 시리즈 관리 — 서브커맨드를 선택하세요.
 
-  /sowhat:series create {name}   — 시리즈 생성
+  /sowhat:series create {name}   — 시리즈 생성 (프로젝트 안이면 승격)
+  /sowhat:series promote          — 현재 프로젝트를 시리즈 Ep 1로 승격
   /sowhat:series list             — 시리즈 목록
   /sowhat:series add {name}       — 현재 프로젝트를 에피소드로 등록
   /sowhat:series digest [ep]      — 에피소드 다이제스트 생성
@@ -141,6 +143,185 @@ status_transitions: []
 ## 서브커맨드: `create {name}` — 시리즈 생성
 
 Interactive 핑퐁으로 시리즈를 생성한다.
+
+### 0. 기존 프로젝트 감지 (승격 모드)
+
+`create` 실행 시 현재 디렉터리에 `planning/config.json`이 존재하는지 확인한다.
+
+**존재하면 (기존 sowhat 프로젝트 안에서 실행):**
+
+```
+📋 현재 디렉터리에 sowhat 프로젝트가 감지되었습니다.
+  프로젝트: {config.project}
+  상태: {settled 수}/{total} settled
+
+❓ 이 프로젝트를 시리즈의 첫 번째 에피소드로 승격하시겠습니까?
+
+  [1] 승격 — 현재 프로젝트를 Ep 1로, 시리즈 구조로 전환
+  [2] 별도 생성 — 이 프로젝트와 무관한 새 시리즈를 다른 위치에 생성
+```
+
+**[1] 선택 시 → 승격 워크플로우 실행 (아래 "승격 모드" 섹션)**
+**[2] 선택 시 → 일반 create 진행 (Step 1부터)**
+
+**존재하지 않으면:** 일반 create 진행 (Step 1부터).
+
+---
+
+### 0-1. 승격 모드 — 기존 프로젝트를 시리즈 Ep 1로 전환
+
+기존 sowhat 프로젝트를 시리즈 구조로 in-place 재구조화한다.
+
+#### 정보 수집
+
+시리즈 이름, 제목, 타겟 독자, 캐릭터, 에피소드 기획, 서사 흐름, 시리즈 Thesis를 일반 create와 동일하게 수집한다 (Step 1~7).
+
+단, 다음이 다르다:
+- **Ep 1 제목**: 현재 프로젝트의 thesis Answer에서 자동 제안
+- **Ep 1 상태**: 현재 프로젝트의 실제 상태 반영 (`settled` 수 기반)
+- **에피소드 기획**: Ep 1은 현재 프로젝트로 확정, Ep 2부터 입력
+
+#### 폴더 재구조화
+
+**[decision] 폴더 재구조화 확인:**
+
+```
+⚠️ 폴더 구조가 변경됩니다.
+
+현재:
+  {cwd}/
+    00-thesis.md
+    planning/
+    export/
+    ...
+
+변경 후:
+  {cwd}/                          ← 시리즈 루트
+    series/                       ← 시리즈 메타 (신규)
+    ep-01-{project-name}/         ← 현재 파일 이동
+      00-thesis.md
+      planning/
+      export/
+      ...
+
+  - git 이력은 보존됩니다 (git mv 사용)
+  - 모든 상대 경로 참조가 유지됩니다
+
+[1] 진행
+[2] 취소
+```
+
+**[1] 선택 시 실행:**
+
+```bash
+# 현재 datetime
+date -u +"%Y-%m-%dT%H:%M:%SZ"
+
+# 에피소드 디렉터리명 결정
+EP_DIR="ep-01-{config.project}"
+
+# 시리즈 메타 디렉터리 생성
+mkdir -p series/digests series/shared-research
+
+# 기존 프로젝트 파일을 에피소드 디렉터리로 이동
+# 이동 대상: sowhat 프로젝트 파일 (series/ 제외한 모든 것)
+mkdir -p "$EP_DIR"
+git mv 00-thesis.md "$EP_DIR/"
+git mv planning/ "$EP_DIR/"
+[ -d research/ ] && git mv research/ "$EP_DIR/"
+[ -d export/ ] && git mv export/ "$EP_DIR/"
+[ -d logs/ ] && git mv logs/ "$EP_DIR/"
+[ -d branches/ ] && git mv branches/ "$EP_DIR/"
+[ -d maps/ ] && git mv maps/ "$EP_DIR/"
+[ -f notes.md ] && git mv notes.md "$EP_DIR/"
+
+# .gitignore, CLAUDE.md 등 루트 파일은 이동하지 않음
+```
+
+#### 시리즈 메타 파일 생성
+
+일반 create의 Step 9과 동일하게 `series/series.json`, `series/arc.md`, `series/terminology.json`, `series/shared-research/pool.md` 생성.
+
+단, `episodes[0]`은 현재 프로젝트 정보로 채운다:
+
+```json
+{
+  "number": 1,
+  "project_path": "ep-01-{project}",
+  "project_name": "{config.project}",
+  "title": "{Ep 1 제목}",
+  "status": "{현재 상태 기반 — settled이면 'settled', draft 있으면 'drafted'}",
+  "thesis_answer": "{00-thesis.md의 Answer}",
+  "digest_file": null,
+  "settled_date": "{마지막 settle 시각 또는 null}"
+}
+```
+
+#### 에피소드 config.json 업데이트
+
+`{EP_DIR}/planning/config.json`에 series 필드 추가:
+
+```json
+"series": {
+  "name": "{series_name}",
+  "episode": 1,
+  "series_root": ".."
+}
+```
+
+#### 다이제스트 자동 생성
+
+Ep 1이 settled 상태이면 자동으로 다이제스트를 생성한다 (digest 서브커맨드 로직 호출).
+settled가 아니면 건너뛴다.
+
+#### 용어 사전 자동 추출
+
+Ep 1의 settled 섹션에서 핵심 용어를 자동 추출하여 `series/terminology.json`에 초기 등록한다.
+추출 방법: 각 섹션의 Claim에서 반복 등장하는 핵심 개념어를 식별.
+사용자에게 확인:
+
+```
+📖 Ep 1에서 추출한 핵심 용어:
+  - {term1}: "{자동 추출 정의}"
+  - {term2}: "{자동 추출 정의}"
+
+[1] 수락
+[2] 수정 후 수락
+[3] 건너뛰기
+```
+
+#### 글로벌 인덱스 등록
+
+일반 create의 Step 10과 동일.
+
+#### Git 커밋
+
+```bash
+git add -A
+git commit -m "series: promote {project} to series {series_name} (Ep 1)"
+```
+
+#### 완료 안내
+
+```
+✅ 시리즈 승격 완료: {series_title}
+
+  기존 프로젝트 → Ep 1: {ep1_title}
+  캐릭터: {character 또는 "(미설정)"}
+  에피소드: {N}편 계획 (Ep 1 = 현재 프로젝트)
+  위치: {cwd}/
+  
+  폴더 구조:
+    series/          ← 시리즈 메타
+    ep-01-{name}/    ← 현재 프로젝트 (이동됨)
+
+다음 액션:
+  [1] 다음 에피소드 시작 (/sowhat:init --series {series_name} --episode 2)
+  [2] Ep 1 다이제스트 생성 (/sowhat:series digest 1)
+  [3] 시리즈 현황 (/sowhat:series status)
+```
+
+---
 
 ### 1. 시리즈 이름
 
