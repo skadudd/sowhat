@@ -20,13 +20,89 @@ Valid status values, transition rules, and cascading invalidation algorithm for 
 
 ### Backward (degradation)
 - Any status → `needs-revision`: challenge/revise finds a problem in this section directly
+  - **단, revise에서는 `substantive` 또는 `structural` 분류일 때만 상태 변경 발생**
+  - `cosmetic` / `reinforcing` 분류의 수정은 현재 상태를 유지함 (settled → settled)
 - Any status → `invalidated`: upstream section was revised, cascading effect
+  - **단, `structural` 분류의 수정에서만 전체 전파(cascading) 발생**
+  - `substantive` 분류는 스코프 검증만 수행하고 자동 invalidation 없음
+  - `cosmetic` / `reinforcing` 분류는 전파 자체를 수행하지 않음
 - `needs-revision` / `invalidated` → `discussing`: expand restarts development
 
 ### Gates
 - `settled` requires: Claim + Grounds + Warrant + Qualifier + Rebuttal + Scheme all non-empty
 - `finalize-planning` requires: all planning sections (01-03) settled
 - `finalize` requires: all spec sections (04-09) settled
+
+---
+
+## Revision Classification (수정 분류 시스템)
+
+수정의 성격에 따라 4단계로 분류하여, 사소한 수정이 전체 논증 트리를 무효화하는 것을 방지한다.
+
+### 분류 유형
+
+| 유형 | 설명 | 예시 | 상태 변경 | 전파 |
+|------|------|------|----------|------|
+| `cosmetic` | 오타, 포맷팅, 인용 형식 수정 | 맞춤법 교정, 마크다운 형식 변경, open-questions 수정 | 없음 (settled 유지) | 없음 |
+| `reinforcing` | 기존 논증을 강화하는 추가 | Backing 추가, Claim 불변인 Grounds 보강, 증거 추가 | 없음 (settled 유지) | 없음 |
+| `substantive` | 논증 구조의 실질적 변경 (의미는 보존) | Claim 재표현 (의미 동일), Qualifier 축소, Rebuttal 추가 | settled → needs-revision | 스코프 검증만 (자동 invalidation 없음) |
+| `structural` | 논증의 의미나 방향 자체 변경 | Claim 의미 변경, thesis_argument 변경, Scheme 변경 | settled → needs-revision | 전체 전파 (cascading invalidation) |
+
+### 자동 감지 알고리즘
+
+분류는 수정된 필드와 변경 내용을 기반으로 자동 감지된다:
+
+| 수정 필드 | 조건 | 분류 |
+|-----------|------|------|
+| 모든 필드 | 포맷팅/오타만 변경 (의미 동일) | `cosmetic` |
+| `backing` | 항상 | `reinforcing` |
+| `open-questions` | 항상 | `cosmetic` |
+| `grounds` | Claim 변경 없음 | `reinforcing` |
+| `grounds` | Claim도 변경됨 | `structural` |
+| `claim` | 의미 동일한 재표현 | `substantive` |
+| `claim` | 의미 변경 | `structural` |
+| `warrant` | Claim 변경 없음 | `substantive` |
+| `warrant` | Claim도 변경됨 | `structural` |
+| `qualifier` | 항상 | `substantive` |
+| `rebuttal` | 항상 | `substantive` |
+
+**감지 원칙:** 판단이 모호할 때는 항상 상위 등급으로 분류한다 (safe-by-default).
+
+### 상태 변경 규칙
+
+```
+IF classification IN [cosmetic, reinforcing]:
+  status 변경 없음
+  전파 없음
+  오염 범위 탐지 건너뜀
+
+IF classification == substantive:
+  settled → needs-revision
+  스코프 검증 실행 (수정된 섹션만 Toulmin 재검증)
+  오염 섹션 표시하되 자동 invalidation 없음
+
+IF classification == structural:
+  settled → needs-revision
+  전체 전파 실행 (기존 Cascading Invalidation Algorithm 적용)
+```
+
+### 사용자 오버라이드 규칙
+
+- 자동 감지 결과는 사용자에게 표시되며, 사용자가 오버라이드할 수 있다
+- **상향 조정** (예: cosmetic → structural): 즉시 허용
+- **하향 조정** (예: structural → cosmetic): 경고 표시 후 허용
+  - 사용자가 자신의 수정 의도를 가장 잘 알기 때문에 최종 결정은 사용자에게 있다
+  - 단, 하향 조정 시 "오염 검사가 생략됩니다" 경고를 반드시 표시
+- 오버라이드 이력은 argument-log 및 discussion audit trail에 기록된다
+
+### 전파 동작 요약
+
+```
+cosmetic     →  저장만 (상태 유지, 전파 없음)
+reinforcing  →  저장만 (상태 유지, 전파 없음)
+substantive  →  저장 + 상태 강등 + 스코프 검증 (자동 invalidation 없음)
+structural   →  저장 + 상태 강등 + 전체 전파 (Cascading Invalidation Algorithm)
+```
 
 ---
 

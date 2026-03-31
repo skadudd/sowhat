@@ -29,6 +29,7 @@ status_transitions: ["(none) → draft"]
 | `--from https://...` | content-critique (URL) | URL에서 콘텐츠를 가져옴 |
 | `--from file:{path}` 또는 `--from {local-path}` | content-critique (파일) | 로컬 파일을 읽음 |
 | `--research <source> [<source> ...]` | research (bottom-up) | 자료 수집 → 분석 → thesis 도출 |
+| `--series {name} --episode {N}` | series-episode | 시리즈 에피소드로 초기화 |
 | (없음) | idea | 기존 동작 그대로 |
 
 `--research` 뒤의 source는 복수 가능하며 혼합 가능:
@@ -40,6 +41,57 @@ status_transitions: ["(none) → draft"]
 모드를 결정하고 이후 단계에서 조건 분기한다.
 
 ## 실행 절차
+
+### series-episode 모드 (`--series`)
+
+시리즈 에피소드로 프로젝트를 초기화한다. `--series {name} --episode {N}`이 감지되면 아래를 실행한 후, Step 1의 idea 모드 thesis 핑퐁으로 합류한다.
+
+1. `~/.claude/sowhat-series/{name}/series.json` 로드
+   - 없으면: `❌ 시리즈를 찾을 수 없습니다: {name}. /sowhat:series create {name}으로 먼저 생성하세요.`
+
+2. 에피소드 번호 확인:
+   - 해당 번호의 에피소드가 series.json에 있는지 확인
+   - 없으면: 새 에피소드로 등록할지 질문
+     ```
+     ⚠️ Ep{N}이 시리즈에 없습니다.
+     [1] 새 에피소드로 추가
+     [2] 취소
+     ```
+
+3. 이전 에피소드 다이제스트 로드:
+   - 모든 이전 에피소드의 digest 파일 로드 (`digests/ep-{NN}-*.md`)
+   - 다이제스트가 없는 에피소드: 경고 (`⚠️ Ep{N}의 다이제스트가 없습니다`)
+
+4. 시리즈 컨텍스트 주입 (thesis 핑퐁 전에 Claude에게 제공):
+   - `arc.md` 전체 내용
+   - 이전 에피소드 다이제스트의 "확립된 결론" 섹션
+   - 이전 에피소드 다이제스트의 "열린 실마리" 섹션
+   - `terminology.json` 용어 목록
+   - 시리즈 캐릭터 정보 (`~/.claude/sowhat-characters/{character}/`)
+
+5. 프로젝트 이름: 사용자 입력 또는 자동 생성 (`{series-name}-ep{N}`)
+
+6. `planning/config.json`에 series 정보 추가 (Step 11에서 생성 시):
+   ```json
+   "series": {
+     "name": "{series-name}",
+     "episode": {N},
+     "series_path": "~/.claude/sowhat-series/{series-name}"
+   }
+   ```
+
+7. 이후 idea 모드의 thesis 핑퐁 (Step 2~6)을 실행하되, Claude에게 다음 추가 지시:
+   - "이전 에피소드에서 확립된 결론은 이 에피소드의 Situation으로 참조할 수 있습니다"
+   - "열린 실마리는 이 에피소드의 Complication 후보입니다"
+   - "기존 에피소드에서 이미 다룬 주장과 겹치지 않도록 하세요"
+   - "시리즈 용어 사전의 정의를 따르세요"
+
+8. series.json 업데이트: 에피소드 상태를 `"in-progress"`로 변경, `project_path`와 `project_name` 설정
+
+이후 Step 0부터 정상 흐름으로 진행한다 (환경 체크 → 입력 수집 → IBIS → SCQ → ...).
+단, Step 1 입력 수집에서 프로젝트 이름은 위 5번에서 결정된 값을 사용한다.
+
+---
 
 ### 0. 환경 체크
 

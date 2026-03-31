@@ -47,6 +47,7 @@ flowchart LR
 
     subgraph 수정·복구
         REVISE["/sowhat:revise<br/>settled 섹션 수정"]
+        SNAPSHOT["/sowhat:snapshot<br/>논증 스냅샷"]
         SYNC["/sowhat:sync<br/>GitHub 동기화"]
         RESUME["/sowhat:resume<br/>세션 재개"]
     end
@@ -98,14 +99,18 @@ flowchart LR
 | research | accept 후 | expand (해당 섹션 Grounds 보강) |
 | character | 캐릭터 완성 후 | draft (캐릭터 적용) |
 | critic | 비평 완료 후 | expand 또는 debate (약점 주입) |
+| snapshot | restore 후 | expand (needs-revision 섹션) |
+| challenge | 실행 전 (auto) | snapshot (자동 백업) |
+| finalize-planning | 완료 후 (auto) | snapshot (자동 기록) |
+| add-argument | 추가 후 (auto) | snapshot (자동 기록) |
 | note | promote 후 | expand (해당 섹션 Open Question) |
 
 ## 섹션 Status와 사용 가능 커맨드
 
 | Status | 사용 가능 | 사용 불가 |
 |--------|----------|----------|
-| `draft` | expand | settle, debate, revise |
-| `discussing` | expand, debate, settle, research | — |
-| `settled` | revise, debate, challenge | expand |
-| `needs-revision` | expand, revise, debate | settle |
-| `invalidated` | expand (상위 해결 후), revise | settle, debate |
+| `draft` | expand, snapshot | settle, debate, revise |
+| `discussing` | expand, debate, settle, research, snapshot | — |
+| `settled` | revise, debate, challenge, snapshot | expand |
+| `needs-revision` | expand, revise, debate, snapshot | settle |
+| `invalidated` | expand (상위 해결 후), revise, snapshot | settle, debate |
