@@ -19,21 +19,45 @@ status_transitions: []
 
 ## 데이터 모델
 
-시리즈 데이터는 `~/.claude/sowhat-series/{series-name}/`에 전역으로 저장된다:
+시리즈 데이터는 **로컬 프로젝트 기반**으로 저장된다. 각 시리즈는 독립된 git repo이며, 에피소드는 시리즈 루트의 하위 디렉터리이다:
 
 ```
-~/.claude/sowhat-series/
-  {series-name}/
-    series.json              # 시리즈 메타데이터
-    arc.md                   # 매크로 서사 흐름
-    terminology.json         # 공유 용어 사전
+{series-root}/                    ← git repo (시리즈 루트)
+  series/                         ← 시리즈 메타
+    series.json
+    arc.md
+    terminology.json
     digests/
-      ep-{NN}-{project}.md   # 에피소드 다이제스트
+      ep-{NN}-{project}.md
     shared-research/
-      pool.md                # 시리즈 공유 리서치 인덱스
+      pool.md
+  ep-01-{name}/                   ← 에피소드 1 (sowhat 프로젝트)
+    00-thesis.md
+    planning/
+    research/
+    export/
+    logs/
+  ep-02-{name}/                   ← 에피소드 2
+    ...
 ```
 
-**series.json:**
+**글로벌 인덱스 (경량):** `~/.claude/sowhat-series/index.json`
+
+시리즈 루트 경로만 기록하는 경량 인덱스. 시리즈 목록 조회 및 경로 해석에 사용된다.
+
+```json
+{
+  "series": {
+    "ai-vibe-coding": {
+      "path": "/absolute/path/to/ai-vibe-coding",
+      "title": "AI 바이브 코딩 시리즈",
+      "created": "2026-03-31T10:00:00Z"
+    }
+  }
+}
+```
+
+**series.json** (`{series-root}/series/series.json`):
 ```json
 {
   "name": "ai-vibe-coding",
@@ -45,7 +69,7 @@ status_transitions: []
   "episodes": [
     {
       "number": 1,
-      "project_path": "/absolute/path/to/ep1",
+      "project_path": "ep-01-vibe-coding-intro",
       "project_name": "vibe-coding-intro",
       "title": "바이브 코딩이란 무엇인가",
       "status": "published",
@@ -205,7 +229,19 @@ Interactive 핑퐁으로 시리즈를 생성한다.
 [2] 나중에 결정 (TBD)
 ```
 
-### 8. 파일 생성
+### 8. 시리즈 루트 위치 결정
+
+```
+❓ 시리즈 폴더를 어디에 만들까요?
+  현재 위치: {cwd}
+
+  [1] 여기에 생성 ({cwd}/{series_name}/)     ← 추천
+  [2] 다른 위치 지정
+```
+
+[2] 선택 시 경로를 입력받는다. 최종 경로를 `series_root`에 저장.
+
+### 9. 파일 생성
 
 현재 datetime을 가져온다:
 ```bash
@@ -214,11 +250,16 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 
 디렉터리 생성:
 ```bash
-mkdir -p ~/.claude/sowhat-series/{series_name}/digests
-mkdir -p ~/.claude/sowhat-series/{series_name}/shared-research
+mkdir -p {series_root}/series/digests
+mkdir -p {series_root}/series/shared-research
 ```
 
-**series.json** 생성:
+Git 초기화:
+```bash
+cd {series_root} && git init
+```
+
+**{series_root}/series/series.json** 생성:
 ```json
 {
   "name": "{series_name}",
@@ -243,7 +284,7 @@ mkdir -p ~/.claude/sowhat-series/{series_name}/shared-research
 }
 ```
 
-**arc.md** 생성:
+**{series_root}/series/arc.md** 생성:
 
 ```markdown
 # Series Arc: {series_title}
@@ -270,14 +311,14 @@ mkdir -p ~/.claude/sowhat-series/{series_name}/shared-research
 - Act 3은 Answer를 도달한다 (해결과 제언)
 ```
 
-**terminology.json** 생성:
+**{series_root}/series/terminology.json** 생성:
 ```json
 {
   "terms": {}
 }
 ```
 
-**shared-research/pool.md** 생성:
+**{series_root}/series/shared-research/pool.md** 생성:
 ```markdown
 # Shared Research Pool: {series_title}
 
@@ -287,13 +328,41 @@ mkdir -p ~/.claude/sowhat-series/{series_name}/shared-research
 (에피소드 진행 시 자동 추가)
 ```
 
-### 9. 완료 안내
+### 10. 글로벌 인덱스 등록
+
+`~/.claude/sowhat-series/index.json`에 시리즈 경로를 등록한다. 파일이 없으면 생성:
+
+```bash
+mkdir -p ~/.claude/sowhat-series
+```
+
+```json
+{
+  "series": {
+    "{series_name}": {
+      "path": "{series_root의 절대 경로}",
+      "title": "{series_title}",
+      "created": "{current_datetime}"
+    }
+  }
+}
+```
+
+### 11. Git 커밋
+
+```bash
+cd {series_root}
+git add -A
+git commit -m "init: create series {series_name}"
+```
+
+### 12. 완료 안내
 
 ```
 ✅ 시리즈 생성: {series_title}
   캐릭터: {character 또는 "(미설정)"}
   에피소드: {N}편 계획
-  위치: ~/.claude/sowhat-series/{series_name}/
+  위치: {series_root}/
 
 다음 액션:
   [1] 첫 에피소드 시작 (/sowhat:init --series {series_name} --episode 1)
@@ -305,15 +374,15 @@ mkdir -p ~/.claude/sowhat-series/{series_name}/shared-research
 
 ## 서브커맨드: `list` — 시리즈 목록
 
-`~/.claude/sowhat-series/` 디렉터리를 스캔한다.
+`~/.claude/sowhat-series/index.json`을 읽어 등록된 시리즈 목록을 표시한다.
 
-디렉터리가 없거나 비어 있으면:
+파일이 없거나 `series` 객체가 비어 있으면:
 ```
 📚 등록된 시리즈가 없습니다.
   /sowhat:series create {name}으로 시리즈를 생성하세요.
 ```
 
-각 시리즈의 `series.json`을 읽어 목록 출력:
+각 시리즈의 경로에서 `{path}/series/series.json`을 읽어 목록 출력 (경로가 유효하지 않으면 `⚠️ 경로 없음` 표시):
 
 ```
 ----------------------------------------
@@ -340,7 +409,7 @@ startup-lessons      스타트업 레슨                 1/3편       Ep1 작성
 
 1. 현재 디렉터리의 `planning/config.json` 로드
    - 없으면: `❌ sowhat 프로젝트가 아닙니다. /sowhat:init으로 초기화하세요.`
-2. `~/.claude/sowhat-series/{series-name}/series.json` 로드
+2. `~/.claude/sowhat-series/index.json`에서 `{series-name}`의 경로를 찾고, `{path}/series/series.json` 로드
    - 없으면: `❌ 시리즈를 찾을 수 없습니다: {series-name}. /sowhat:series create {series-name}으로 먼저 생성하세요.`
 3. config.json에 이미 `series` 필드가 있으면:
    - 같은 시리즈: `⚠️ 이미 이 시리즈에 등록되어 있습니다 (Ep{N}).`
@@ -369,12 +438,13 @@ startup-lessons      스타트업 레슨                 1/3편       Ep1 작성
    "series": {
      "name": "{series-name}",
      "episode": {N},
-     "series_path": "~/.claude/sowhat-series/{series-name}"
+     "series_root": ".."
    }
    ```
+   `"series_root": ".."` — 에피소드 디렉터리에서 시리즈 루트로의 상대 경로. 에피소드는 시리즈 루트의 직접 하위 디렉터리이므로 항상 `".."`이다.
 
 2. `series.json`에 에피소드 정보 업데이트:
-   - `project_path`: 현재 프로젝트의 절대 경로
+   - `project_path`: 시리즈 루트 기준 상대 경로 (예: `"ep-02-tools"`)
    - `project_name`: config.json의 `project` 값
    - `status`: `"in-progress"`
 
@@ -410,9 +480,9 @@ startup-lessons      스타트업 레슨                 1/3편       Ep1 작성
 
 ### 사전 검증
 
-1. 에피소드의 `project_path`가 존재하는지 확인
+1. 에피소드의 `project_path`가 설정되어 있고, `{series-root}/{project_path}/` 디렉터리가 존재하는지 확인
    - 없으면: `❌ Ep{N}의 프로젝트 경로가 설정되지 않았습니다.`
-2. 해당 프로젝트의 `00-thesis.md` 로드
+2. 해당 프로젝트의 `{series-root}/{project_path}/00-thesis.md` 로드
 3. settled 상태인 섹션 파일 로드
 
 ### 다이제스트 생성
@@ -455,7 +525,7 @@ Answer: {00-thesis.md의 Answer 전문}
 date -u +"%Y-%m-%dT%H:%M:%SZ"
 ```
 
-`~/.claude/sowhat-series/{series-name}/digests/ep-{NN}-{project_name}.md`에 저장.
+`{series-root}/series/digests/ep-{NN}-{project_name}.md`에 저장.
 NN은 두 자리 (01, 02, ...).
 
 `series.json`의 해당 에피소드 `digest_file` 필드 업데이트.
@@ -472,7 +542,7 @@ NN은 두 자리 (01, 02, ...).
   확립된 결론: {M}건
   열린 실마리: {K}건
   새 용어: {L}건 추가됨
-  위치: ~/.claude/sowhat-series/{series-name}/digests/ep-{NN}-{project_name}.md
+  위치: {series-root}/series/digests/ep-{NN}-{project_name}.md
 
 다음 액션:
   [1] 다음 에피소드 시작 (/sowhat:init --series {series-name} --episode {N+1})
@@ -488,11 +558,13 @@ NN은 두 자리 (01, 02, ...).
 
 `[series-name]` 인자가 있으면 사용, 없으면:
 1. 현재 프로젝트의 config.json에서 `series.name` 확인
-2. 없으면: 시리즈 목록 표시 후 선택 요청
+2. 없으면: `~/.claude/sowhat-series/index.json`에서 시리즈 목록 표시 후 선택 요청
+
+시리즈 루트 경로 해석: `~/.claude/sowhat-series/index.json`에서 `{series-name}`의 `path`를 가져온다.
 
 ### 동작
 
-`arc.md` 파일의 내용을 표시한다:
+`{series-root}/series/arc.md` 파일의 내용을 표시한다:
 
 ```
 ----------------------------------------
@@ -654,7 +726,7 @@ NN은 두 자리 (01, 02, ...).
 
 ### 출력
 
-`series.json`과 각 에피소드 프로젝트의 상태를 종합:
+`{series-root}/series/series.json`과 각 에피소드 프로젝트의 상태를 종합 (에피소드 경로: `{series-root}/{episode.project_path}/`):
 
 ```
 ----------------------------------------

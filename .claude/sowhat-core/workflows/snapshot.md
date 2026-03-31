@@ -31,7 +31,40 @@ status_transitions: ["(restore) → needs-revision"]
 | `list` | 목록 출력 |
 | `diff {v1} {v2}` | 두 버전 비교 |
 | `restore {version} [--section {section}]` | 복원 |
-| (없음) | `❌ 사용법: /sowhat:snapshot "label" \| list \| diff v1 v2 \| restore v1` |
+| (없음) | 서브커맨드 선택 UI 표시 (아래 참조) |
+
+### 서브커맨드 선택 UI (인자 없이 실행 시)
+
+`$ARGUMENTS`가 비어있으면 아래 UI를 표시한다:
+
+```
+❓ 무엇을 하시겠습니까?
+
+  [1] 현재 상태 스냅샷 저장
+  [2] 스냅샷 목록 보기
+  [3] 두 버전 비교
+  [4] 이전 버전으로 복원
+```
+
+[1] 선택 시 → 라벨 입력 요청 후 create 실행
+```
+❓ 스냅샷 라벨을 입력하세요.
+  예) "Initial thesis", "Post-challenge revision"
+```
+
+[2] 선택 시 → list 실행
+
+[3] 선택 시 → 두 버전 번호 입력 요청 후 diff 실행
+```
+❓ 비교할 두 버전을 입력하세요.
+  예) v1 v3
+```
+
+[4] 선택 시 → 버전 번호 입력 요청 후 restore 실행
+```
+❓ 복원할 버전 번호를 입력하세요.
+  예) v2
+```
 
 ---
 

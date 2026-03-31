@@ -40,14 +40,64 @@ status_transitions: ["(none) → draft"]
 
 모드를 결정하고 이후 단계에서 조건 분기한다.
 
+### 모드 선택 UI (인자 없이 실행 시)
+
+`$ARGUMENTS`에 `--from`, `--research`, `--series` 플래그가 모두 없고, 텍스트만 있거나 비어있으면 **모드 선택 UI를 먼저 표시**한다.
+
+단, `$ARGUMENTS`에 프로젝트 이름과 아이디어가 함께 있으면 (예: `my-project "AI가 교육을 바꾼다"`) idea 모드로 직행한다.
+
+```
+❓ 어떤 방식으로 시작하시겠습니까?
+
+  [1] 아이디어에서 시작        — 내 생각을 논증으로 구조화
+  [2] 콘텐츠 분석에서 시작     — 기존 글/영상을 분석하고 입장 세우기
+  [3] 리서치에서 시작          — 자료 먼저 모아서 thesis 도출
+  [4] 시리즈 에피소드로 시작    — 기존 시리즈의 다음 편
+```
+
+**[1] 선택 시:** idea 모드로 진행 (기존 동작 그대로)
+
+**[2] 선택 시:** 소스 URL 또는 파일 경로를 질문한 후 content-critique 모드로 진행
+```
+❓ 분석할 콘텐츠의 URL 또는 파일 경로를 입력하세요.
+```
+
+**[3] 선택 시:** 리서치 소스를 질문한 후 research 모드로 진행
+```
+❓ 리서치할 소스를 입력하세요. (URL, 파일 경로, 토픽 — 복수 가능, 빈 줄로 종료)
+```
+
+**[4] 선택 시:** 시리즈 선택 UI 표시
+```
+❓ 어떤 시리즈입니까?
+
+  {~/.claude/sowhat-series/index.json에서 시리즈 목록 로드}
+  [1] {series-name} — {title} (Ep{N} {status})
+  [2] {series-name} — {title} (Ep{N} {status})
+  ...
+  [0] 새 시리즈 생성 (/sowhat:series create)
+```
+
+시리즈 선택 후:
+```
+❓ 몇 번째 에피소드입니까?
+
+  다음 예정: Ep {next_planned} — "{title}"
+  
+  [1] Ep {next_planned} (추천)
+  [2] 다른 번호 입력
+```
+
+이후 series-episode 모드로 진행 (기존 `--series` 플래그 처리와 동일).
+
 ## 실행 절차
 
 ### series-episode 모드 (`--series`)
 
 시리즈 에피소드로 프로젝트를 초기화한다. `--series {name} --episode {N}`이 감지되면 아래를 실행한 후, Step 1의 idea 모드 thesis 핑퐁으로 합류한다.
 
-1. `~/.claude/sowhat-series/{name}/series.json` 로드
-   - 없으면: `❌ 시리즈를 찾을 수 없습니다: {name}. /sowhat:series create {name}으로 먼저 생성하세요.`
+1. `~/.claude/sowhat-series/index.json`에서 `{name}`의 경로(`series_root`)를 찾고, `{series_root}/series/series.json` 로드
+   - index.json에 없거나 series.json이 없으면: `❌ 시리즈를 찾을 수 없습니다: {name}. /sowhat:series create {name}으로 먼저 생성하세요.`
 
 2. 에피소드 번호 확인:
    - 해당 번호의 에피소드가 series.json에 있는지 확인
@@ -59,26 +109,28 @@ status_transitions: ["(none) → draft"]
      ```
 
 3. 이전 에피소드 다이제스트 로드:
-   - 모든 이전 에피소드의 digest 파일 로드 (`digests/ep-{NN}-*.md`)
+   - 모든 이전 에피소드의 digest 파일 로드 (`{series_root}/series/digests/ep-{NN}-*.md`)
    - 다이제스트가 없는 에피소드: 경고 (`⚠️ Ep{N}의 다이제스트가 없습니다`)
 
 4. 시리즈 컨텍스트 주입 (thesis 핑퐁 전에 Claude에게 제공):
-   - `arc.md` 전체 내용
+   - `{series_root}/series/arc.md` 전체 내용
    - 이전 에피소드 다이제스트의 "확립된 결론" 섹션
    - 이전 에피소드 다이제스트의 "열린 실마리" 섹션
-   - `terminology.json` 용어 목록
+   - `{series_root}/series/terminology.json` 용어 목록
    - 시리즈 캐릭터 정보 (`~/.claude/sowhat-characters/{character}/`)
 
 5. 프로젝트 이름: 사용자 입력 또는 자동 생성 (`{series-name}-ep{N}`)
+   에피소드 디렉터리: `{series_root}/ep-{NN}-{project-name}/` (시리즈 루트의 직접 하위)
 
 6. `planning/config.json`에 series 정보 추가 (Step 11에서 생성 시):
    ```json
    "series": {
      "name": "{series-name}",
      "episode": {N},
-     "series_path": "~/.claude/sowhat-series/{series-name}"
+     "series_root": ".."
    }
    ```
+   `"series_root": ".."` — 에피소드 디렉터리에서 시리즈 루트로의 상대 경로.
 
 7. 이후 idea 모드의 thesis 핑퐁 (Step 2~6)을 실행하되, Claude에게 다음 추가 지시:
    - "이전 에피소드에서 확립된 결론은 이 에피소드의 Situation으로 참조할 수 있습니다"
@@ -86,10 +138,11 @@ status_transitions: ["(none) → draft"]
    - "기존 에피소드에서 이미 다룬 주장과 겹치지 않도록 하세요"
    - "시리즈 용어 사전의 정의를 따르세요"
 
-8. series.json 업데이트: 에피소드 상태를 `"in-progress"`로 변경, `project_path`와 `project_name` 설정
+8. series.json 업데이트: 에피소드 상태를 `"in-progress"`로 변경, `project_path`를 상대 경로로 설정 (예: `"ep-02-tools"`), `project_name` 설정
 
 이후 Step 0부터 정상 흐름으로 진행한다 (환경 체크 → 입력 수집 → IBIS → SCQ → ...).
 단, Step 1 입력 수집에서 프로젝트 이름은 위 5번에서 결정된 값을 사용한다.
+작업 디렉터리는 `{series_root}/ep-{NN}-{project-name}/`로 이동하여 이후 모든 파일 생성이 에피소드 디렉터리 안에서 이루어진다.
 
 ---
 
