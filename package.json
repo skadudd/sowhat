@@ -1,6 +1,6 @@
 {
   "name": "sowhat-cc",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Structured argumentation system for Claude Code. Build logic-driven PRDs with Toulmin, Walton, and Minto Pyramid frameworks.",
   "bin": {
     "sowhat-cc": "bin/install.js"
