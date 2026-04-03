@@ -454,10 +454,14 @@ scheme에 따라 다른 근거 유형을 안내한다.
 
 [6] 선택 직후, `planning/config.json`의 `features.deep_research` 값을 확인한다.
 
+> **API 키 탐색 순서** (환경변수가 세션 시작 후 설정된 경우를 대비):
+> `$PERPLEXITY_API_KEY` → `.claude/settings.local.json` → `~/.claude/settings.local.json`
+> (`/sowhat:research` 워크플로우의 "API 키 탐색 순서" 참조)
+
 **Case 1: `deep_research` == `"disabled"` 또는 config에 features 없음**
 → UX 없이 기본 agent-browser 검색으로 바로 진행.
 
-**Case 2: `deep_research` == `"enabled"` 또는 (`"auto"` && `PERPLEXITY_API_KEY` 존재)**
+**Case 2: `deep_research` == `"enabled"` 또는 (`"auto"` && API 키 존재)**
 → 다음 선택지를 제시:
 
 ```

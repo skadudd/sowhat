@@ -103,9 +103,23 @@ API 키를 입력하세요 (pplx-...):
    - `429`: 유효 (요청 한도 초과일 뿐 키는 정상)
    - 기타: `⚠️ API 연결 확인 실패 ({status}). 키를 저장하고 나중에 확인할까요? [1] 저장 [2] 취소`
 
-3. **저장**: `.claude/settings.local.json`에 환경변수로 저장
+3. **저장 범위 선택**:
 
-   `.claude/settings.local.json`을 읽고 (없으면 `{}` 기준), `env` 섹션에 추가한다:
+   ```
+   저장 범위를 선택하세요:
+
+   [1] 전역 (모든 프로젝트에 적용)
+       ~/.claude/settings.local.json
+   [2] 이 프로젝트만
+       .claude/settings.local.json
+   [3] 둘 다
+   ```
+
+   선택에 따라 해당 `settings.local.json`을 읽고 (없으면 `{}` 기준), `env` 섹션에 추가한다:
+   - **[1] 전역**: `~/.claude/settings.local.json`에 저장
+   - **[2] 프로젝트**: `.claude/settings.local.json`에 저장
+   - **[3] 둘 다**: 양쪽 모두 저장
+
    ```json
    {
      "env": {
@@ -121,8 +135,10 @@ API 키를 입력하세요 (pplx-...):
    ```
    ✅ Perplexity API 키 설정 완료
 
-   적용: 다음 Claude Code 세션부터 자동 적용
-   지금 바로 사용하려면 Claude Code를 재시작하세요.
+   저장: {전역 (~/.claude/) | 프로젝트 (.claude/) | 전역 + 프로젝트}
+
+   ⚠️ 이미 실행 중인 세션에는 자동 반영되지 않습니다.
+      다른 세션에서 사용하려면 해당 세션을 재시작하세요.
    ```
 
 ### 2-A-4. 키 삭제
