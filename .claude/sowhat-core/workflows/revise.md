@@ -111,7 +111,7 @@ field 인자가 없으면 선택지를 출력한다:
   [5] Rebuttal
   [6] Backing
   [7] Open Questions
-  [취소] 입력 없이 엔터
+  [0] 취소
 ```
 
 ---
@@ -207,11 +207,11 @@ FUNCTION classify_revision(field, old_content, new_content, claim_changed):
   판정 근거: {왜 이 유형으로 분류했는지}
 
 이 분류가 맞습니까?
-  [엔터] 확인
-  [1] cosmetic으로 변경 (포맷팅/오타 수정)
-  [2] reinforcing으로 변경 (논증 보강)
-  [3] substantive로 변경 (실질적 수정)
-  [4] structural로 변경 (구조적 변경)
+  [1] 확인
+  [2] cosmetic으로 변경 (포맷팅/오타 수정)
+  [3] reinforcing으로 변경 (논증 보강)
+  [4] substantive로 변경 (실질적 수정)
+  [5] structural로 변경 (구조적 변경)
 ```
 
 **오버라이드 규칙:**
@@ -221,7 +221,7 @@ FUNCTION classify_revision(field, old_content, new_content, claim_changed):
   ⚠️ 하향 조정: structural → cosmetic
   이 수정이 다른 섹션의 논증 전제를 변경하지 않는 것이 확실합니까?
   하향 조정 시 오염 검사가 생략됩니다.
-  [y] 확인 / [n] 취소
+  [1] 확인 / [2] 취소
   ```
 - 사용자가 자신의 수정 의도를 가장 잘 알기 때문에 최종 결정은 사용자에게 있다.
 

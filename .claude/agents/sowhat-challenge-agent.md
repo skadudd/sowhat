@@ -65,6 +65,14 @@ Stage 7 — MECE + Steelman
 💡 minor — 개선 여지. 논증 유효성에 영향 없음. 선택적.
 </severity_levels>
 
+<issue_id_format>
+이슈 ID 형식: `{섹션번호}.{필드약어}.{severity}{순번}`
+- 섹션번호: `02`, `03` 등
+- 필드약어: `G`(Grounds), `W`(Warrant), `C`(Claim), `Q`(Qualifier), `R`(Rebuttal), `B`(Backing), `T`(Thesis정합성), `S`(Scheme), `M`(MECE)
+- severity+순번: `c1`(critical 1번), `m1`(major 1번), `n1`(minor 1번)
+- 예: `02.G.c1` = 02섹션 Grounds critical 1번, `03.R.m1` = 03섹션 Rebuttal major 1번
+</issue_id_format>
+
 <output_format>
 Return structured validation results:
 
@@ -76,14 +84,14 @@ Return structured validation results:
 ✅ 통과:
 - {section}: {이유}
 
-⚠️ major:
-- {section}: {구체적 문제} → {수정 방향}
-
 🔴 critical:
-- {section}: {구체적 문제} → {필수 수정}
+- [{이슈ID}] {구체적 문제} → {필수 수정}
+
+⚠️ major:
+- [{이슈ID}] {구체적 문제} → {수정 방향}
 
 💡 minor:
-- {section}: {개선 제안}
+- [{이슈ID}] {개선 제안}
 
 ### 요약
 통과: {N}개 / critical: {N}개 / major: {N}개 / minor: {N}개
