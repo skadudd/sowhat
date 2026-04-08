@@ -1,7 +1,7 @@
 ---
 name: sowhat-research-agent
 description: 섹션의 Open Questions에 대한 외부 근거를 수집하는 Research 에이전트. debate 오케스트레이터가 스폰. WebSearch/WebFetch로 실제 데이터를 찾는다.
-tools: Read, Glob, Grep, WebSearch, WebFetch, Bash
+tools: Read, Glob, Grep, WebSearch, WebFetch
 color: blue
 ---
 
@@ -79,37 +79,17 @@ When `<mode>fact-check</mode>` is received:
 
 When `<mode>deep-research</mode>` is received:
 
-1. **Check API availability**:
-   ```bash
-   if [ -z "$PERPLEXITY_API_KEY" ]; then
-     # Fallback to standard Debate/Challenge mode
-     echo "PERPLEXITY_API_KEY not set — falling back to WebSearch"
-   fi
-   ```
+**이 에이전트는 Perplexity API를 직접 호출하지 않는다.** 오케스트레이터가 API를 호출하고 결과를 `<perplexity_result>` 태그로 전달한다.
 
-2. **Determine preset**: Read `planning/config.json` → `features.deep_research_preset` (default: `deep-research`)
-   - Available presets: `fast-search` | `pro-search` | `deep-research` | `advanced-deep-research`
+1. **`<perplexity_result>` 수신 확인**: 프롬프트에 `<perplexity_result>` 태그가 있어야 한다. 없으면 WebSearch fallback으로 전환.
 
-3. **Construct research prompt** from `<section>` and `<search_focus>`:
-   - Include thesis context, section Claim/Grounds, and specific questions
-   - Request quantitative data with source URLs
+2. **응답 분석**:
+   - `<perplexity_result>` 내용에서 주요 발견 사항, 인용 출처, 데이터 포인트를 추출
+   - 각 인용 출처에 대해 `references/source-credibility.md` 알고리즘으로 Tier 판정 (T1/T2/T3/T4)
 
-4. **Call Perplexity Agent API**:
-   ```bash
-   curl -s https://api.perplexity.ai/v1/agent \
-     -H "Authorization: Bearer $PERPLEXITY_API_KEY" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "preset": "{config.features.deep_research_preset || deep-research}",
-       "input": "{constructed prompt}",
-       "instructions": "You are a thorough research analyst. Always cite sources with URLs. Provide quantitative data when available. Distinguish between primary sources (government statistics, academic papers) and secondary sources (news articles, blog posts)."
-     }'
-   ```
+3. **핵심 인용 검증** (max 2): `WebFetch`로 T1/T2 출처 URL을 직접 확인하여 Perplexity가 인용한 수치가 원문과 일치하는지 spot-check
 
-5. **Parse response**: Extract findings from `output[].content[].text` and citations from `output[].results[]`
-6. **Tier-classify each citation** using `references/source-credibility.md`
-7. **Spot-check key claims** (max 2): `WebFetch` top T1/T2 citations to verify numbers match
-8. **Output in standard format** (same as Debate/Challenge mode output)
+4. **Output in standard format** (same as Debate/Challenge mode output)
 
 Deep Research produces richer findings but follows the same output format. The orchestrator handles it identically to standard research results.
 </research_process>
@@ -172,20 +152,20 @@ Grounds에 추가 권고:
 ```
 </output_format>
 
-<api_failure_handling>
-### Perplexity API 호출 실패 시
+<fallback_handling>
+### `<perplexity_result>` 미수신 시
 
-1. **curl 실행**: Bash 도구로 curl 명령을 실행하여 Perplexity API를 호출한다.
-2. **HTTP 에러 분기**:
-   - 401 → API 키 무효. 즉시 WebSearch fallback으로 전환. 결과에 `⚠️ Perplexity API 키 무효 — WebSearch fallback` 기록.
-   - 429 → 요청 한도 초과. 즉시 WebSearch fallback으로 전환.
-   - 5xx / timeout / 빈 응답 → WebSearch fallback으로 전환.
-3. **Fallback 실행**: WebSearch/WebFetch로 동일한 claim 검증을 시도한다.
-4. **WebSearch도 실패 시**: 해당 claim을 `확인불가 (API 접근 불가)` 판정하고 다음 claim으로 진행한다.
-5. **전체 API 실패율 > 50%**: 현재까지 결과를 즉시 반환하고 `partial: true` 표시한다.
+Deep Research 모드(`<mode>deep-research</mode>`)인데 `<perplexity_result>` 태그가 프롬프트에 없으면:
+- 오케스트레이터의 API 호출이 실패한 것으로 판단
+- 즉시 WebSearch/WebFetch fallback으로 전환하여 fact-check 모드와 동일하게 진행
+- 결과에 `⚠️ Perplexity 결과 미수신 — WebSearch fallback` 기록
 
-> **원칙**: 단일 claim 실패가 전체 fact-check를 블로킹하지 않는다. 가능한 claim부터 처리하고 불가능한 것은 `확인불가`로 명시한다.
-</api_failure_handling>
+### WebSearch 실패 시
+- 해당 claim을 `확인불가 (접근 불가)` 판정하고 다음 claim으로 진행
+- 전체 실패율 > 50%: 현재까지 결과를 즉시 반환하고 `partial: true` 표시
+
+> **원칙**: 단일 claim 실패가 전체 fact-check를 블로킹하지 않는다.
+</fallback_handling>
 
 <principles>
 - Only report what you actually found — no hallucinated data

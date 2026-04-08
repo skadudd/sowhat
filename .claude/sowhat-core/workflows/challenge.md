@@ -107,8 +107,8 @@ UX는 `research.md`의 "리서치 엔진 선택" 섹션과 동일하다 (1단계
 
 **Stage 0 — 사실 검증 (sowhat-research-agent 사용)**
 
-Stage 0은 외부 데이터 접근이 필요하므로 WebSearch/WebFetch 또는 Perplexity API(Bash curl)를 사용하는 sowhat-research-agent를 사용한다.
-위 엔진 선택 결과에 따라 `<mode>` 태그를 설정한다.
+Stage 0은 외부 데이터 접근이 필요하므로 sowhat-research-agent를 사용한다.
+**Deep Research 선택 시, 오케스트레이터가 Perplexity API를 직접 호출하고 결과를 agent 프롬프트에 주입한다.**
 
 ```
 # Stage 0: 각 섹션의 검증 가능한 주장을 추출하고 research-agent로 검증
@@ -117,13 +117,32 @@ FOR EACH section IN target_sections:
   # 정량 데이터, 시점 주장, 사실 주장, 사례 인용 모두 추출
 
   IF claims.length > 0:
+
+    # === Deep Research 선택 시: 오케스트레이터가 Perplexity API 직접 호출 ===
+    IF engine == "deep":
+      perplexity_result = Bash("""
+        curl -s --ssl-revoke-best-effort https://api.perplexity.ai/chat/completions \
+          -H "Authorization: Bearer $PERPLEXITY_API_KEY" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "model": "sonar-deep-research",
+            "messages": [{"role": "user", "content": "다음 주장들을 검증해주세요. 각 주장에 대해 정확/부정확/부분정확을 판정하고, 출처 URL을 명시하세요.\n\n{claims 목록}"}]
+          }'
+      """)
+      # API 실패 시 (HTTP != 200 또는 빈 응답):
+      #   사용자에게 에러 표시 후 Web Research fallback 여부 확인
+      #   fallback 선택 시 engine = "web"으로 전환
+
+    # === agent 스폰 ===
     result_0_{section} = Task(sowhat-research-agent,
       prompt = """
-      <mode>fact-check</mode>
+      <mode>{engine == "deep" ? "deep-research" : "fact-check"}</mode>
       <section>{section 전체 데이터}</section>
       <claims>{추출된 claims 목록 — 각 claim의 값, 출처 URL, 맥락}</claims>
+      {"<perplexity_result>" + perplexity_result + "</perplexity_result>" IF engine == "deep"}
       <instructions>
-        각 claim에 대해:
+        {"Perplexity 결과를 기반으로 각 claim을 검증하고, 핵심 인용 2건을 WebFetch로 spot-check하라." IF engine == "deep"}
+        {"각 claim에 대해:" IF engine == "web"}
         1. 출처가 있으면 → WebFetch로 출처 원문 확인, 수치/사실 대조
         2. 2차 출처(뉴스 등)이면 → 1차 출처(정부 통계, 공식 DB 등) 역추적 시도
         3. 출처가 없으면 → WebSearch로 독립 검색하여 사실 확인
