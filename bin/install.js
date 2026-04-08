@@ -19,7 +19,13 @@ const args = process.argv.slice(2);
 const hasGlobal = args.includes('--global') || args.includes('-g');
 const hasLocal = args.includes('--local') || args.includes('-l');
 const hasUninstall = args.includes('--uninstall') || args.includes('-u');
+const hasVersion = args.includes('--version') || args.includes('-v');
 const hasHelp = args.includes('--help') || args.includes('-h');
+
+if (hasVersion) {
+  console.log(`sowhat-cc v${pkg.version}`);
+  process.exit(0);
+}
 
 if (hasHelp || (!hasGlobal && !hasLocal && !hasUninstall)) {
   console.log(`
@@ -38,6 +44,7 @@ ${cyan}  ███████╗ ██████╗     ██╗    ██�
     ${cyan}-g, --global${reset}     Install globally (to ~/.claude/)
     ${cyan}-l, --local${reset}      Install locally (to ./.claude/)
     ${cyan}-u, --uninstall${reset}  Remove sowhat files
+    ${cyan}-v, --version${reset}    Show version
     ${cyan}-h, --help${reset}       Show this help
 
   ${yellow}Examples:${reset}

@@ -161,7 +161,7 @@ Deep Research가 비활성화되고 기본 웹 검색이 사용됩니다.
 
 ### 2-B-1. 기능 목록
 
-`planning/config.json`의 `features` 섹션을 읽고 표시한다:
+`planning/config.json`의 `features` 섹션을 읽고, 전역 기본값(`~/.claude/settings.local.json`의 `sowhat`)도 함께 참조하여 표시한다:
 
 ```
 기능 설정
@@ -177,6 +177,8 @@ Deep Research가 비활성화되고 기본 웹 검색이 사용됩니다.
 
 변경할 항목 번호를 선택하세요 (또는 'done'):
 ```
+
+> 프로젝트 config가 없으면 (init 전) 전역 기본값을 표시한다.
 
 ### 2-B-2. Deep Research 토글 ([1] 선택 시)
 
@@ -221,9 +223,42 @@ Sub-Research 설정
 
 선택 시 `planning/config.json`의 `features.sub_research`를 업데이트한다.
 
-### 2-B-5. 변경 완료
+### 2-B-5. 저장 범위 선택
 
-각 항목 변경 후 기능 목록(2-B-1)으로 돌아간다.
+각 항목 변경 시 저장 범위를 선택한다:
+
+```
+저장 범위:
+
+[1] 이 프로젝트만 (planning/config.json)
+[2] 전역 기본값으로 저장 (~/.claude/settings.local.json)
+    → 새 프로젝트에도 이 값이 적용됩니다
+[3] 둘 다
+```
+
+- **[1]**: `planning/config.json`의 `features.{field}`만 업데이트
+- **[2]**: `~/.claude/settings.local.json`의 `sowhat.{field}`를 업데이트. 기존 `env` 등 다른 키는 보존.
+- **[3]**: 양쪽 모두 업데이트
+
+**프로젝트가 없을 때** (init 전): [2] 전역만 가능. [1]은 비활성.
+
+전역 저장 시 `~/.claude/settings.local.json` 예시:
+```json
+{
+  "env": {
+    "PERPLEXITY_API_KEY": "pplx-..."
+  },
+  "sowhat": {
+    "deep_research": "enabled",
+    "deep_research_preset": "advanced-deep-research",
+    "sub_research": "enabled"
+  }
+}
+```
+
+### 2-B-6. 변경 완료
+
+각 항목 변경 + 저장 후 기능 목록(2-B-1)으로 돌아간다.
 `done` 입력 시:
 
 ```
@@ -245,8 +280,13 @@ API 키:
 
 기능:
   Deep Research: {auto | enabled | disabled}
-  Deep Research 모델: {model name}
+  Deep Research Preset: {preset name}
   Sub-Research: {enabled | disabled}
+
+전역 기본값 (~/):
+  Deep Research: {sowhat.deep_research || 미설정}
+  Deep Research Preset: {sowhat.deep_research_preset || 미설정}
+  Sub-Research: {sowhat.sub_research || 미설정}
 
 출처 신뢰도:
   Strict 모드: {true | false}

@@ -456,6 +456,15 @@ Issue 번호를 기록한다.
 
 ### 11. planning/config.json 생성
 
+**전역 기본값 로드**: `~/.claude/settings.local.json`의 `sowhat` 키를 읽어 `global_defaults`로 사용한다. 없으면 빈 객체.
+
+```python
+# 의사코드
+global_settings = read_json("~/.claude/settings.local.json")
+global_defaults = global_settings.get("sowhat", {})
+# global_defaults 예: {"deep_research": "enabled", "deep_research_preset": "advanced-deep-research"}
+```
+
 **idea 모드:**
 ```json
 {
@@ -476,9 +485,11 @@ Issue 번호를 기록한다.
     "last_research": null
   },
   "features": {
-    "sub_research": "enabled",
+    "sub_research": "{global_defaults.sub_research || 'enabled'}",
     "sub_research_engine": "agent-browser",
-    "sub_research_fallback": "websearch"
+    "sub_research_fallback": "websearch",
+    "deep_research": "{global_defaults.deep_research || 'auto'}",
+    "deep_research_preset": "{global_defaults.deep_research_preset || 'deep-research'}"
   }
 }
 ```

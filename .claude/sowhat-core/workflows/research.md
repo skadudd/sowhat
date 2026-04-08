@@ -582,10 +582,17 @@ API 키를 어디에서도 찾을 수 없으면:
 ```
 
 ```bash
-# features.deep_research 확인 (config.json)
+# features.deep_research 확인
+# 1순위: planning/config.json → features.deep_research
+# 2순위: ~/.claude/settings.local.json → sowhat.deep_research
+# 3순위: 기본값 "auto"
+#
 # "disabled"면 --deep 무시하고 기본 모드로 진행
 # "auto"면 API 키 존재 시 활성화
 # "enabled"면 API 키 필수
+#
+# deep_research_preset도 동일 우선순위:
+# config.json → ~/.claude/settings.local.json → 기본값 "deep-research"
 ```
 
 API 키 없이 `[1]` 선택 시: `--deep` 플래그를 무시하고 기존 토픽 검색 모드로 fallback.
