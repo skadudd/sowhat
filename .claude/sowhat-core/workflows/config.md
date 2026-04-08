@@ -28,6 +28,7 @@ sowhat 설정
 [2] 기능 설정
 [3] 현재 설정 보기
 [4] 설정 초기화
+[5] 파일 직접 편집
 ```
 
 ---
@@ -326,6 +327,163 @@ API 키는 초기화되지 않습니다.
   "strict_mode": false
 }
 ```
+
+---
+
+## Step 2-E: 파일 직접 편집 ([5] 선택 시)
+
+대화형 핑퐁 대신 설정 파일을 직접 편집하고 검증받는 모드.
+
+### 2-E-1. 편집 대상 선택
+
+```
+파일 직접 편집
+
+[1] 프로젝트 설정 (planning/config.json)
+    현재 프로젝트의 features, credibility 등
+[2] 전역 기본값 (~/.claude/settings.local.json)
+    API 키 + sowhat 전역 기본값
+```
+
+### 2-E-2. 편집 가능 필드 레퍼런스 출력
+
+선택된 파일의 편집 가능한 필드와 허용값을 출력한다. 사용자가 무엇을 어떻게 바꿀 수 있는지 즉시 파악할 수 있도록 한다.
+
+**[1] 프로젝트 설정 선택 시:**
+
+```
+planning/config.json 편집 레퍼런스
+
+편집 가능 필드:
+┌─────────────────────────┬──────────────────────────────────────────────┐
+│ features.deep_research  │ "auto" | "enabled" | "disabled"              │
+│ features.deep_research  │                                              │
+│   _preset               │ "fast-search" | "pro-search"                 │
+│                         │ | "deep-research" | "advanced-deep-research" │
+│ features.sub_research   │ "enabled" | "disabled"                       │
+│ credibility.strict_mode │ true | false                                 │
+│ credibility.custom      │ ["domain1.com", "domain2.org"]               │
+│   _whitelist            │                                              │
+│ credibility.custom      │ ["domain.com"]                               │
+│   _blacklist            │                                              │
+└─────────────────────────┴──────────────────────────────────────────────┘
+
+⚠️ 위 필드 외에는 수정하지 마세요 (project, layer, sections 등은 워크플로우가 관리).
+
+파일을 편집한 뒤 'done'을 입력하면 검증합니다.
+```
+
+**[2] 전역 기본값 선택 시:**
+
+```
+~/.claude/settings.local.json 편집 레퍼런스
+
+편집 가능 필드:
+┌───────────────────────────────┬──────────────────────────────────────────────┐
+│ env.PERPLEXITY_API_KEY        │ "pplx-..." (문자열)                          │
+│ sowhat.deep_research          │ "auto" | "enabled" | "disabled"              │
+│ sowhat.deep_research_preset   │ "fast-search" | "pro-search"                 │
+│                               │ | "deep-research" | "advanced-deep-research" │
+│ sowhat.sub_research           │ "enabled" | "disabled"                       │
+└───────────────────────────────┴──────────────────────────────────────────────┘
+
+⚠️ permissions, env 내 다른 키 등 기존 필드는 건드리지 마세요.
+
+파일을 편집한 뒤 'done'을 입력하면 검증합니다.
+```
+
+### 2-E-3. 편집 대기 + 검증
+
+사용자가 `done`을 입력하면 파일을 다시 읽고 검증한다.
+
+**검증 항목:**
+
+```python
+def validate_config(file_path, file_type):
+    content = read_file(file_path)
+
+    # 1. JSON 파싱
+    try:
+        data = json.loads(content)
+    except JSONDecodeError as e:
+        return ERROR(f"❌ JSON 파싱 실패 (line {e.lineno}): {e.msg}")
+
+    if file_type == "project":  # planning/config.json
+        features = data.get("features", {})
+
+        # 2. deep_research 값 검증
+        dr = features.get("deep_research")
+        if dr and dr not in ["auto", "enabled", "disabled"]:
+            return ERROR(f"❌ features.deep_research: '{dr}' — 허용값: auto | enabled | disabled")
+
+        # 3. deep_research_preset 값 검증
+        preset = features.get("deep_research_preset")
+        valid_presets = ["fast-search", "pro-search", "deep-research", "advanced-deep-research"]
+        if preset and preset not in valid_presets:
+            return ERROR(f"❌ features.deep_research_preset: '{preset}' — 허용값: {valid_presets}")
+
+        # 4. sub_research 값 검증
+        sr = features.get("sub_research")
+        if sr and sr not in ["enabled", "disabled"]:
+            return ERROR(f"❌ features.sub_research: '{sr}' — 허용값: enabled | disabled")
+
+        # 5. strict_mode 타입 검증
+        sm = data.get("credibility", {}).get("strict_mode")
+        if sm is not None and not isinstance(sm, bool):
+            return ERROR(f"❌ credibility.strict_mode: '{sm}' — boolean이어야 합니다")
+
+        # 6. 필수 필드 존재 확인
+        for key in ["project", "layer", "sections"]:
+            if key not in data:
+                return ERROR(f"❌ 필수 필드 '{key}'가 삭제되었습니다. 복원하세요.")
+
+    elif file_type == "global":  # ~/.claude/settings.local.json
+        sowhat = data.get("sowhat", {})
+
+        # sowhat 필드 검증 (위와 동일한 값 검증)
+        dr = sowhat.get("deep_research")
+        if dr and dr not in ["auto", "enabled", "disabled"]:
+            return ERROR(f"❌ sowhat.deep_research: '{dr}'")
+
+        preset = sowhat.get("deep_research_preset")
+        valid_presets = ["fast-search", "pro-search", "deep-research", "advanced-deep-research"]
+        if preset and preset not in valid_presets:
+            return ERROR(f"❌ sowhat.deep_research_preset: '{preset}'")
+
+        sr = sowhat.get("sub_research")
+        if sr and sr not in ["enabled", "disabled"]:
+            return ERROR(f"❌ sowhat.sub_research: '{sr}'")
+
+        # API 키 형식 경고 (에러는 아님)
+        api_key = data.get("env", {}).get("PERPLEXITY_API_KEY", "")
+        if api_key and not api_key.startswith("pplx-"):
+            return WARNING("⚠️ PERPLEXITY_API_KEY가 'pplx-'로 시작하지 않습니다")
+
+    return OK
+```
+
+### 2-E-4. 검증 결과 출력
+
+**통과 시:**
+```
+✅ 검증 통과
+
+변경 감지:
+  features.deep_research_preset: "deep-research" → "advanced-deep-research"
+  features.deep_research: "auto" → "enabled"
+```
+
+**실패 시:**
+```
+❌ 검증 실패
+
+  [1] features.deep_research_preset: "ultra-search" — 허용값: fast-search | pro-search | deep-research | advanced-deep-research
+  [2] JSON line 15: Expected ',' but got '}'
+
+파일을 수정한 뒤 다시 'done'을 입력하세요. (또는 'cancel')
+```
+
+실패 시 사용자가 다시 편집 → `done` → 재검증 루프를 반복한다. `cancel` 입력 시 메인 메뉴로 복귀.
 
 ---
 
