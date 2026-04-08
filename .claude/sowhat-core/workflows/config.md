@@ -93,10 +93,10 @@ API 키를 입력하세요 (pplx-...):
 2. **연결 검증**: 실제 API 호출로 키 유효성 확인
    ```bash
    response=$(curl -s -o /dev/null -w "%{http_code}" \
-     https://api.perplexity.ai/chat/completions \
+     https://api.perplexity.ai/v1/agent \
      -H "Authorization: Bearer {입력된_키}" \
      -H "Content-Type: application/json" \
-     -d '{"model":"sonar","messages":[{"role":"user","content":"test"}]}')
+     -d '{"preset":"fast-search","input":"test"}')
    ```
    - `200`: 유효
    - `401`: `❌ API 키가 유효하지 않습니다. 다시 확인해주세요.` → 재입력 안내
@@ -169,8 +169,8 @@ Deep Research가 비활성화되고 기본 웹 검색이 사용됩니다.
 [1] Deep Research: {auto ✅ | enabled ✅ | disabled ❌}
     Perplexity API로 심층 조사
 
-[2] Deep Research 모델: {sonar-deep-research}
-    사용할 Perplexity 모델
+[2] Deep Research Preset: {deep-research}
+    Perplexity Agent API preset
 
 [3] Sub-Research: {enabled ✅ | disabled ❌}
     expand 중 병렬 리서치 자동 실행
@@ -193,19 +193,20 @@ Deep Research 설정
 선택 시 `planning/config.json`의 `features.deep_research`를 업데이트한다.
 `enabled` 선택 시 API 키가 없으면: `⚠️ API 키가 설정되지 않았습니다. 먼저 API 키를 설정하세요.` → 메인 메뉴로 돌아가기.
 
-### 2-B-3. Deep Research 모델 변경 ([2] 선택 시)
+### 2-B-3. Deep Research Preset 변경 ([2] 선택 시)
 
 ```
-Deep Research 모델
+Deep Research Preset (Perplexity Agent API)
 
-[1] sonar-deep-research — 심층 조사 (느리지만 정확)
-[2] sonar-pro — 균형 (속도·품질 타협)
-[3] sonar — 기본 (빠르지만 얕음)
+[1] fast-search — 빠른 검색 (단일 스텝, 최소 지연)
+[2] pro-search — 균형 (3스텝, 웹 검색+URL 패치)
+[3] deep-research — 심층 조사 (10스텝, 다단계 분석) ← 기본값
+[4] advanced-deep-research — 최대 정밀도 (10스텝, 최대 깊이)
 
 현재: {현재값}
 ```
 
-선택 시 `planning/config.json`의 `features.deep_research_model`을 업데이트한다.
+선택 시 `planning/config.json`의 `features.deep_research_preset`을 업데이트한다.
 
 ### 2-B-4. Sub-Research 토글 ([3] 선택 시)
 
@@ -277,7 +278,7 @@ API 키는 초기화되지 않습니다.
   "sub_research_engine": "agent-browser",
   "sub_research_fallback": "websearch",
   "deep_research": "auto",
-  "deep_research_model": "sonar-deep-research"
+  "deep_research_preset": "deep-research"
 },
 "credibility": {
   "custom_whitelist": [],

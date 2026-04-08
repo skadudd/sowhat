@@ -87,28 +87,29 @@ When `<mode>deep-research</mode>` is received:
    fi
    ```
 
-2. **Construct research prompt** from `<section>` and `<search_focus>`:
+2. **Determine preset**: Read `planning/config.json` → `features.deep_research_preset` (default: `deep-research`)
+   - Available presets: `fast-search` | `pro-search` | `deep-research` | `advanced-deep-research`
+
+3. **Construct research prompt** from `<section>` and `<search_focus>`:
    - Include thesis context, section Claim/Grounds, and specific questions
    - Request quantitative data with source URLs
 
-3. **Call Perplexity API**:
+4. **Call Perplexity Agent API**:
    ```bash
-   curl -s https://api.perplexity.ai/chat/completions \
+   curl -s https://api.perplexity.ai/v1/agent \
      -H "Authorization: Bearer $PERPLEXITY_API_KEY" \
      -H "Content-Type: application/json" \
      -d '{
-       "model": "sonar-deep-research",
-       "messages": [
-         {"role": "system", "content": "You are a thorough research analyst. Always cite sources with URLs. Provide quantitative data when available. Distinguish between primary and secondary sources."},
-         {"role": "user", "content": "{constructed prompt}"}
-       ]
+       "preset": "{config.features.deep_research_preset || deep-research}",
+       "input": "{constructed prompt}",
+       "instructions": "You are a thorough research analyst. Always cite sources with URLs. Provide quantitative data when available. Distinguish between primary sources (government statistics, academic papers) and secondary sources (news articles, blog posts)."
      }'
    ```
 
-4. **Parse response**: Extract findings and `citations` array
-5. **Tier-classify each citation** using `references/source-credibility.md`
-6. **Spot-check key claims** (max 2): `WebFetch` top T1/T2 citations to verify numbers match
-7. **Output in standard format** (same as Debate/Challenge mode output)
+5. **Parse response**: Extract findings from `output[].content[].text` and citations from `output[].results[]`
+6. **Tier-classify each citation** using `references/source-credibility.md`
+7. **Spot-check key claims** (max 2): `WebFetch` top T1/T2 citations to verify numbers match
+8. **Output in standard format** (same as Debate/Challenge mode output)
 
 Deep Research produces richer findings but follows the same output format. The orchestrator handles it identically to standard research results.
 </research_process>

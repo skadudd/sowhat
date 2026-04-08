@@ -471,9 +471,10 @@ scheme에 따라 다른 근거 유형을 안내한다.
 🔍 리서치 방식을 선택하세요:
 
   [1] 기본 웹 검색 — agent-browser 인라인 검색 (빠름, 표면 수준)
-  [2] 🔬 Deep Research — Perplexity {모델명} 심층 조사 (느림, 다단계 분석)
+  [2] 🔬 Deep Research — Perplexity Agent API ({preset명}) 심층 조사
 
 💡 Deep Research는 학술·통계·산업 리포트 등 깊은 근거가 필요할 때 유용합니다.
+   현재 preset: {preset명} — /sowhat:config 에서 변경 가능
 ```
 
 **Case 3: `deep_research` == `"auto"` && `PERPLEXITY_API_KEY` 미설정**
@@ -576,7 +577,7 @@ Grounds에 추가할 항목을 선택하세요:
 > [expand {section} > 스텝 4/9 Grounds > 🔬 Deep Research 완료]
 > Claim: "{Claim 40자}"
 
-🔬 Deep Research 완료 ({N}건 발견, Perplexity {모델명})
+🔬 Deep Research 완료 ({N}건 발견, Perplexity {preset명})
    인용 출처: {M}개 URL
 
   [1] {출처명} {연도}
