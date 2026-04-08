@@ -1,7 +1,7 @@
 ---
 name: sowhat-research-agent
 description: 섹션의 Open Questions에 대한 외부 근거를 수집하는 Research 에이전트. debate 오케스트레이터가 스폰. WebSearch/WebFetch로 실제 데이터를 찾는다.
-tools: Read, Glob, Grep, WebSearch, WebFetch
+tools: Read, Glob, Grep, WebSearch, WebFetch, Bash
 color: blue
 ---
 
@@ -172,9 +172,25 @@ Grounds에 추가 권고:
 ```
 </output_format>
 
+<api_failure_handling>
+### Perplexity API 호출 실패 시
+
+1. **curl 실행**: Bash 도구로 curl 명령을 실행하여 Perplexity API를 호출한다.
+2. **HTTP 에러 분기**:
+   - 401 → API 키 무효. 즉시 WebSearch fallback으로 전환. 결과에 `⚠️ Perplexity API 키 무효 — WebSearch fallback` 기록.
+   - 429 → 요청 한도 초과. 즉시 WebSearch fallback으로 전환.
+   - 5xx / timeout / 빈 응답 → WebSearch fallback으로 전환.
+3. **Fallback 실행**: WebSearch/WebFetch로 동일한 claim 검증을 시도한다.
+4. **WebSearch도 실패 시**: 해당 claim을 `확인불가 (API 접근 불가)` 판정하고 다음 claim으로 진행한다.
+5. **전체 API 실패율 > 50%**: 현재까지 결과를 즉시 반환하고 `partial: true` 표시한다.
+
+> **원칙**: 단일 claim 실패가 전체 fact-check를 블로킹하지 않는다. 가능한 claim부터 처리하고 불가능한 것은 `확인불가`로 명시한다.
+</api_failure_handling>
+
 <principles>
 - Only report what you actually found — no hallucinated data
 - Cite sources for all evidence
 - Both supporting and challenging evidence is valuable
 - Keep searches focused on section's specific claims, not general topic
+- Never hang on a single failed API call — fallback or skip and continue
 </principles>

@@ -52,6 +52,63 @@ status_transitions: []
 
 ---
 
+## 리서치 엔진 선택 (매 실행마다)
+
+인자 파싱 완료 후, 사전 준비 전에 **반드시** 리서치 엔진 선택 프롬프트를 표시한다.
+config 값은 default 선택지로 표시하되, 사용자가 매번 확인·변경할 수 있다.
+
+### 1단계: 엔진 선택
+
+config에서 default를 읽는다:
+- `features.deep_research`가 `"auto"` + `PERPLEXITY_API_KEY` 존재 → default: `Deep Research`
+- `features.deep_research`가 `"enabled"` → default: `Deep Research`
+- `features.deep_research`가 `"disabled"` 또는 API 키 없음 → default: `Web Research`
+- `--deep` 플래그가 명시적으로 있으면 → default: `Deep Research` (override)
+
+```
+🔍 리서치 엔진 선택
+
+  [1] 🌐 Web Research — WebSearch/WebFetch (빠름, API 키 불필요)
+  [2] 🔬 Deep Research — Perplexity API (정밀, 다단계 분석)
+
+  현재 기본값: [{config default}]
+  엔터 = 기본값 사용
+```
+
+- `[1]` 선택 → `engine = "web"`, 기존 WebSearch/WebFetch 모드로 진행
+- `[2]` 선택 → `engine = "deep"`, 2단계로 이동
+- API 키 미설정 상태에서 `[2]` 선택 → `❌ PERPLEXITY_API_KEY가 설정되지 않았습니다. /sowhat:config 로 설정하세요.` → 1단계 재표시
+
+### 2단계: Preset 선택 (Deep Research 선택 시만)
+
+config에서 `features.deep_research_preset`을 default로 읽는다 (없으면 `"deep-research"`).
+
+```
+🔬 Deep Research Preset 선택
+
+  [1] ⚡ fast-search     — 단일 스텝, 최소 지연 (빠른 사실 확인)
+  [2] 🔎 pro-search      — 3스텝, 웹 검색+URL 패치 (일반 리서치)
+  [3] 📊 deep-research   — 10스텝, 다단계 분석 (심층 조사)
+  [4] 🏛️ advanced-deep   — 10스텝, 최대 깊이 (최대 정밀도)
+
+  현재 기본값: [{config preset}]
+  엔터 = 기본값 사용
+```
+
+선택 결과를 `selected_preset`에 저장하고 진행한다.
+
+> **config 반영 안 함**: 여기서 선택한 값은 이번 실행에만 적용된다. config를 영구 변경하려면 `/sowhat:config`를 사용한다.
+
+### Challenge Stage 0에서의 엔진 선택
+
+`/sowhat:challenge`의 Stage 0도 동일한 엔진 선택 UX를 적용한다:
+- challenge 오케스트레이터가 Stage 0 스폰 전에 엔진 선택 프롬프트를 표시
+- 선택 결과를 research-agent 프롬프트의 `<mode>` 태그에 반영:
+  - `engine = "web"` → `<mode>fact-check</mode>` (WebSearch/WebFetch만 사용)
+  - `engine = "deep"` → `<mode>deep-research</mode>` + `<preset>{selected_preset}</preset>`
+
+---
+
 ## 사전 준비 (모든 모드 공통)
 
 1. `planning/config.json` 로드 → sowhat 프로젝트 확인

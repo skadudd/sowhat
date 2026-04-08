@@ -92,12 +92,23 @@ status_transitions: ["settled → needs-revision", "discussing → needs-revisio
 
 > **판정 알고리즘**: 각 스테이지의 pass/fail 기준, severity 분류, 구체적 판정 로직은 `references/challenge-algorithm.md`에 정의되어 있다. agent 스폰 시 해당 스테이지의 algorithm 섹션을 함께 전달한다.
 
+### 리서치 엔진 선택 (Stage 0 스폰 전)
+
+Stage 0 에이전트 스폰 전에 리서치 엔진 선택 프롬프트를 표시한다.
+UX는 `research.md`의 "리서치 엔진 선택" 섹션과 동일하다 (1단계: 엔진, 2단계: preset).
+
+선택 결과에 따라 Stage 0 프롬프트의 `<mode>` 태그를 설정:
+- `engine = "web"` → `<mode>fact-check</mode>` (WebSearch/WebFetch만 사용)
+- `engine = "deep"` → `<mode>deep-research</mode>` + `<preset>{selected_preset}</preset>`
+
+> **시간 절약**: 엔진 선택은 Stage 0 스폰 전에만 1회 묻는다. Stage 1-7은 엔진 선택과 무관하므로 병렬 스폰에 영향 없다.
+
 ### 에이전트 스폰 패턴
 
 **Stage 0 — 사실 검증 (sowhat-research-agent 사용)**
 
-Stage 0은 외부 데이터 접근이 필요하므로 WebSearch/WebFetch를 가진 sowhat-research-agent를 사용한다.
-`PERPLEXITY_API_KEY` 환경변수가 존재하고 `features.deep_research`가 `"disabled"`가 아니면, `<mode>deep-research</mode>`를 추가하여 Perplexity API로 더 정확한 사실 검증을 수행한다.
+Stage 0은 외부 데이터 접근이 필요하므로 WebSearch/WebFetch 또는 Perplexity API(Bash curl)를 사용하는 sowhat-research-agent를 사용한다.
+위 엔진 선택 결과에 따라 `<mode>` 태그를 설정한다.
 
 ```
 # Stage 0: 각 섹션의 검증 가능한 주장을 추출하고 research-agent로 검증
@@ -151,6 +162,20 @@ FOR stage IN [1, 2, 3, 4, 5, 6, 7]:
 ```
 
 > **Stage 0 → Stage 1-7 연계**: Stage 0에서 사실 오류가 발견된 Grounds는 Stage 4(So What), Stage 5(Why So)에서 "오류 있는 근거"로 취급하여 더 엄격하게 검증한다.
+
+### Stage 0 타임아웃 및 Fallback
+
+Stage 0 research-agent가 응답하지 않는 경우의 방어 로직:
+
+1. **병렬 실행**: Stage 0과 Stage 1-3을 동시에 스폰한다. Stage 1-3은 `stage_0_issues` 없이 먼저 완료 가능.
+2. **Stuck 판정**: Stage 1-7 에이전트가 모두 완료되었는데 Stage 0만 미완료 → Stage 0을 `timeout`으로 처리.
+3. **Fallback 처리**:
+   - 리포트에 `⚠️ Stage 0 미완료 — 사실 검증 별도 실행 필요` 경고 포함
+   - Stage 4-5는 `<stage_0_issues>unavailable — Stage 0 timed out</stage_0_issues>`로 진행
+   - session.md에 `stage_0: timeout` 기록
+4. **후속 안내**: challenge 완료 후 `다음 액션`에 `/sowhat:challenge --stage-0-only` 재실행 옵션 제시
+
+> **원칙**: Stage 0 실패가 전체 challenge를 블로킹하지 않는다. 사실 검증은 중요하지만, 논리 검증과 독립적으로 재실행 가능하다.
 
 ### 부분 결과 보존
 
