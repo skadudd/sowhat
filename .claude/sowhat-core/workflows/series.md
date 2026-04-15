@@ -511,11 +511,24 @@ cd {series_root} && git init
 
 ### 10. 글로벌 인덱스 등록
 
-`~/.claude/sowhat-series/index.json`에 시리즈 경로를 등록한다. 파일이 없으면 생성:
+`~/.claude/sowhat-series/index.json`에 시리즈 경로를 등록한다.
 
 ```bash
 mkdir -p ~/.claude/sowhat-series
 ```
+
+**⚠️ 공유 레지스트리 갱신 규칙 (반드시 준수):**
+
+이 파일은 사용자의 **모든 sowhat 프로젝트가 공유하는 전역 레지스트리**다. 손상되면 `series list`, `series status`, `init --series` 등이 전역적으로 깨진다. 따라서:
+
+1. **파일이 없는 경우에만** Write로 아래 스키마 전체 생성
+2. **파일이 이미 존재하면 반드시 Edit 도구를 사용해 surgical 추가**. Read→Write 전체 덮어쓰기는 금지 (파싱 오류 시 타 프로젝트 엔트리 유실 위험)
+   - Edit의 `old_string`: `"series": {` 블록 직후의 첫 엔트리 또는 닫는 `}` 주변 고유 문자열
+   - `new_string`: 기존 문자열 + 새 엔트리 (쉼표 처리 주의)
+3. **같은 `{series_name}` 엔트리가 이미 존재하면** 즉시 중단하고 사용자에게 고지: `⚠️ 시리즈 이름 '{series_name}'이 이미 등록되어 있습니다. 덮어쓸까요?`
+4. **변경 전 반드시 Read로 현재 상태 확인** 후 기존 엔트리 목록을 사용자에게 한 줄 고지: `글로벌 인덱스에 '{series_name}' 추가 (기존: {N}개 엔트리 보존)`
+
+새 엔트리 스키마:
 
 ```json
 {
