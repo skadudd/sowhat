@@ -158,6 +158,8 @@ Task(sowhat-expand-agent,
 
 **수치·출처 할루시네이션 방지 (CRITICAL):**
 
+> 이 규칙은 `references/fabrication-prevention.md`의 중앙 정의를 따른다. autonomous 모드는 인간 개입이 없기 때문에 가장 엄격한 적용 구간이다.
+
 autonomous 모드에서 AI가 Toulmin 필드를 자동 전개할 때, **구체적 수치(%, 배수, 금액, 건수)와 출처(기관명, 보고서명, 연도)**를 AI가 자체 생성하면 할루시네이션이 발생한다. 반드시 다음 규칙을 따른다:
 
 ```
@@ -423,6 +425,7 @@ challenge 결과 확인 후 /sowhat:finalize-planning 또는 /sowhat:revise {섹
 - **리포트는 파일에, 대시보드만 응답에** — 상세 로그는 `logs/` 디렉터리에 저장
 - **Human checkpoint는 최소화** — critical 이슈에서만 멈춤, 나머지는 AI가 자율 판단
 - **품질 우선** — 속도보다 논증 품질. settle 검증은 생략하지 않음
+- **수치·출처는 retrieval만** — AI 자체 생성 절대 금지 (`references/fabrication-prevention.md` 참조). 확인 불가 시 정성 기술 + Qualifier 하향.
 - **Stub은 즉시 재전개** — AI 자동 전개에서 stub이 발견되면 해당 필드를 다시 채움
 - **Warrant 공격 최우선** — mini-debate에서 Warrant 연결 논리를 우선 공격
 - **강도 60 이상 목표** — 60 미만이면 추가 debate로 보강 시도

@@ -25,6 +25,28 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 
 이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Toulmin Model 전체 구조(Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
+## CRITICAL: AI 제안의 Fabrication 금지
+
+AI가 생성하는 **모든 선택지·제안·예시·힌트·placeholder**에 구체적 수치·기관명·연도·URL·사람 이름·보고서명 같은 fabrication 가능한 고유값을 포함하지 않는다. 구체 내용은 오직 다음 3가지 경로에서만 들어온다:
+
+1. 사용자 직접 입력 (`[N] 직접 작성`)
+2. Sub-Research 결과 (실제 웹 검색)
+3. `research/` 파인딩 매핑
+
+상세 규칙: `references/fabrication-prevention.md`.
+
+### 선택지 생성 치환 규칙
+
+| 금지 | 허용 |
+|------|------|
+| `[1] McKinsey 2024 리포트: 이탈률 34%` | `[1] 업계 벤치마크 이탈률 수치 (출처: Sub-Research 또는 직접 입력)` |
+| `[2] IDC 2024: CAGR 27.8%` | `[2] 시장 성장률 지표 (출처 필요)` |
+| `예) 78%가 통합 비용을 언급` | `예) {비율}%가 {요인}을 {결과} 이유로 언급` |
+
+AI가 Step 3/5/7/8에서 제안 선택지를 생성할 때, 구체적 수치·기관명·고유명사가 들어가면 해당 선택지를 무효로 하고 유형 설명 또는 플레이스홀더로 대체한다.
+
+---
+
 ## 사전 검증 (1회만 실행 — 이후 재로드 금지)
 
 **세션 시작 시 아래 파일들을 한 번만 로드하고 이후 모든 스텝에서 메모리 값을 재사용한다.**
@@ -83,22 +105,22 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 - Stasis/Scheme/논거 등 이미 확정된 정보는 표시하지 않음
 
 ```
-> [expand 01-market > 스텝 4/9 Grounds]
-> Claim: "국내 SaaS 시장은 연 28% 성장 중이다"
+> [expand {N}-{섹션} > 스텝 4/9 Grounds]
+> Claim: "{섹션 주장 40자}"
 ```
 
 스텝 진행에 따라 직전 확정 필드를 1줄 추가할 수 있음:
 ```
-> [expand 01-market > 스텝 5/9 Warrant]
-> Claim: "국내 SaaS 시장은 연 28% 성장 중이다"
-> Grounds: IDC 2024, CAGR 27.8%
+> [expand {N}-{섹션} > 스텝 5/9 Warrant]
+> Claim: "{섹션 주장 40자}"
+> Grounds: {근거 요약 40자}
 ```
 
 ### 질문 출력 패턴
 
 ```
-> [expand 01-market > 스텝 4/9 Grounds]
-> Claim: "국내 SaaS 시장은 연 28% 성장 중이다"
+> [expand {N}-{섹션} > 스텝 4/9 Grounds]
+> Claim: "{섹션 주장 40자}"
 
 ❓ 이 주장을 지지하는 근거의 유형은?
 
@@ -115,11 +137,11 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 ### 답변 확인 패턴
 
 ```
-✓ Grounds 기록됨: IDC 2024 리포트, CAGR 27.8%
+✓ Grounds 기록됨: {사용자 입력 또는 Sub-Research 결과 요약}
 
-> [expand 01-market > 스텝 5/9 Warrant]
-> Claim: "국내 SaaS 시장은 연 28% 성장 중이다"
-> Grounds: IDC 2024, CAGR 27.8%
+> [expand {N}-{섹션} > 스텝 5/9 Warrant]
+> Claim: "{섹션 주장 40자}"
+> Grounds: {근거 요약 40자}
 
 ❓ Grounds가 Claim을 왜 지지하는지?
   ...
@@ -223,10 +245,10 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 
 ❓ 이 섹션에서 증명하려는 것은 어떤 종류의 주장입니까?
 
-  예) 사실 주장: "국내 SaaS 이탈률은 연 35%다" → 측정값, 데이터가 핵심
-      정의 주장: "이것이 PMF다"              → 정의 기준과 분류 논리가 핵심
-      가치 주장: "이 문제가 가장 중요하다"     → 비교 기준과 우선순위가 핵심
-      행동 주장: "지금 진입해야 한다"          → 사실+가치+실행가능성 모두 필요
+  예) 사실 주장: "X 지표가 Y 수준이다"         → 측정값, 데이터가 핵심
+      정의 주장: "A는 B에 해당한다"             → 정의 기준과 분류 논리가 핵심
+      가치 주장: "X가 가장 중요하다"             → 비교 기준과 우선순위가 핵심
+      행동 주장: "X를 해야 한다"                → 사실+가치+실행가능성 모두 필요
 
   [1] 사실 주장 — "X가 존재한다 / 측정됐다 / 일어났다"
   [2] 정의 주장 — "X는 Y에 해당한다 / Y이다"
@@ -290,9 +312,9 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
    ({stasis} / {scheme} 방식 논증 / "{thesis_argument}" 지지)
 
 **좋은 Claim vs 나쁜 Claim:**
-  너무 넓음: "시장이 중요하다"          → Claim이 아니라 토픽
-  적절함:   "국내 SaaS 시장은 연 28%
-             성장 중이며 진입 시점은 지금이다"
+  너무 넓음: "{주제}가 중요하다"         → Claim이 아니라 토픽
+  적절함:   "{주제}의 {측면}이 {속성}이며
+             따라서 {행동/판단}이 정당하다"
 
   [1] {thesis_argument와 stasis를 조합한 구체적 Claim 제안 1}
   [2] {구체적 Claim 제안 2}
@@ -379,7 +401,7 @@ scheme에 따라 다른 근거 유형을 안내한다.
     [3] 자체 조사/실험 데이터
     [4] 기타 (직접 입력)
 
-  → 선택 후: "구체적으로 어떤 수치입니까? (예: IDC 2024: $12.3B, CAGR 27.8%)"
+  → 선택 후: "구체적으로 어떤 수치입니까? (예: {기관} {연도}: {수치} {단위})"
 ```
 
 **[2] 인터뷰/설문 선택 시 세부 질문:**
@@ -390,7 +412,7 @@ scheme에 따라 다른 근거 유형을 안내한다.
     [3] 대규모 (n > 200) — 통계적 유의성 있음
     [4] 직접 입력
 
-  → 선택 후: "핵심 발견은 무엇입니까? (예: 78%가 통합 비용을 이탈 이유로 언급)"
+  → 선택 후: "핵심 발견은 무엇입니까? (예: {비율}%가 {주요 요인}을 {결과} 이유로 언급)"
 ```
 
 **[3] 사례/비교 선택 시 세부 질문:**
@@ -1059,7 +1081,7 @@ git commit -m "expand({section}): complete toulmin structure"
 - **Grounds 결합 방식 명시** — Linked/Convergent에 따라 challenge 공격 전략이 달라짐
 - **예시는 맥락 기반** — generic 예시 금지, 인간의 실제 Claim/Grounds에서 파생
 - **즉시 기록 확인** — 각 답변 후 기록된 내용을 바로 보여주고 추가/계속 선택
-- **Claude는 질문만 한다** — 내용을 대신 채우지 않는다
+- **Claude는 질문만 한다** — 내용을 대신 채우지 않는다. 특히 **구체 수치·기관명·연도·인물명은 절대 AI가 생성하지 않는다** (`references/fabrication-prevention.md` 참조)
 - **항상 thesis와의 연결을 확인한다** — 모든 필드는 thesis Answer로 거슬러 올라간다
 - **Warrant는 생략 불가** — Implicit Warrant는 경고 후 계속 가능하나 위험함을 고지
 - **각 스텝 완료마다 커밋** — 작업 손실 방지

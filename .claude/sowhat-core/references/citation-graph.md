@@ -323,32 +323,34 @@ graph LR
 ## 참고문헌
 
 ### Tier 1 — 1차 출처
-[1] OECD. (2024). AI Policy Observatory Report. https://oecd.org/...
-[2] Kim, J. et al. (2023). Startup Failure Analysis. Journal of Entrepreneurship, 45(2), 112-130.
+[1] {공신력 있는 기관}. ({연도}). {원본 보고서 제목}. {URL}
+[2] {저자}. ({연도}). {1차 연구 제목}. {저널명}, {권(호)}, {페이지}.
 
 ### Tier 2 — 전문 출처
-[3] McKinsey & Company. (2024). State of AI Report. https://mckinsey.com/...
-[4] Bloomberg. (2024). "VC Investment Trends in AI." https://bloomberg.com/...
+[3] {전문 리서치 기관}. ({연도}). {보고서 제목}. {URL}
+[4] {공신력 있는 매체}. ({연도}). "{기사 제목}." {URL}
 
 ### Tier 3 — 준전문 출처
-[5] Park, S. (2024). "AI 스타트업 생존 전략." Medium. https://medium.com/...
+[5] {저자}. ({연도}). "{제목}." {플랫폼}. {URL}
 ```
 
 #### 각주 형식 (footnotes)
 
 ```markdown
 본문 내:
-  국내 AI 스타트업의 72%가 Series A 이전에 실패한다.[^1]
+  {주장 문장 — 수치 포함 가능, 단 실제 검증된 값만}.[^1]
 
 하단:
-  [^1]: McKinsey & Company. (2024). State of AI Report. p.42.
+  [^1]: {저자/기관}. ({연도}). {제목}. {페이지/URL}.
 ```
 
 #### 인라인 형식 (inline)
 
 ```markdown
-  국내 AI 스타트업의 72%가 Series A 이전에 실패한다 (McKinsey, 2024).
+  {주장 문장} ({저자/기관}, {연도}).
 ```
+
+> 예시의 `{중괄호}` 값은 실제 retrieval된 출처에서 치환된다. AI가 자체로 기관명·저자·제목·연도·수치를 생성하면 fabrication이다. `references/fabrication-prevention.md` 참조.
 
 ### Tier별 그룹핑
 

@@ -6,12 +6,14 @@ All sowhat sections use the Toulmin Model with 6 mandatory fields.
 
 | Field | Korean | Definition | Example |
 |-------|--------|------------|---------|
-| **Claim** | 주장 | The assertion being made. What this section argues. | "이 시장은 연 30% 성장 중이다" |
-| **Grounds** | 근거 | Factual evidence supporting the Claim. Data, observations, facts. | "2023 IDC 보고서: TAM $4.2B" |
+| **Claim** | 주장 | The assertion being made. What this section argues. | "{주제} 시장은 연 {N}% 성장 중이다" |
+| **Grounds** | 근거 | Factual evidence supporting the Claim. Data, observations, facts. | "{연도} {기관} 보고서: TAM {금액}" |
 | **Warrant** | 논리적 연결 | The reasoning that connects Grounds to Claim. Why the evidence matters. | "시장 성장률은 진입 타이밍의 적절성을 증명한다" |
-| **Backing** | 보강 | Evidence supporting the Warrant itself. Meta-justification. | "McKinsey: 성장기 시장 진입이 성숙기보다 3x 생존율" |
+| **Backing** | 보강 | Evidence supporting the Warrant itself. Meta-justification. | "{기관}: 성장기 시장 진입이 성숙기보다 {N}x 생존율" |
 | **Qualifier** | 한정어 | Confidence level. How certain is the Claim. | "usually" (1등급) |
 | **Rebuttal** | 반박 조건 | Conditions under which the Claim would be false. | "단, 규제 환경이 급변하지 않는 한" |
+
+> 예시의 `{중괄호}` 플레이스홀더는 실제 값이 retrieval(사용자 입력, Sub-Research, `research/` finding)을 통해서만 채워져야 함을 의미한다. AI가 이 자리를 구체 고유값으로 자체 생성하면 **fabrication**이다. 상세: `references/fabrication-prevention.md`.
 
 ## Qualifier Scale (5-level)
 

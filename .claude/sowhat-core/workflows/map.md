@@ -88,29 +88,31 @@ Thesis: "{Answer}"
 
 ```
 ----------------------------------------
-my-saas-product — 논증 구조
-2/3 settled
+{project-name} — 논증 구조
+{M}/{N} settled
 ----------------------------------------
 
-Thesis: "통합 비용 해소로 B2B SaaS 이탈을 막을 수 있다"
+Thesis: "{thesis answer 40자}"
 
-  01 market-size [settled]
-     Claim: 국내 SaaS 시장은 연 28% 성장 중이다
-     Grounds: IDC 2024 리포트, CAGR 27.8%, TAM $12.3B
-     Warrant: 성장 시장은 신규 진입자에게 기회
-     Rebuttal: 레드오션 가능성 → 니치 전략으로 대응
+  01 {section-a} [settled]
+     Claim: {섹션 a 주장 요약}
+     Grounds: {근거 요약}
+     Warrant: {논리 연결 요약}
+     Rebuttal: {반론 요약} → {대응 요약}
 
-  02 tech-feasibility [settled]
-     Claim: 기존 인프라로 6개월 내 MVP 가능
-     Grounds: React+Node 검증 완료, AWS 운영 중
-     Warrant: 검증된 스택 + 기존 인프라 = 빠른 개발
+  02 {section-b} [settled]
+     Claim: {섹션 b 주장 요약}
+     Grounds: {근거 요약}
+     Warrant: {논리 연결 요약}
 
-  03 competition [discussing]
-     Claim: 기존 솔루션 대비 통합 비용 70% 절감
-     Grounds: 경쟁사 3곳 비교 분석 진행 중
+  03 {section-c} [discussing]
+     Claim: {섹션 c 주장 요약}
+     Grounds: {근거 요약}
 
 ----------------------------------------
 ```
+
+> 예시의 `{중괄호}` 값은 실제 섹션 파일에서 렌더링 시점에 치환된다. AI가 자체로 구체 수치·출처를 생성해 넣으면 fabrication이다. `references/fabrication-prevention.md` 참조.
 
 ---
 
@@ -175,39 +177,38 @@ Open Questions:
 
 ```
 ----------------------------------------
-01-market-size [settled]
-Scheme: statistics | Qualifier: 높은 확신
+{N}-{섹션} [settled]
+Scheme: {scheme} | Qualifier: {qualifier}
 ----------------------------------------
 
-Thesis: "통합 비용 해소로 B2B SaaS 이탈을 막을 수 있다"
-Key Argument: "시장 규모가 충분히 크다"
+Thesis: "{thesis answer 40자}"
+Key Argument: "{thesis_argument}"
 
 Claim:
-  국내 SaaS 시장은 연 28% 성장 중이며
-  2026년까지 TAM $12.3B에 달할 것이다
+  {Claim 전문}
 
 Grounds:
-  1. IDC 2024 리포트: 국내 SaaS 시장 CAGR 27.8%
-  2. 소프트웨어산업협회: 2023년 기준 $8.1B
-  3. Gartner 예측: 아시아 SaaS 시장 2026 $45B
+  1. {Ground 1 — 출처/수치/사례}
+  2. {Ground 2 — 출처/수치/사례}
+  3. {Ground 3 — 출처/수치/사례}
 
 Warrant:
-  CAGR 27%+ 시장은 신규 진입자가 시장 점유율을
-  확보할 수 있는 충분한 성장 여력이 있다
+  {Grounds → Claim 연결 논리}
 
 Backing:
-  미국 SaaS 시장도 유사한 성장률 시기(2015-2020)에
-  다수의 유니콘이 탄생했다
+  {Warrant 강화 근거}
 
-Qualifier: 높은 확신
-  공신력 있는 복수 출처 교차 검증 완료
+Qualifier: {qualifier 값}
+  {qualifier 설명}
 
 Rebuttal:
-  시장 성장이 기존 대형 벤더의 확장으로 흡수될 수 있다
-  → 대응: 니치 세그먼트(중소기업 HR)는 대형 벤더 미진출 영역
+  {반론}
+  → 대응: {대응}
 
 ----------------------------------------
 ```
+
+> 예시의 `{중괄호}` 값은 실제 섹션 파일에서 렌더링 시점에 치환된다. AI가 자체로 구체 수치·출처를 생성해 넣으면 fabrication이다. `references/fabrication-prevention.md` 참조.
 
 ---
 
