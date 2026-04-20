@@ -95,11 +95,14 @@ status_transitions: ["settled → needs-revision", "discussing → needs-revisio
 ### 리서치 엔진 선택 (Stage 0 스폰 전)
 
 Stage 0 에이전트 스폰 전에 리서치 엔진 선택 프롬프트를 표시한다.
-UX는 `research.md`의 "리서치 엔진 선택" 섹션과 동일하다 (1단계: 엔진, 2단계: preset).
+UX는 `research.md`의 "리서치 엔진 선택" 섹션과 동일하다 (1단계: 엔진 3종, 2단계: Perplexity preset 또는 Gemini agent 확인).
 
-선택 결과에 따라 Stage 0 프롬프트의 `<mode>` 태그를 설정:
-- `engine = "web"` → `<mode>fact-check</mode>` (WebSearch/WebFetch만 사용)
-- `engine = "deep"` → `<mode>deep-research</mode>` + `<preset>{selected_preset}</preset>`
+선택 결과에 따라 Stage 0 프롬프트의 태그를 설정:
+- `engine == "web"` → `<mode>fact-check</mode>` (WebSearch/WebFetch만 사용)
+- `engine == "perplexity"` → `<mode>deep-research</mode>` + `<perplexity_result>{영수증 JSON}</perplexity_result>` + `<receipt_path>...</receipt_path>`
+- `engine == "gemini"` → `<mode>deep-research</mode>` + `<gemini_result>{영수증 JSON}</gemini_result>` + `<receipt_path>...</receipt_path>`
+
+호출 패턴·영수증 검증·응답 파싱의 세부는 `references/deep-research-adapters.md`에 위임한다.
 
 > **시간 절약**: 엔진 선택은 Stage 0 스폰 전에만 1회 묻는다. Stage 1-7은 엔진 선택과 무관하므로 병렬 스폰에 영향 없다.
 
@@ -108,7 +111,9 @@ UX는 `research.md`의 "리서치 엔진 선택" 섹션과 동일하다 (1단계
 **Stage 0 — 사실 검증 (sowhat-research-agent 사용)**
 
 Stage 0은 외부 데이터 접근이 필요하므로 sowhat-research-agent를 사용한다.
-**Deep Research 선택 시, 오케스트레이터가 Perplexity API를 직접 호출하고 결과를 agent 프롬프트에 주입한다.**
+**Deep Research 선택 시, 오케스트레이터가 선택된 엔진(Perplexity 또는 Gemini)의 API를 직접 호출하고 영수증 검증 게이트를 통과한 결과만 agent 프롬프트에 주입한다.** 호출 시퀀스는 `references/deep-research-adapters.md`의 해당 어댑터 명세를 그대로 따른다.
+
+> **Silent fallback 금지**: 영수증 검증 게이트를 통과하지 못하면 deep-research mode로 절대 스폰하지 않는다. 사용자 명시적 동의 없이 Web Research로 다운그레이드되는 일은 없어야 한다.
 
 ```
 # Stage 0: 각 섹션의 검증 가능한 주장을 추출하고 research-agent로 검증
@@ -118,31 +123,57 @@ FOR EACH section IN target_sections:
 
   IF claims.length > 0:
 
-    # === Deep Research 선택 시: 오케스트레이터가 Perplexity API 직접 호출 ===
-    IF engine == "deep":
-      perplexity_result = Bash("""
-        curl -s --ssl-revoke-best-effort https://api.perplexity.ai/chat/completions \
-          -H "Authorization: Bearer $PERPLEXITY_API_KEY" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "model": "sonar-deep-research",
-            "messages": [{"role": "user", "content": "다음 주장들을 검증해주세요. 각 주장에 대해 정확/부정확/부분정확을 판정하고, 출처 URL을 명시하세요.\n\n{claims 목록}"}]
-          }'
-      """)
-      # API 실패 시 (HTTP != 200 또는 빈 응답):
-      #   사용자에게 에러 표시 후 Web Research fallback 여부 확인
-      #   fallback 선택 시 engine = "web"으로 전환
+    # === Deep Research 선택 시: 어댑터 호출 + 영수증 검증 ===
+    IF engine in ["perplexity", "gemini"]:
+      ctx = "stage0-{section}"
+      prompt = "다음 주장들을 검증해주세요. 각 주장에 대해 정확/부정확/부분정확을 판정하고, 출처 URL을 명시하세요.\n\n{claims 목록}"
+
+      IF engine == "perplexity":
+        receipt_path = "research/_receipts/perplexity-{ts}-{ctx}.json"
+        # Adapter A.1 (preflight) → A.2 (본 호출, deep-research-adapters.md 참조)
+        # 응답 전체를 receipt_path에 저장
+        validation = validate_receipt_perplexity(receipt_path)  # A.3
+        result_payload_tag = "<perplexity_result>{영수증 JSON}</perplexity_result>"
+
+      IF engine == "gemini":
+        create_receipt = "research/_receipts/gemini-{ts}-create-{ctx}.json"
+        final_receipt = "research/_receipts/gemini-{ts}-final-{ctx}.json"
+        # Adapter B.1 (preflight) → B.2 (create) → B.3 (폴링) → final_receipt 저장
+        # 폴링 동안 진행 상황 표시: "🔬 Gemini Stage 0 진행 중... ({elapsed}s / {timeout}s)"
+        validation = validate_receipt_gemini(final_receipt)  # B.4
+        receipt_path = final_receipt
+        result_payload_tag = "<gemini_result>{final_receipt JSON}</gemini_result>"
+
+      IF validation.failed:
+        # silent fallback 절대 금지. 사용자 명시적 동의 절차로 진입.
+        prompt_user("""
+          ❌ Deep Research 영수증 검증 실패 (Stage 0, section: {section})
+            엔진: {engine}:{모델 또는 agent}
+            사유: {validation.reason}
+            영수증: {receipt_path}
+
+          [1] Web Research로 fallback (이 섹션만, engine_for_section = "web")
+          [2] 다른 Deep Research 엔진으로 재시도 (가용 시)
+          [3] 이 섹션 Stage 0 skip (issue 기록 후 다음 섹션 진행)
+          [4] 전체 challenge 중단
+        """)
+        IF user == 1: engine_for_section = "web"
+        IF user == 2: 다른 엔진의 키 확인 후 어댑터 호출 재시도 (위 분기로 복귀)
+        IF user == 3: stage_0_issues.append({section, status: "skipped-validation-failed", failed_engine: engine, failed_receipt: receipt_path}); continue
+        IF user == 4: abort_challenge()
 
     # === agent 스폰 ===
+    effective_engine = engine_for_section IF defined ELSE engine
     result_0_{section} = Task(sowhat-research-agent,
       prompt = """
-      <mode>{engine == "deep" ? "deep-research" : "fact-check"}</mode>
+      <mode>{effective_engine in ["perplexity","gemini"] ? "deep-research" : "fact-check"}</mode>
       <section>{section 전체 데이터}</section>
       <claims>{추출된 claims 목록 — 각 claim의 값, 출처 URL, 맥락}</claims>
-      {"<perplexity_result>" + perplexity_result + "</perplexity_result>" IF engine == "deep"}
+      {result_payload_tag IF effective_engine in ["perplexity","gemini"]}
+      {"<receipt_path>" + receipt_path + "</receipt_path>" IF effective_engine in ["perplexity","gemini"]}
       <instructions>
-        {"Perplexity 결과를 기반으로 각 claim을 검증하고, 핵심 인용 2건을 WebFetch로 spot-check하라." IF engine == "deep"}
-        {"각 claim에 대해:" IF engine == "web"}
+        {"Deep Research 결과를 기반으로 각 claim을 검증하고, 핵심 인용 2건을 WebFetch로 spot-check하라. 출력에 🔬 Engine / Tokens / Citations 메타데이터 헤더를 반드시 포함하라." IF effective_engine in ["perplexity","gemini"]}
+        {"각 claim에 대해:" IF effective_engine == "web"}
         1. 출처가 있으면 → WebFetch로 출처 원문 확인, 수치/사실 대조
         2. 2차 출처(뉴스 등)이면 → 1차 출처(정부 통계, 공식 DB 등) 역추적 시도
         3. 출처가 없으면 → WebSearch로 독립 검색하여 사실 확인
@@ -426,8 +457,18 @@ date -u +"%Y%m%d-%H%M"
 
 ### 2. 응답 출력 (요약만)
 
+응답에는 Stage 0 엔진 메타데이터 헤더를 **반드시** 포함한다 (사용자가 사실 검증이 어떤 엔진으로 실행되었는지 섹션별로 검증 가능해야 함):
+
 문제가 있을 때:
 ```
+🔬 Stage 0 Engine 분포:
+   - perplexity:{모델}: {N}개 섹션 (Tokens: {합계})
+   - gemini:{agent}: {N}개 섹션 (Tokens: {합계})
+   - web: {N}개 섹션
+   영수증: research/_receipts/
+   {fallback이 발생한 섹션이 있으면} ⚠️ Web Research fallback (사용자 동의): {섹션 목록 + 실패 사유}
+   {validation skip된 섹션이 있으면} ⚠️ Stage 0 skipped: {섹션 목록 + 실패 영수증}
+
 🔴 Challenge — {N}건 발견 (상세: logs/challenge-{datetime}.md)
 
   [Factual]   {N}건 — {섹션 목록 한 줄}
@@ -447,11 +488,18 @@ date -u +"%Y%m%d-%H%M"
 
 문제가 없을 때:
 ```
+🔬 Stage 0 Engine 분포:
+   - perplexity:{모델}: {N}개 섹션 (Tokens: {합계})
+   - gemini:{agent}: {N}개 섹션 (Tokens: {합계})
+   - web: {N}개 섹션
+   영수증: research/_receipts/
+
 ✅ Challenge 통과 — 7단계 모두 통과
   논증 강도: [████████░░] {N}%
 ```
 
 > **응답 원칙**: 섹션별 상세 내용은 로그 파일에만 저장한다. 응답에 각 공격의 전문을 출력하지 않는다.
+> **메타데이터 원칙**: 엔진 헤더는 절대 생략하지 않는다. 사용자가 silent fallback 여부를 즉시 확인할 수 있어야 한다.
 
 ---
 

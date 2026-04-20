@@ -159,8 +159,12 @@ git checkout -b "$BRANCH"
 - 역할: 외부 근거 수집. **요청 시 + 자동 트리거 조건 충족 시** 활성화
 - 도구: WebSearch, WebFetch
 - 출력: Grounds 또는 Backing에 삽입 가능한 형식으로 정리
-- 한도: 라운드당 최대 3회 검색 (Deep Research 모드에서는 Perplexity API 1회 호출로 대체)
-- Deep Research: `PERPLEXITY_API_KEY` 환경변수가 존재하고 `config.json`의 `features.deep_research`가 `"disabled"`가 아니면, `<mode>deep-research</mode>`로 스폰. 더 많은 출처와 깊은 분석 제공
+- 한도: 라운드당 최대 3회 검색 (Deep Research 모드에서는 엔진 API 1회 호출로 대체)
+- Deep Research:
+  - 활성 엔진의 API 키(`PERPLEXITY_API_KEY` 또는 `GEMINI_API_KEY`)가 존재하고 `features.deep_research`가 `"disabled"`가 아니면 활성화
+  - 엔진 선택은 Round 1에서 1회 결정(`deep_session_engine`)하여 이후 라운드 재사용
+  - 호출/검증/파싱은 `references/deep-research-adapters.md`의 어댑터 명세를 그대로 따름
+  - 영수증 검증 실패 시 silent fallback 금지 — 세션 단위 사용자 동의(`deep_session_decision`)로 처리
 
 #### 자동 트리거 조건 (요청 없어도 활성화)
 
@@ -250,19 +254,80 @@ con_result = Task(sowhat-con-agent,
   {stance가 있으면: <stance_instruction>{stance별 Con 지시}</stance_instruction>}
   """)
 
+# === Deep Research 자동 트리거 판단 ===
+# silent fallback 금지: Deep Research 모드로 스폰하려면 영수증 검증 게이트를 통과해야 함
+# 호출/검증 세부는 references/deep-research-adapters.md 참조
+
+# Round 1에서 엔진 선택을 1회 결정하여 deep_session_engine에 저장 (이후 라운드 재사용)
+IF round == 1 AND deep_session_engine is unset:
+  deep_session_engine = resolve_engine(features.deep_research_engine, PERPLEXITY_API_KEY, GEMINI_API_KEY)
+  # "perplexity" | "gemini" | "web" | None (사용 불가)
+  # features.deep_research == "disabled"면 None
+
+IF deep_session_engine in ["perplexity", "gemini"]:
+  ctx = "debate-r{round}-{section}"
+
+  IF deep_session_engine == "perplexity":
+    # Adapter A.1 → A.2 → A.3 (deep-research-adapters.md 참조)
+    receipt_path = "research/_receipts/perplexity-{ts}-{ctx}.json"
+    validation = validate_receipt_perplexity(receipt_path)
+    result_payload_tag = "<perplexity_result>{영수증 JSON}</perplexity_result>"
+
+  IF deep_session_engine == "gemini":
+    # Adapter B.1 → B.2 → B.3 (폴링) → B.4
+    final_receipt = "research/_receipts/gemini-{ts}-final-{ctx}.json"
+    receipt_path = final_receipt
+    validation = validate_receipt_gemini(final_receipt)
+    result_payload_tag = "<gemini_result>{영수증 JSON}</gemini_result>"
+
+  IF validation.failed:
+    # debate는 라운드가 빠르게 돌아가므로 매 라운드 사용자 프롬프트는 흐름을 끊는다.
+    # → 세션 단위 결정(deep_session_decision)을 한 번만 받고 재사용한다.
+    IF deep_session_decision is unset:
+      prompt_user("""
+        ❌ Deep Research 영수증 검증 실패 (debate Round {round}, section {section})
+          엔진: {deep_session_engine}:{모델 또는 agent}
+          사유: {validation.reason}
+          영수증: {receipt_path}
+
+        이 debate 세션에서 Deep Research를 어떻게 처리할까요?
+          [1] 이 세션은 fact-check(WebSearch) 모드로 진행 (남은 라운드 모두 적용)
+          [2] 다른 Deep Research 엔진으로 세션 전환 (가용 시)
+          [3] 이 라운드만 fact-check, 다음 라운드부터 동일 엔진 재시도
+          [4] debate 세션 종료
+      """)
+      deep_session_decision = user_choice
+      IF user == 2: deep_session_engine = 다른 엔진으로 전환 후 위 분기 재시도
+      IF user == 4: abort_debate()
+
+    effective_mode = "fact-check" (이 라운드)
+    payload_tag_for_round = none
+
+  ELSE:
+    effective_mode = "deep-research"
+    payload_tag_for_round = result_payload_tag
+
+ELSE:
+  effective_mode = "(default fact-check or web-search)"
+  payload_tag_for_round = none
+
 research_result = Task(sowhat-research-agent,
   prompt = """
   <thesis>{thesis}</thesis>
   <section>{섹션 내용}</section>
   <search_focus>{현재 섹션의 가장 약한 Grounds + Open Questions}</search_focus>
   <previous_findings>{이전 라운드에서 이미 찾은 것 — 중복 검색 방지}</previous_findings>
-  {PERPLEXITY_API_KEY 존재 && features.deep_research != "disabled" ? "<mode>deep-research</mode>" : ""}
+  {effective_mode == "deep-research" ? "<mode>deep-research</mode>" : ""}
+  {effective_mode == "deep-research" ? payload_tag_for_round : ""}
+  {effective_mode == "deep-research" ? "<receipt_path>" + receipt_path + "</receipt_path>" : ""}
   """)
 
 # 두 에이전트 완료 대기
 ```
 
 > **자동 트리거 판단**: 위 "자동 트리거 조건"에 해당하지 않으면 Research-Agent 스폰을 건너뛴다. 단, Round 1에서는 항상 스폰한다 (초기 근거 수집).
+>
+> **silent fallback 금지 원칙**: research-agent에 `<mode>deep-research</mode>` 태그를 다는 모든 경로는 사전에 영수증 검증을 통과해야 한다. 검증 없이 deep-research 태그만 다는 단순화는 사용자가 deep research를 받았다고 오인하게 만들므로 절대 금지.
 
 ### Phase 2: Pro 스폰 (Con + Research 결과 포함)
 

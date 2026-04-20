@@ -41,18 +41,18 @@ sowhat 설정
 
 ```bash
 # 환경변수 존재 여부만 확인 (값은 표시하지 않음)
-if [ -n "$PERPLEXITY_API_KEY" ]; then
-  perplexity_status="✅ 설정됨"
-else
-  perplexity_status="❌ 미설정"
-fi
+if [ -n "$PERPLEXITY_API_KEY" ]; then perplexity_status="✅ 설정됨"; else perplexity_status="❌ 미설정"; fi
+if [ -n "$GEMINI_API_KEY" ];     then gemini_status="✅ 설정됨";     else gemini_status="❌ 미설정";     fi
 ```
 
 ```
 API 키 관리
 
 [1] Perplexity ({perplexity_status})
-    Deep Research 심층 조사에 사용
+    Deep Research — sonar-deep-research (동기, ~30초)
+
+[2] Gemini ({gemini_status})
+    Deep Research — Interactions API (비동기 폴링, 2-5분, citations 풍부)
 
 어떤 서비스를 설정할까요?
 ```
@@ -84,7 +84,7 @@ Perplexity API 키
 API 키를 입력하세요 (pplx-...):
 ```
 
-### 2-A-3. 키 검증 + 저장
+### 2-A-3. Perplexity 키 검증 + 저장
 
 사용자가 키를 입력하면:
 
@@ -93,11 +93,11 @@ API 키를 입력하세요 (pplx-...):
 
 2. **연결 검증**: 실제 API 호출로 키 유효성 확인
    ```bash
-   response=$(curl -s -o /dev/null -w "%{http_code}" \
-     https://api.perplexity.ai/v1/agent \
+   response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
+     --ssl-revoke-best-effort https://api.perplexity.ai/chat/completions \
      -H "Authorization: Bearer {입력된_키}" \
      -H "Content-Type: application/json" \
-     -d '{"preset":"fast-search","input":"test"}')
+     -d '{"model":"sonar","messages":[{"role":"user","content":"ping"}],"max_tokens":1}')
    ```
    - `200`: 유효
    - `401`: `❌ API 키가 유효하지 않습니다. 다시 확인해주세요.` → 재입력 안내
@@ -142,19 +142,98 @@ API 키를 입력하세요 (pplx-...):
       다른 세션에서 사용하려면 해당 세션을 재시작하세요.
    ```
 
-### 2-A-4. 키 삭제
+### 2-A-4. Perplexity 키 삭제
 
 "키 삭제" 선택 시:
 
 ```
 ⚠️ Perplexity API 키를 삭제합니다.
-Deep Research가 비활성화되고 기본 웹 검색이 사용됩니다.
+Perplexity 기반 Deep Research가 비활성화됩니다.
+(Gemini 키가 있다면 Gemini Deep Research는 그대로 사용 가능)
 
 [1] 삭제
 [2] 취소
 ```
 
 삭제 시 `.claude/settings.local.json`에서 `env.PERPLEXITY_API_KEY` 키를 제거한다.
+
+### 2-A-5. Gemini 설정 ([2] 선택 시)
+
+이미 설정되어 있으면:
+
+```
+Gemini API 키
+
+현재: ✅ 설정됨 (AIza****{마지막4자})
+
+[1] 키 변경
+[2] 키 삭제
+[3] 돌아가기
+```
+
+미설정이면:
+
+```
+Gemini API 키
+
+현재: ❌ 미설정
+발급: https://aistudio.google.com/app/apikey
+
+API 키를 입력하세요 (AIza...):
+```
+
+### 2-A-6. Gemini 키 검증 + 저장
+
+1. **형식 검증**: `AIza`로 시작하는지 확인
+   - 아니면: `⚠️ Gemini API 키는 보통 'AIza'로 시작합니다. 이대로 진행할까요? [1] 예 [2] 다시 입력`
+
+2. **연결 검증**: 실제 API 호출로 키 유효성 확인
+   ```bash
+   response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
+     --ssl-revoke-best-effort \
+     "https://generativelanguage.googleapis.com/v1beta/models" \
+     -H "x-goog-api-key: {입력된_키}")
+   ```
+   - `200`: 유효
+   - `401` / `403`: `❌ API 키가 유효하지 않거나 권한이 없습니다. 다시 확인해주세요.` → 재입력
+   - 기타: `⚠️ API 연결 확인 실패 ({status}). 키를 저장하고 나중에 확인할까요? [1] 저장 [2] 취소`
+
+3. **저장 범위 선택**: Perplexity와 동일 (전역/프로젝트/둘 다)
+
+   ```json
+   {
+     "env": {
+       "GEMINI_API_KEY": "AIza..."
+     }
+   }
+   ```
+
+   **이미 존재하는 필드(`PERPLEXITY_API_KEY` 등)는 절대 보존**하고 `env.GEMINI_API_KEY`만 추가/업데이트.
+
+4. **완료 안내**:
+   ```
+   ✅ Gemini API 키 설정 완료
+
+   저장: {전역 | 프로젝트 | 둘 다}
+
+   💡 Gemini Deep Research를 기본 엔진으로 사용하려면:
+      [2] 기능 설정 → [4] Deep Research Engine → gemini
+
+   ⚠️ 이미 실행 중인 세션에는 자동 반영되지 않습니다.
+   ```
+
+### 2-A-7. Gemini 키 삭제
+
+```
+⚠️ Gemini API 키를 삭제합니다.
+Gemini 기반 Deep Research가 비활성화됩니다.
+(Perplexity 키가 있다면 Perplexity Deep Research는 그대로 사용 가능)
+
+[1] 삭제
+[2] 취소
+```
+
+삭제 시 `.claude/settings.local.json`에서 `env.GEMINI_API_KEY` 키를 제거한다.
 
 ---
 
@@ -168,12 +247,18 @@ Deep Research가 비활성화되고 기본 웹 검색이 사용됩니다.
 기능 설정
 
 [1] Deep Research: {auto ✅ | enabled ✅ | disabled ❌}
-    Perplexity API로 심층 조사
+    Deep Research 사용 여부 (활성 엔진의 API 키 필요)
 
-[2] Deep Research Preset: {deep-research}
+[2] Deep Research Engine: {ask | perplexity | gemini}
+    어떤 엔진을 기본으로 쓸지 (ask면 매 실행마다 묻기)
+
+[3] Deep Research Preset: {deep-research}  (Perplexity 전용)
     Perplexity Agent API preset
 
-[3] Sub-Research: {enabled ✅ | disabled ❌}
+[4] Gemini Deep Research Agent: {deep-research-pro-preview-12-2025}  (Gemini 전용)
+    Interactions API의 agent 식별자 (모델 변경 시 직접 입력)
+
+[5] Sub-Research: {enabled ✅ | disabled ❌}
     expand 중 병렬 리서치 자동 실행
 
 변경할 항목 번호를 선택하세요 (또는 'done'):
@@ -186,17 +271,34 @@ Deep Research가 비활성화되고 기본 웹 검색이 사용됩니다.
 ```
 Deep Research 설정
 
-[1] auto — API 키가 있으면 자동 활성화 (권장)
-[2] enabled — 항상 활성화 (API 키 필수)
+[1] auto — 활성 엔진의 API 키가 있으면 자동 활성화 (권장)
+[2] enabled — 항상 활성화 (활성 엔진의 API 키 필수)
 [3] disabled — 비활성화
 
 현재: {현재값}
 ```
 
 선택 시 `planning/config.json`의 `features.deep_research`를 업데이트한다.
-`enabled` 선택 시 API 키가 없으면: `⚠️ API 키가 설정되지 않았습니다. 먼저 API 키를 설정하세요.` → 메인 메뉴로 돌아가기.
+`enabled` 선택 시 두 엔진 모두 키가 없으면: `⚠️ Perplexity 또는 Gemini API 키가 필요합니다. 먼저 API 키를 설정하세요.` → 메인 메뉴로.
 
-### 2-B-3. Deep Research Preset 변경 ([2] 선택 시)
+### 2-B-3. Deep Research Engine 변경 ([2] 선택 시)
+
+```
+Deep Research Engine
+
+[1] ask — 매 실행마다 사용자에게 엔진 선택 묻기 (가용 키 1개면 자동)
+[2] perplexity — Perplexity sonar-deep-research 기본 사용
+[3] gemini — Gemini Interactions API (deep-research-pro-preview) 기본 사용
+
+현재: {현재값}
+```
+
+선택 시 `planning/config.json`의 `features.deep_research_engine`을 업데이트한다.
+`perplexity` 또는 `gemini` 선택 시 해당 키가 없으면: `⚠️ {engine} API 키가 설정되지 않았습니다. 먼저 [1] API 키 관리에서 설정하세요.` → 메인 메뉴로.
+
+### 2-B-4. Deep Research Preset 변경 ([3] 선택 시 — Perplexity 전용)
+
+> `deep_research_engine == "gemini"`이면 이 항목은 비활성 표시(grayed out)되고 선택할 수 없다. 메시지: `ℹ️ Preset은 Perplexity 전용입니다. 변경하려면 먼저 Engine을 perplexity로 설정하세요.`
 
 ```
 Deep Research Preset (Perplexity Agent API)
@@ -211,7 +313,29 @@ Deep Research Preset (Perplexity Agent API)
 
 선택 시 `planning/config.json`의 `features.deep_research_preset`을 업데이트한다.
 
-### 2-B-4. Sub-Research 토글 ([3] 선택 시)
+### 2-B-5. Gemini Deep Research Agent 변경 ([4] 선택 시 — Gemini 전용)
+
+> `deep_research_engine == "perplexity"`이면 비활성. 메시지: `ℹ️ Agent 식별자는 Gemini 전용입니다.`
+
+```
+Gemini Deep Research Agent
+
+현재: {현재값 — 예: deep-research-pro-preview-12-2025}
+
+⚠️ Gemini Deep Research는 베타 API이며 Google이 GA 시 모델명을 변경할 수 있습니다.
+   변경된 agent 식별자를 알고 있다면 직접 입력하세요.
+
+새 agent 식별자를 입력하세요 (엔터 = 기본값 유지):
+```
+
+입력 검증:
+- 빈 문자열 → 변경 없이 돌아감
+- 공백 포함 → `❌ agent 식별자에 공백이 포함될 수 없습니다.` → 재입력
+- 통과 시 `planning/config.json`의 `features.gemini_deep_research_agent`를 업데이트
+
+> **주의**: 잘못된 agent명을 입력하면 호출 시 401/404 에러가 발생한다. config 저장은 가능하지만 실제 호출 시 영수증 검증 게이트에서 abort된다.
+
+### 2-B-6. Sub-Research 토글 ([5] 선택 시)
 
 ```
 Sub-Research 설정
@@ -224,7 +348,7 @@ Sub-Research 설정
 
 선택 시 `planning/config.json`의 `features.sub_research`를 업데이트한다.
 
-### 2-B-5. 저장 범위 선택
+### 2-B-7. 저장 범위 선택
 
 각 항목 변경 시 저장 범위를 선택한다:
 
@@ -247,17 +371,20 @@ Sub-Research 설정
 ```json
 {
   "env": {
-    "PERPLEXITY_API_KEY": "pplx-..."
+    "PERPLEXITY_API_KEY": "pplx-...",
+    "GEMINI_API_KEY": "AIza..."
   },
   "sowhat": {
     "deep_research": "enabled",
+    "deep_research_engine": "gemini",
     "deep_research_preset": "advanced-deep-research",
+    "gemini_deep_research_agent": "deep-research-pro-preview-12-2025",
     "sub_research": "enabled"
   }
 }
 ```
 
-### 2-B-6. 변경 완료
+### 2-B-8. 변경 완료
 
 각 항목 변경 + 저장 후 기능 목록(2-B-1)으로 돌아간다.
 `done` 입력 시:
@@ -278,15 +405,20 @@ sowhat 설정 현황
 
 API 키:
   Perplexity: {✅ 설정됨 (pplx-****{마지막4자}) | ❌ 미설정}
+  Gemini:     {✅ 설정됨 (AIza****{마지막4자}) | ❌ 미설정}
 
 기능:
   Deep Research: {auto | enabled | disabled}
-  Deep Research Preset: {preset name}
+  Deep Research Engine: {ask | perplexity | gemini}
+  Deep Research Preset: {preset name}  (Perplexity 전용)
+  Gemini Agent: {agent명}                (Gemini 전용)
   Sub-Research: {enabled | disabled}
 
 전역 기본값 (~/):
   Deep Research: {sowhat.deep_research || 미설정}
+  Deep Research Engine: {sowhat.deep_research_engine || 미설정}
   Deep Research Preset: {sowhat.deep_research_preset || 미설정}
+  Gemini Agent: {sowhat.gemini_deep_research_agent || 미설정}
   Sub-Research: {sowhat.sub_research || 미설정}
 
 출처 신뢰도:
@@ -319,7 +451,11 @@ API 키는 초기화되지 않습니다.
   "sub_research_engine": "agent-browser",
   "sub_research_fallback": "websearch",
   "deep_research": "auto",
-  "deep_research_preset": "deep-research"
+  "deep_research_engine": "ask",
+  "deep_research_preset": "deep-research",
+  "gemini_deep_research_agent": "deep-research-pro-preview-12-2025",
+  "gemini_polling_interval_seconds": 10,
+  "gemini_polling_timeout_seconds": 600
 },
 "credibility": {
   "custom_whitelist": [],
@@ -355,18 +491,21 @@ API 키는 초기화되지 않습니다.
 planning/config.json 편집 레퍼런스
 
 편집 가능 필드:
-┌─────────────────────────┬──────────────────────────────────────────────┐
-│ features.deep_research  │ "auto" | "enabled" | "disabled"              │
-│ features.deep_research  │                                              │
-│   _preset               │ "fast-search" | "pro-search"                 │
-│                         │ | "deep-research" | "advanced-deep-research" │
-│ features.sub_research   │ "enabled" | "disabled"                       │
-│ credibility.strict_mode │ true | false                                 │
-│ credibility.custom      │ ["domain1.com", "domain2.org"]               │
-│   _whitelist            │                                              │
-│ credibility.custom      │ ["domain.com"]                               │
-│   _blacklist            │                                              │
-└─────────────────────────┴──────────────────────────────────────────────┘
+┌─────────────────────────────────────┬──────────────────────────────────────────────┐
+│ features.deep_research              │ "auto" | "enabled" | "disabled"              │
+│ features.deep_research_engine       │ "ask" | "perplexity" | "gemini"              │
+│ features.deep_research_preset       │ "fast-search" | "pro-search"                 │
+│  (Perplexity 전용)                  │ | "deep-research" | "advanced-deep-research" │
+│ features.gemini_deep_research_agent │ "deep-research-pro-preview-12-2025" 등 문자열 │
+│ features.gemini_polling             │ 1-60 (정수)                                  │
+│  _interval_seconds                  │                                              │
+│ features.gemini_polling             │ 60-3600 (정수)                               │
+│  _timeout_seconds                   │                                              │
+│ features.sub_research               │ "enabled" | "disabled"                       │
+│ credibility.strict_mode             │ true | false                                 │
+│ credibility.custom_whitelist        │ ["domain1.com", "domain2.org"]               │
+│ credibility.custom_blacklist        │ ["domain.com"]                               │
+└─────────────────────────────────────┴──────────────────────────────────────────────┘
 
 ⚠️ 위 필드 외에는 수정하지 마세요 (project, layer, sections 등은 워크플로우가 관리).
 
@@ -379,13 +518,20 @@ planning/config.json 편집 레퍼런스
 ~/.claude/settings.local.json 편집 레퍼런스
 
 편집 가능 필드:
-┌───────────────────────────────┬──────────────────────────────────────────────┐
-│ env.PERPLEXITY_API_KEY        │ "pplx-..." (문자열)                          │
-│ sowhat.deep_research          │ "auto" | "enabled" | "disabled"              │
-│ sowhat.deep_research_preset   │ "fast-search" | "pro-search"                 │
-│                               │ | "deep-research" | "advanced-deep-research" │
-│ sowhat.sub_research           │ "enabled" | "disabled"                       │
-└───────────────────────────────┴──────────────────────────────────────────────┘
+┌──────────────────────────────────────┬──────────────────────────────────────────────┐
+│ env.PERPLEXITY_API_KEY               │ "pplx-..." (문자열)                          │
+│ env.GEMINI_API_KEY                   │ "AIza..." (문자열)                           │
+│ sowhat.deep_research                 │ "auto" | "enabled" | "disabled"              │
+│ sowhat.deep_research_engine          │ "ask" | "perplexity" | "gemini"              │
+│ sowhat.deep_research_preset          │ "fast-search" | "pro-search"                 │
+│                                      │ | "deep-research" | "advanced-deep-research" │
+│ sowhat.gemini_deep_research_agent    │ "deep-research-pro-preview-12-2025" 등 문자열 │
+│ sowhat.gemini_polling_interval       │ 1-60 (정수)                                  │
+│  _seconds                            │                                              │
+│ sowhat.gemini_polling_timeout        │ 60-3600 (정수)                               │
+│  _seconds                            │                                              │
+│ sowhat.sub_research                  │ "enabled" | "disabled"                       │
+└──────────────────────────────────────┴──────────────────────────────────────────────┘
 
 ⚠️ permissions, env 내 다른 키 등 기존 필드는 건드리지 마세요.
 
@@ -408,56 +554,73 @@ def validate_config(file_path, file_type):
     except JSONDecodeError as e:
         return ERROR(f"❌ JSON 파싱 실패 (line {e.lineno}): {e.msg}")
 
-    if file_type == "project":  # planning/config.json
-        features = data.get("features", {})
+    # 두 file_type 공통: features 또는 sowhat 키 안의 동일한 항목들을 검증
+    if file_type == "project":
+        section = data.get("features", {})
+        prefix = "features"
+    else:  # global
+        section = data.get("sowhat", {})
+        prefix = "sowhat"
 
-        # 2. deep_research 값 검증
-        dr = features.get("deep_research")
-        if dr and dr not in ["auto", "enabled", "disabled"]:
-            return ERROR(f"❌ features.deep_research: '{dr}' — 허용값: auto | enabled | disabled")
+    # deep_research
+    dr = section.get("deep_research")
+    if dr and dr not in ["auto", "enabled", "disabled"]:
+        return ERROR(f"❌ {prefix}.deep_research: '{dr}' — 허용값: auto | enabled | disabled")
 
-        # 3. deep_research_preset 값 검증
-        preset = features.get("deep_research_preset")
-        valid_presets = ["fast-search", "pro-search", "deep-research", "advanced-deep-research"]
-        if preset and preset not in valid_presets:
-            return ERROR(f"❌ features.deep_research_preset: '{preset}' — 허용값: {valid_presets}")
+    # deep_research_engine
+    eng = section.get("deep_research_engine")
+    if eng and eng not in ["ask", "perplexity", "gemini"]:
+        return ERROR(f"❌ {prefix}.deep_research_engine: '{eng}' — 허용값: ask | perplexity | gemini")
 
-        # 4. sub_research 값 검증
-        sr = features.get("sub_research")
-        if sr and sr not in ["enabled", "disabled"]:
-            return ERROR(f"❌ features.sub_research: '{sr}' — 허용값: enabled | disabled")
+    # deep_research_preset (Perplexity 전용)
+    preset = section.get("deep_research_preset")
+    valid_presets = ["fast-search", "pro-search", "deep-research", "advanced-deep-research"]
+    if preset and preset not in valid_presets:
+        return ERROR(f"❌ {prefix}.deep_research_preset: '{preset}' — 허용값: {valid_presets}")
 
-        # 5. strict_mode 타입 검증
+    # gemini_deep_research_agent (문자열, 공백 불가)
+    agent = section.get("gemini_deep_research_agent")
+    if agent is not None:
+        if not isinstance(agent, str) or not agent.strip() or " " in agent:
+            return ERROR(f"❌ {prefix}.gemini_deep_research_agent: '{agent}' — 공백 없는 문자열이어야 합니다")
+
+    # gemini_polling_interval_seconds (1-60 정수)
+    interval = section.get("gemini_polling_interval_seconds")
+    if interval is not None:
+        if not isinstance(interval, int) or interval < 1 or interval > 60:
+            return ERROR(f"❌ {prefix}.gemini_polling_interval_seconds: '{interval}' — 1-60 정수여야 합니다")
+
+    # gemini_polling_timeout_seconds (60-3600 정수)
+    timeout = section.get("gemini_polling_timeout_seconds")
+    if timeout is not None:
+        if not isinstance(timeout, int) or timeout < 60 or timeout > 3600:
+            return ERROR(f"❌ {prefix}.gemini_polling_timeout_seconds: '{timeout}' — 60-3600 정수여야 합니다")
+
+    # sub_research
+    sr = section.get("sub_research")
+    if sr and sr not in ["enabled", "disabled"]:
+        return ERROR(f"❌ {prefix}.sub_research: '{sr}' — 허용값: enabled | disabled")
+
+    if file_type == "project":
+        # strict_mode 타입 검증
         sm = data.get("credibility", {}).get("strict_mode")
         if sm is not None and not isinstance(sm, bool):
             return ERROR(f"❌ credibility.strict_mode: '{sm}' — boolean이어야 합니다")
 
-        # 6. 필수 필드 존재 확인
+        # 필수 필드 존재 확인
         for key in ["project", "layer", "sections"]:
             if key not in data:
                 return ERROR(f"❌ 필수 필드 '{key}'가 삭제되었습니다. 복원하세요.")
 
-    elif file_type == "global":  # ~/.claude/settings.local.json
-        sowhat = data.get("sowhat", {})
-
-        # sowhat 필드 검증 (위와 동일한 값 검증)
-        dr = sowhat.get("deep_research")
-        if dr and dr not in ["auto", "enabled", "disabled"]:
-            return ERROR(f"❌ sowhat.deep_research: '{dr}'")
-
-        preset = sowhat.get("deep_research_preset")
-        valid_presets = ["fast-search", "pro-search", "deep-research", "advanced-deep-research"]
-        if preset and preset not in valid_presets:
-            return ERROR(f"❌ sowhat.deep_research_preset: '{preset}'")
-
-        sr = sowhat.get("sub_research")
-        if sr and sr not in ["enabled", "disabled"]:
-            return ERROR(f"❌ sowhat.sub_research: '{sr}'")
-
+    else:  # global
         # API 키 형식 경고 (에러는 아님)
-        api_key = data.get("env", {}).get("PERPLEXITY_API_KEY", "")
-        if api_key and not api_key.startswith("pplx-"):
+        env = data.get("env", {})
+        pplx = env.get("PERPLEXITY_API_KEY", "")
+        if pplx and not pplx.startswith("pplx-"):
             return WARNING("⚠️ PERPLEXITY_API_KEY가 'pplx-'로 시작하지 않습니다")
+        gem = env.get("GEMINI_API_KEY", "")
+        if gem and not gem.startswith("AIza"):
+            return WARNING("⚠️ GEMINI_API_KEY가 'AIza'로 시작하지 않습니다")
 
     return OK
 ```
