@@ -567,6 +567,36 @@ date -u +"%Y%m%d-%H%M"
 
 ---
 
+## 섹션 frontmatter 업데이트 (cycle 6 신설 — AU12/AU16 해소)
+
+challenge Stage 0-7 전체 통과 후 (또는 Stage 0만 부분 통과 후), 검증된 모든 섹션의 frontmatter를 업데이트한다. 이 step은 L4 게이트(draft.md / finalize.md)가 `last_challenged_at`과 `unverified_items` 상태를 정확히 판정할 수 있게 한다.
+
+**절차**:
+
+1. **검증 완료 섹션 식별**: 전체 모드면 `settled`/`discussing` 모든 섹션, 부분 모드면 대상 섹션만
+2. **각 섹션 frontmatter 업데이트** (`references/config-schema.md` §섹션 파일 frontmatter 스키마 참조):
+
+   ```yaml
+   last_challenged_at: {current_datetime_ISO8601}   # Stage 0 통과 시각
+   ```
+
+3. **unverified_items 업데이트 로직**:
+   - Stage 0에서 **해소된 항목** (사용자 수정 또는 outcome이 "철회"): 해당 엔트리 제거
+   - Stage 0에서 **새로 발견된 사실 오류** (출처 미실존, 값 불일치): 기존 `unverified_items`에 append (또는 `detected_by` 배열에 `"L3-stage0"` 추가)
+   - 중복 감지: 같은 `(field, bullet_index)`면 새 엔트리 대신 기존 엔트리의 `detected_by` 배열에 `"L3-stage0"` 추가
+
+4. **인간 수용 시 (concession move)**: 공격이 수용되면 해당 섹션은 `needs-revision`으로 강등되고 `last_challenged_at`은 유지 (재수정 후 재challenge 필요). 수정 시 `updated` 갱신 → `last_challenged_at < updated` 상태가 되어 L4가 재검증 감지.
+
+5. **Git commit**:
+   ```bash
+   git add {수정된 섹션 파일들}
+   git commit -m "challenge: update last_challenged_at + unverified_items for {N} sections"
+   ```
+
+> **왜 필요한가**: cycle 5에서 L4 draft 게이트가 `last_challenged_at` 비교를 spec으로 선언했으나 이 필드를 **기록하는 로직이 어디에도 없어** 실질 미작동이었다. cycle 6에서 challenge가 이 책임을 담당.
+
+---
+
 ## logs/session.md 업데이트 (완료 시)
 
 ```markdown

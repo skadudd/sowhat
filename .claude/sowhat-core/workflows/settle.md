@@ -186,9 +186,15 @@ cycle 4까지 L2a는 "L2 Exception 발동 시만" 작동했다. cycle 5에서 **
    - `"어떤 연구(#456)에 따르면 34%"` — 기관명·연도 매칭 없음 → L2 미매칭
      - L2a 독립 실행 → `#456` Glob → 미실존 → **unverified 플래그**
 
-3. research/ 디렉토리가 없는 프로젝트(init 전)에선 L2a 비활성화, L2 단독 동작.
+3. **research/ 디렉토리 없는 프로젝트 처리 (cycle 6 AU14 해소)**: 디렉토리 유무로 L2a를 비활성화하지 않는다. 참조별 독립 판정:
+   - `#NNN` 참조 있음 + `research/` 디렉토리 없음 → `Glob` 결과 비어있음 → **unverified 플래그** (보수적 판정)
+   - `file:{path}` 참조 있음 + 경로 미실존 → Read 실패 → **unverified 플래그**
+   - 참조 패턴이 아예 없는 섹션 → L2a는 아무것도 하지 않음 (no-op)
 
-> **cycle 4 → cycle 5 변화**: Exception 조건부 검증 → 독립 검증. "기관명 없이 #NNN만 인용" bypass(AU7) 차단.
+> **cycle 4 → cycle 5 → cycle 6 변화**:
+> - cycle 4: L2 Exception 조건부 검증 (한정적)
+> - cycle 5: 독립 검증으로 확장했으나 "research/ 디렉토리 유무"로 일괄 비활성화 조건 남아있었음 (AU14)
+> - cycle 6: 참조별 독립 판정 — 디렉토리 유무는 개별 `Glob` 결과에만 영향
 
 **검증 결과 (cycle 4 재분류)**:
 
