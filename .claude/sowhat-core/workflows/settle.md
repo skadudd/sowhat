@@ -63,14 +63,16 @@ status_transitions: ["discussing → settled"]
 Toulmin 필드가 형식만 갖추고 실질 내용이 없는 "stub"을 탐지한다. AI 자동 전개(autonomous)에서 특히 빈번.
 
 Stub 탐지는 두 방향의 결함을 함께 본다:
-- **Filler stub** (너무 비어있음): 구체 식별자 없이 일반론만 서술
-- **Fabrication stub** (너무 구체적인데 출처 표기 없음): 기관명·수치·연도가 있지만 출처 표기(URL/파일/finding ID/DOI)가 **형식상** 존재하지 않음
+- **Filler stub** (너무 비어있음): 구체 식별자 없이 일반론만 서술 → **settle 거부** (기존 유지)
+- **Fabrication 의심** (구체적인데 출처 표기 없음): 기관명·수치·연도가 있지만 출처 표기(URL/파일/finding ID/DOI)가 형식상 없거나 참조 실존 확인 실패 → **`unverified: true` 플래그 부착, settle 허용** (cycle 4 재구성: reject → warning)
 
-> **Layer 책임 명시** (`references/fabrication-prevention.md` §"Layer 책임 분리" 참조):
-> - Settle은 **L2 입력 검증**이다 — 출처 표기의 **형식적 존재**만 검증
-> - URL이 실존하는지, 값이 원문과 일치하는지는 **검증하지 않는다**. L3 challenge Stage 0 책임
-> - 사람명·보고서명·제품명 fabrication은 **탐지하지 않는다**. L3 책임
-> - Settle을 통과한 가짜 URL은 L4 finalize 게이트에서 challenge 자동 실행으로 반드시 잡힌다
+> **cycle 4 Layer 책임 재정의** (`references/fabrication-prevention.md` §"Layer 책임 분리" 참조):
+> - Settle은 이제 **L2 형식 경고 + L2a 참조 실존 확인** 레이어다
+> - **L2 warning**: 정규식 매칭 + Exception 미발동 → `unverified` 플래그 (reject 아님)
+> - **L2a cross-reference**: `#NNN`/`file:`/`§N` 실존 확인 — 미실존 시 `unverified` 플래그
+> - URL 실존·값 정확성·사람명·보고서명 fabrication은 **L3 책임**
+> - 최종 차단은 **L4 게이트** (finalize-planning / finalize / draft)가 `unverified` 플래그 집계로 수행
+> - 이로써 AI 할루시네이션 원천 차단 (L0 AI-엄격) + 사용자 작성 편의성 (L0 사용자-중간) + 최종 유출 방지 (L4) 3중 방어
 
 **탐지 패턴 — Filler (비어있음):**
 
@@ -155,14 +157,61 @@ Stub 탐지는 두 방향의 결함을 함께 본다:
 
 > **탐지 우선순위** (중복 플래그 방지, 한 번만 flag): (1) en_direct → (2) ko_direct → (3) en_suffix → (4) ko_suffix. 상위에서 플래그되면 하위는 건너뛴다. 본 문서와 `references/fabrication-prevention.md`는 동일한 우선순위를 사용한다.
 
-**검증 결과:**
-- Filler stub 발견 → `❌ Stub 탐지 (filler): {필드} — {이유}` → settle 거부
-- Fabrication stub 발견 → `❌ Stub 탐지 (fabrication 의심): {필드} — "{구체 값}" 출처 미연결` → settle 거부. 사용자에게 다음 해소 경로 안내:
-  1. 해당 인용의 URL/파일 경로/DOI를 직접 명시 → `/sowhat:revise`
-  2. `/sowhat:research` 또는 `/sowhat:inject`로 검증된 finding에 매핑 후 `#NNN` 삽입
-  3. 자체 데이터인 경우 `자체 조사 (n=N, 연도)` 형식으로 맥락 명시 (위 예외 조건 충족)
-  4. 구체 인용을 제거하고 정성 기술로 대체 + Qualifier 하향
-- 경계 사례 → `⚠️ Stub 의심: {필드} — {이유}` → 경고 (거부 아님)
+**L2a 참조 실존 확인 (cycle 4 신설)**:
+
+L2 정규식 매칭 후 Exception이 발동했어도 참조 대상의 **실존**을 확인한다:
+
+- `#\d{3}` 매칭 → `Glob("research/{NNN}-*.md")` 수행
+  - 파일 있음 → pass
+  - 없음 → `unverified: true` 플래그 부착
+- `file:{path}` / `dir:{path}` 매칭 → `Read` 시도로 실존 확인
+  - 성공 → pass
+  - 실패 → `unverified: true` 플래그
+- `§\d+` 매칭 → 숫자가 프로젝트 섹션 번호 범위(00-thesis, 01-03 planning, 04-09 spec) 내인지 확인
+  - 범위 내 → pass
+  - 범위 밖 → `unverified: true` 플래그
+
+research/ 디렉토리가 없는 프로젝트(init 전)에선 L2a 비활성화, L2 단독 동작.
+
+**검증 결과 (cycle 4 재분류)**:
+
+- **Filler stub 발견** → `❌ Stub 탐지 (filler): {필드} — {이유}` → **settle 거부** (기존 유지 — filler는 여전히 차단)
+- **Fabrication 의심 (L2 warning)** 또는 **L2a 미실존** → `⚠️ Fabrication 의심: {필드} — "{구체 값}" 출처 미연결 또는 참조 미실존` → **`unverified: true` 플래그 부착, settle 허용**
+  - 사용자에게 알림: "ℹ️ unverified 플래그 {N}건 부착. draft/finalize 전에 해소 필요:
+    1. 해당 인용의 URL/파일 경로/DOI를 직접 명시 → `/sowhat:revise`
+    2. `/sowhat:research` 또는 `/sowhat:inject`로 검증된 finding에 매핑 후 `#NNN` 삽입
+    3. 자체 데이터인 경우 `자체 조사 (n=N)` + `file:` 경로 명시
+    4. 구체 인용을 제거하고 정성 기술로 대체 + Qualifier 하향"
+- **경계 사례** → `⚠️ Stub 의심: {필드} — {이유}` → 경고 (플래그 없음, 거부 아님)
+
+### unverified 플래그 스키마 (cycle 4 신설)
+
+Toulmin 필드의 의심 불릿에 메타 부착. 두 가지 형식 지원:
+
+**Frontmatter 방식** (권장 — 파싱 용이):
+
+```yaml
+---
+unverified_items:
+  - field: "grounds"
+    bullet_index: 2
+    value: "McKinsey 2024: 34%"
+    reason: "en_direct 매칭, 출처 미연결"
+    detected_by: "L2"  # L2 | L2a
+    detected_at: "2026-04-21T..."
+---
+```
+
+**인라인 방식** (보조 — 시각 확인 용):
+
+```markdown
+## Grounds
+- 구체적 근거 1
+- "McKinsey 2024: 34%" ⚠️ unverified (en_direct match, no source)
+- 구체적 근거 3
+```
+
+두 형식은 동기화 유지. L4 게이트는 frontmatter를 집계한다.
 
 ---
 
