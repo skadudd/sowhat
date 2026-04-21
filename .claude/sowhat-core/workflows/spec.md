@@ -17,6 +17,16 @@ status_transitions: ["draft → discussing"]
 
 이 커맨드는 명세 레이어의 섹션을 핑퐁 방식으로 전개한다. **기획 섹션의 Claim/Grounds/Scope에서 질문을 파생**시켜 기획→명세 정합성을 보장한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
+## L1 Fabrication 차단 (필수)
+
+명세 필드(Actors / Data Model / API 계약 / Edge Cases / AC)를 AI가 제안할 때, **기획 섹션에 없던** 구체 수치·기관명·연도·인물명·URL을 임의로 추가하지 않는다.
+
+- 데이터 모델의 필드값 예시, API 응답 샘플, Edge Case 임계값 등에 구체 수치가 필요하면 **기획 Grounds에서 도출**하거나 사용자 입력 요청
+- 인수 기준(AC)의 성능 수치(`응답 시간 200ms`, `전환율 30%`)도 기획 섹션의 Grounds에 근거가 있어야 함
+- 없으면 플레이스홀더(`{임계값}`)로 남기고 핑퐁 중 사용자에게 확정 요청
+
+상세: `references/fabrication-prevention.md`.
+
 ## 사전 검증
 
 1. `planning/config.json` 로드

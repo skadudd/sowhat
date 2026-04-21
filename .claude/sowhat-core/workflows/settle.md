@@ -98,44 +98,62 @@ Stub 탐지는 두 방향의 결함을 함께 본다:
 > - URL 유효성 (실존·내용 대조)
 > - 값 정확성 (원문 대조)
 
-**Fabrication 검증 예외 (false positive 방지):**
+**Fabrication 검증 예외 (false positive 방지) — 복합 조건**:
 
-다음 조건 중 하나라도 해당되면 Fabrication 판정을 **하지 않는다**. 사용자가 출처 연결을 직접 대체한 경우로 간주:
+다음 조건 중 하나라도 해당되면 Fabrication 판정을 **하지 않는다**. 키워드만으로 통과시키지 않고 **구조적 뒷받침**을 요구하여 bypass를 차단한다.
 
-- **자체 데이터 맥락 표기**: Grounds/Backing의 해당 불릿에 다음 키워드 중 하나가 명시됨
-  - 한글: `자체 조사`, `자체 데이터`, `내부 조사`, `인하우스`
-  - 영문: `internal survey`, `internal data`, `in-house study/research`
-  - 표본 크기 명시 시 더 강한 신호: `(n=N)`, `표본 N명`
-- **파일 경로 출처**: `file:{path}` 또는 `dir:{path}` 참조가 같은 불릿에 존재
-- **Research finding ID**: `#NNN` (3자리 ID) 또는 `[리서치 #NNN]` 형식 참조가 존재
-- **URL**: `http://` 또는 `https://` 링크가 존재
-- **DOI**: `doi:`, `DOI:`, `10.\d{4,}/` 패턴 존재
-- **섹션 내부 교차참조**: `{NN}-{section}`, `Appendix`, `§` 등으로 같은 프로젝트 문서를 가리킴
+- **자체 데이터 맥락 표기 (복합)**: 키워드 하나만으론 부족. 아래 구조 중 하나 필수:
+  - 키워드(`자체 조사|자체 데이터|내부 조사|인하우스|internal survey|internal data|in-house study|in-house research`) + `(n=\d+)` 표본 크기
+  - 키워드 + `표본 \d+명` 한글 표현
+  - 키워드 + `file:` / `dir:` 경로 동반
+- **파일 경로 출처**: `file:{path}` 또는 `dir:{path}` 참조 (단독으로도 유효)
+- **Research finding ID**: `#\d{3}` (3자리 ID) 또는 `\[리서치 #\d{3}\]`
+- **URL**: `http://` 또는 `https://` 링크 (실존 확인은 L3)
+- **DOI**: `doi:`, `DOI:`, `10\.\d{4,}/` 패턴
+- **섹션 내부 교차참조 (식별자 요구)**:
+  - `§\d+` — `§` 뒤 **숫자 필수**. 단독 `§`는 예외 미발동
+  - `Appendix [A-Z\d]+` — `Appendix` 뒤 **식별자 필수** (예: `Appendix A`, `Appendix 1`). 단독 `Appendix`는 예외 미발동
+  - `{NN}-[a-z]+` — 섹션 번호 형식 (예: `02-solution`)
+
+> **왜 복합 조건인가**: 이전 구현은 `자체 조사`, `§`, `Appendix` 키워드만 존재하면 통과시켜 AI가 prefix/suffix만 붙여 bypass했다. 구조적 뒷받침을 요구하면 정당한 사용은 통과시키면서 단순 우회는 차단된다.
 
 **탐지 방법:**
-1. 각 필드를 읽고 위 두 범주의 패턴에 해당하는지 검사
+1. **처리 단위**: 각 Toulmin 필드를 **불릿(`-` 또는 `*`으로 시작하는 라인) 단위로 분리**하여 개별 검사. 한 불릿 안에 여러 문장이 있으면 해당 불릿 하나를 범위로 본다. 여러 불릿에 걸친 cross-match는 발생하지 않는다.
 2. Filler 체크:
    - Grounds에 T1/T2 출처명, 수치, 연도, 사례명 등 구체적 식별자가 하나도 없으면 stub 의심
    - Warrant가 Claim의 키워드를 80% 이상 반복하면 동어반복 stub
    - Rebuttal에 구체적 반론 명제가 없으면 stub (대응만 있고 반론 자체가 generic)
-3. Fabrication 체크 (정규식 — Scope IN만, **화이트리스트 + 접미어 2단 방식**):
-   - **영문 직접 매칭 (en_direct)**: `fabrication-prevention.md` §"금지되는 고유값" 영문 기관명 목록(McKinsey, IDC, Gartner, HubSpot, Forrester, Deloitte, Statista, CB Insights, PwC, Bain, BCG, KPMG, EY, Accenture, Nielsen, Ipsos, Pew, Harvard, MIT, Stanford, Oxford, Cambridge, OECD, IMF, WHO, UN 등) + 연도 + 수치
+3. Fabrication 체크 (정규식 — Scope IN만, **화이트리스트 + 접미어 2단 방식, 한·영 대칭**):
+
+   각 정규식의 `.*?` 부분은 **문장 경계(`.`, `!`, `?`, 줄바꿈)를 넘지 않는다**. 즉 `[^.!?\n]*?` 로 제한하여 한 문장 안에서만 매칭.
+
+   - **en_direct**: 영문 기관명 화이트리스트 + 연도 + 수치 (같은 문장 안)
      ```
-     \b(McKinsey|IDC|Gartner|…)\b.*?20\d{2}.*?(\d+\.?\d*%|\$\d+|배)
+     \b(McKinsey|IDC|Gartner|HubSpot|Forrester|Deloitte|Statista|CB Insights|PwC|Bain|BCG|KPMG|EY|Accenture|Nielsen|Ipsos|Pew|Harvard|MIT|Stanford|Oxford|Cambridge|OECD|IMF|WHO|UN)\b[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+|배)
      ```
-   - **영문 접미어 패턴 (en_suffix)**: 영문 기관 접미어(`Research|Institute|Consulting|Group|Insights|Labs|Partners|Associates`) + 연도 + 수치
+   - **ko_direct** (C1 해소 — 연도·수치 조건 추가): 한글 기관명 화이트리스트 + 연도 + 수치 (같은 문장 안)
      ```
-     \b[A-Z][a-zA-Z]+\s+(Research|Institute|Consulting|Group|Insights|Labs|Partners|Associates)\b.*?20\d{2}.*?(\d+\.?\d*%|\$\d+|배)
+     (통계청|한국은행|소프트웨어산업협회|한국개발연구원|한국인터넷진흥원|삼성경제연구소|LG경제연구원|현대경제연구원|금융감독원|DART|KDI|KISA|SERI)[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+|배|명|원)
      ```
-   - **한글 직접 매칭 (ko_direct)**: 한글 기관명 목록(통계청/한국은행/소프트웨어산업협회 등) 직접 매칭
-   - **한글 접미어 패턴 (ko_suffix)**: `[가-힣]{2,}(협회|연구원|연구소|공사|청|원|부|위원회|재단|진흥원|개발원)\s*20\d{2}`
+   - **en_suffix**: 영문 기관 접미어 패턴 + 연도 + 수치 (같은 문장 안)
+     ```
+     \b[A-Z][a-zA-Z]+\s+(Research|Institute|Consulting|Group|Insights|Labs|Partners|Associates)\b[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+|배)
+     ```
+   - **ko_suffix**: 한글 기관 접미어 패턴 + 연도
+     ```
+     [가-힣]{2,}(협회|연구원|연구소|공사|청|원|부|위원회|재단|진흥원|개발원)\s*20\d{2}
+     ```
    - 매칭된 각 건에 대해 위 "Fabrication 검증 예외" 조건을 먼저 확인 — 해당되면 통과
-   - 예외에 해당하지 않으면 같은 불릿/문장 범위 안에 URL / `file:`/`dir:` / `#\d{3}` / DOI 중 하나가 **형식상 존재하는지** 요구 (존재 여부만 검증, 유효성은 L3 책임)
+   - 예외에 해당하지 않으면 같은 불릿 안에 URL / `file:`/`dir:` / `#\d{3}` / DOI 중 하나가 **형식상 존재하는지** 요구 (존재 여부만 검증, 유효성은 L3 책임)
    - 출처 표기 미존재 시 fabrication stub 의심
 
 > **왜 화이트리스트 방식인가**: 단순 `[A-Z][a-zA-Z]+\s+20\d{2}` 패턴은 `"In 2024, market grew 34%"`, `"Oct 2024 report"`, `"Meeting Notes 2024 Q1: 34%"` 같은 **일반 영문 표현을 false positive**로 잡는다. 화이트리스트(en_direct) + 영문 기관 접미어(en_suffix)의 2단 구조로 한글 패턴과 대칭을 이루며 false positive를 제거한다.
 
-> **탐지 우선순위**: 같은 문자열이 여러 조건에 매칭되더라도 한 번만 플래그한다. 우선순위: (1) en_direct/ko_direct 직접 매칭 → (2) en_suffix/ko_suffix 접미어 패턴. 상위 조건에서 플래그되면 하위는 건너뛴다.
+> **왜 ko_direct에 연도·수치 조건을 추가했는가**: 이전 구현은 한글 기관명 단어만 있어도 매칭해 `"통계청 홈페이지를 참고하세요"` 같은 사실 언급까지 reject했다. 영문과 대칭으로 `기관명 + 연도 + 수치` 3요소를 모두 요구하여 사실 언급은 통과시키고 fabrication만 탐지한다.
+
+> **왜 문장 경계를 두는가**: 이전 `.*?`는 greedy backtracking으로 무관한 두 문장을 cross-match했다. `[^.!?\n]*?`로 한 문장 안에서만 매칭하게 하여 `"Harvard는 좋은 대학이다. 2024년 34% 성장."` 같은 두 문장 과도 매칭을 막는다.
+
+> **탐지 우선순위** (중복 플래그 방지, 한 번만 flag): (1) en_direct → (2) ko_direct → (3) en_suffix → (4) ko_suffix. 상위에서 플래그되면 하위는 건너뛴다. 본 문서와 `references/fabrication-prevention.md`는 동일한 우선순위를 사용한다.
 
 **검증 결과:**
 - Filler stub 발견 → `❌ Stub 탐지 (filler): {필드} — {이유}` → settle 거부
