@@ -40,6 +40,14 @@ status_transitions: ["settled → needs-revision (inject 시)"]
    ```
 7. 세션 로그 생성
 
+## L1 Fabrication 차단 (필수)
+
+이 워크플로우가 **AI가 생성하는** 비평 근거·인용에는 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다.
+
+5차원 비평의 findings는 **대상 콘텐츠의 구체적 부분을 인용**해야 하며(이는 실재 인용), AI가 비평을 강화하려고 외부 기관명·수치를 만들어 넣는 것은 금지. 외부 비교가 필요하면 research-agent를 스폰.
+
+상세: `references/fabrication-prevention.md`.
+
 ## Step 1: 대상 콘텐츠 로드
 
 `00-thesis.md`의 `## Source Content` → `### 대상 Toulmin 분석` 테이블에서 다음을 추출한다:

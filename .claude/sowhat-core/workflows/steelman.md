@@ -32,6 +32,21 @@ status_transitions: []
 
 ---
 
+## L1 Fabrication 차단 (필수)
+
+이 워크플로우가 **AI가 생성하는** Anti-Thesis, Counter-Grounds, Counter-Warrant, Counter-Claim에는 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다.
+
+구체 내용은 오직 3가지 경로에서만 들어온다:
+1. 사용자 직접 입력
+2. Sub-Research 결과 (영수증 검증 통과)
+3. `research/` 파인딩 매핑
+
+AI가 스텝 2·3에서 "구체적 근거"를 생성하라는 지시를 받더라도, **retrieval 없이 기관명·수치를 만들어내지 말 것**. 근거 유형(예: `"업계 벤치마크를 반박하는 규모 가설"`)과 논리 구조만 제시하고, 구체 값이 필요하면 research-agent를 스폰하거나 사용자에게 명시 요청.
+
+상세: `references/fabrication-prevention.md`.
+
+---
+
 ## 스텝 1: Thesis Answer 및 Key Arguments 로드
 
 1. `00-thesis.md`에서 Answer와 모든 Key Arguments를 추출

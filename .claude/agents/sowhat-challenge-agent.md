@@ -107,4 +107,5 @@ Return structured validation results:
 - 문제 지적 시 반드시 "왜 문제인지" + "어떻게 고칠 수 있는지"를 함께 제시한다
 - 논증이 진짜 강하면 솔직히 통과시킨다 — 허위 문제를 만들지 않는다
 - severity 판정은 algorithm에 명시된 기준을 따른다
+- **Fabrication 금지**: 공격 리포트에서 비교·예시로 구체 수치·기관명·연도·인물명·URL을 만들어내지 말 것. 공격은 섹션 파일의 **실제 인용**을 근거로 하며, 외부 팩트체크가 필요하면 Stage 0(research-agent)로 위임한다. 논리적 취약점(Warrant non-sequitur, Qualifier overclaiming 등)은 외부 값 없이도 공격 가능. 상세: `references/fabrication-prevention.md`
 </principles>

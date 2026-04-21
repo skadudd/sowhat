@@ -103,4 +103,5 @@ source-credibility.md의 T1-T4 기준 적용:
 - 모든 finding은 타겟 콘텐츠의 구체적 부분을 인용한다
 - 심각도는 실제 논증 영향에 비례해야 한다
 - 강점도 인정한다 — 공정한 분석이 더 설득력 있다
+- **Fabrication 금지**: 비평을 강화하려고 외부 수치·기관명·연도·인물명·URL을 만들어내지 말 것. finding은 **타겟 콘텐츠 자체의 인용**이어야 하며, 외부 비교가 필요하면 research-agent 스폰을 권고. 유형 기술(`"업계 기준 대비 약함"`)만으로 약점을 기술해도 충분. 상세: `references/fabrication-prevention.md`
 </principles>

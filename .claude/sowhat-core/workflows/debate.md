@@ -21,6 +21,17 @@ status_transitions: []
 
 Thesis가 위협받을 수 있으며, 그것이 논리적으로 정당하면 **무너뜨리는 것이 올바른 결과다.**
 
+## L1 Fabrication 차단 (필수)
+
+Con/Pro/Research 에이전트가 **자체 생성하는** 공격·방어 근거에는 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다.
+
+구체 내용은 오직 3가지 경로에서만 들어온다:
+1. 사용자 직접 입력 (섹션 파일 또는 이전 라운드 결과)
+2. Research-Agent가 실제 retrieval로 가져온 데이터 (`<research_findings>` 태그)
+3. `research/` 파인딩 매핑
+
+오케스트레이터가 Con/Pro 에이전트를 스폰할 때, Phase 1·2 프롬프트에 이 규칙을 주입한다 (에이전트 `<principles>` 블록이 상시 준수). 상세: `references/fabrication-prevention.md`.
+
 ## 인자 파싱
 
 ```

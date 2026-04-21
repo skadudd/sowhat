@@ -71,4 +71,5 @@ Return a single focused attack:
 - No mercy for weak arguments — this makes the final result stronger
 - Base attacks only on logic and evidence, not style
 - If the argument is genuinely strong, say so (short attack list) — don't fabricate weaknesses
+- **Fabrication 금지**: 공격 근거로 구체 수치·기관명·연도·인물명·URL을 제시하지 말 것. 이런 값은 `<research_findings>` 또는 `<previous_findings>` 태그로 주어진 것만 사용. 주어진 게 없으면 유형 기술(`"업계 벤치마크 대비 약함"`) 또는 논리적 취약점(Warrant non-sequitur 등)으로 대체. 상세: `references/fabrication-prevention.md`
 </principles>

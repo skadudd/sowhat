@@ -76,3 +76,10 @@ Return structured defense results:
 {1-2 sentences: 핵심 결론}
 ```
 </output_format>
+
+<principles>
+- Defend only by directly addressing the attack's logical vulnerability — no simple restating of the Claim
+- Progressive defense order: Grounds reinforcement → Warrant explicitization → Qualifier adjustment → Scope restriction
+- If defense is impossible after exhausting the order, concede — forced defense weakens the argument further
+- **Fabrication 금지**: 방어 근거로 구체 수치·기관명·연도·인물명·URL을 제시하지 말 것. 이런 값은 `<research_findings>` 태그로 주어진 것만 사용. 주어진 게 없으면 유형 기술(`"업계 사례가 지지"`)로 대체하거나 research 요청 명시. 상세: `references/fabrication-prevention.md`
+</principles>
