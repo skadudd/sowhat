@@ -131,19 +131,27 @@ Stub 탐지는 두 방향의 결함을 함께 본다:
 
    - **en_direct**: 영문 기관명 화이트리스트 + 연도 + 수치 (같은 문장 안)
      ```
-     \b(McKinsey|IDC|Gartner|HubSpot|Forrester|Deloitte|Statista|CB Insights|PwC|Bain|BCG|KPMG|EY|Accenture|Nielsen|Ipsos|Pew|Harvard|MIT|Stanford|Oxford|Cambridge|OECD|IMF|WHO|UN)\b[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+|배)
+     \b(McKinsey|IDC|Gartner|HubSpot|Forrester|Deloitte|Statista|CB Insights|PwC|Bain|BCG|KPMG|EY|Accenture|Nielsen|Ipsos|Pew|Harvard|MIT|Stanford|Oxford|Cambridge|OECD|IMF|WHO|UN)\b[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+(?:\.\d+)?[BMK]?|\d+\.?\d*배)
      ```
-   - **ko_direct** (C1 해소 — 연도·수치 조건 추가): 한글 기관명 화이트리스트 + 연도 + 수치 (같은 문장 안)
+   - **ko_direct** (C1 해소 + cycle 5 KM 확장): 한글 기관명 화이트리스트 + 연도 + 수치 (같은 문장 안). 한글 복합 단위(`조원|억원|백만원|천만원|만원`) 포함.
      ```
-     (통계청|한국은행|소프트웨어산업협회|한국개발연구원|한국인터넷진흥원|삼성경제연구소|LG경제연구원|현대경제연구원|금융감독원|DART|KDI|KISA|SERI)[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+|배|명|원)
+     (통계청|KOSIS|한국은행|소프트웨어산업협회|한국개발연구원|한국인터넷진흥원|삼성경제연구소|LG경제연구원|현대경제연구원|금융감독원|DART|KDI|KISA|SERI)[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*\s*(?:조|억|백만|천만|만)?원|\d+\.?\d*%|\$\d+|\d+\.?\d*배|\d+\s*명)
      ```
    - **en_suffix**: 영문 기관 접미어 패턴 + 연도 + 수치 (같은 문장 안)
      ```
-     \b[A-Z][a-zA-Z]+\s+(Research|Institute|Consulting|Group|Insights|Labs|Partners|Associates)\b[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+|배)
+     \b[A-Z][a-zA-Z]+\s+(Research|Institute|Consulting|Group|Insights|Labs|Partners|Associates)\b[^.!?\n]*?20\d{2}[^.!?\n]*?(\d+\.?\d*%|\$\d+(?:\.\d+)?[BMK]?|\d+\.?\d*배)
      ```
-   - **ko_suffix**: 한글 기관 접미어 패턴 + 연도
+   - **ko_suffix** (cycle 5 KM 확장): 한글 기관 접미어 패턴 + 연도 + (수치 권장)
      ```
      [가-힣]{2,}(협회|연구원|연구소|공사|청|원|부|위원회|재단|진흥원|개발원)\s*20\d{2}
+     ```
+   - **ko_vague** (cycle 5 신설 — AU6 해소): 모호한 귀속 표현 + 수치 (두 문장 걸친 bypass 방지)
+     ```
+     (산업 표준|업계 평균|업계 기준|일반적으로|통상|보통|기준으로|20\d{2}년?\s*기준)[^.!?\n]*?(\d+\.?\d*\s*(?:조|억|백만|천만|만)?원|\d+\.?\d*%|\$\d+|\d+\.?\d*배)
+     ```
+   - **en_vague** (cycle 5 신설 — AU6 해소): 영문 vague attribution
+     ```
+     (industry average|industry standard|benchmark|reported|according to|studies show)[^.!?\n]*?(\d+\.?\d*%|\$\d+(?:\.\d+)?[BMK]?|\d+\.?\d*배)
      ```
    - 매칭된 각 건에 대해 위 "Fabrication 검증 예외" 조건을 먼저 확인 — 해당되면 통과
    - 예외에 해당하지 않으면 같은 불릿 안에 URL / `file:`/`dir:` / `#\d{3}` / DOI 중 하나가 **형식상 존재하는지** 요구 (존재 여부만 검증, 유효성은 L3 책임)
@@ -157,21 +165,30 @@ Stub 탐지는 두 방향의 결함을 함께 본다:
 
 > **탐지 우선순위** (중복 플래그 방지, 한 번만 flag): (1) en_direct → (2) ko_direct → (3) en_suffix → (4) ko_suffix. 상위에서 플래그되면 하위는 건너뛴다. 본 문서와 `references/fabrication-prevention.md`는 동일한 우선순위를 사용한다.
 
-**L2a 참조 실존 확인 (cycle 4 신설)**:
+**L2a 참조 실존 확인 (cycle 4 신설, cycle 5 독립 validator로 확장 — AU7 해소)**:
 
-L2 정규식 매칭 후 Exception이 발동했어도 참조 대상의 **실존**을 확인한다:
+cycle 4까지 L2a는 "L2 Exception 발동 시만" 작동했다. cycle 5에서 **독립 validator로 확장** — L2 정규식 매칭 여부와 무관하게 모든 Toulmin 필드를 스캔하여 참조 패턴 실존 확인.
 
-- `#\d{3}` 매칭 → `Glob("research/{NNN}-*.md")` 수행
-  - 파일 있음 → pass
-  - 없음 → `unverified: true` 플래그 부착
-- `file:{path}` / `dir:{path}` 매칭 → `Read` 시도로 실존 확인
-  - 성공 → pass
-  - 실패 → `unverified: true` 플래그
-- `§\d+` 매칭 → 숫자가 프로젝트 섹션 번호 범위(00-thesis, 01-03 planning, 04-09 spec) 내인지 확인
-  - 범위 내 → pass
-  - 범위 밖 → `unverified: true` 플래그
+**독립 실행 절차**:
 
-research/ 디렉토리가 없는 프로젝트(init 전)에선 L2a 비활성화, L2 단독 동작.
+1. Toulmin 필드(Grounds/Backing/Warrant/Rebuttal) 전체에서 아래 패턴 **독립적으로** 탐색:
+   - `#\d{3}` → `Glob("research/{NNN}-*.md")`
+     - 파일 있음 → pass
+     - 없음 → `unverified: true` 플래그 부착
+   - `file:{path}` / `dir:{path}` → `Read` 시도로 실존 확인
+     - 성공 → pass
+     - 실패 → `unverified: true` 플래그
+   - `§\d+` → 숫자가 프로젝트 섹션 번호 범위(00-thesis, 01-03 planning, 04-09 spec) 내인지 확인
+     - 범위 내 → pass
+     - 범위 밖 → `unverified: true` 플래그
+
+2. L2 정규식이 매칭 안 한 경우에도 참조 패턴만 있으면 L2a 발동. 예:
+   - `"어떤 연구(#456)에 따르면 34%"` — 기관명·연도 매칭 없음 → L2 미매칭
+     - L2a 독립 실행 → `#456` Glob → 미실존 → **unverified 플래그**
+
+3. research/ 디렉토리가 없는 프로젝트(init 전)에선 L2a 비활성화, L2 단독 동작.
+
+> **cycle 4 → cycle 5 변화**: Exception 조건부 검증 → 독립 검증. "기관명 없이 #NNN만 인용" bypass(AU7) 차단.
 
 **검증 결과 (cycle 4 재분류)**:
 
@@ -184,30 +201,44 @@ research/ 디렉토리가 없는 프로젝트(init 전)에선 L2a 비활성화, 
     4. 구체 인용을 제거하고 정성 기술로 대체 + Qualifier 하향"
 - **경계 사례** → `⚠️ Stub 의심: {필드} — {이유}` → 경고 (플래그 없음, 거부 아님)
 
-### unverified 플래그 스키마 (cycle 4 신설)
+### unverified 플래그 스키마 (cycle 4 신설, cycle 5 확장 — AU8 해소)
 
 Toulmin 필드의 의심 불릿에 메타 부착. 두 가지 형식 지원:
 
-**Frontmatter 방식** (권장 — 파싱 용이):
+**Frontmatter 방식** (권장 — 파싱 용이, cycle 5에서 `detected_by` 배열화):
 
 ```yaml
 ---
+last_challenged_at: "2026-04-21T..."  # cycle 5 신설 — L4 게이트가 auto-invoke 판정에 사용
 unverified_items:
   - field: "grounds"
     bullet_index: 2
     value: "McKinsey 2024: 34%"
-    reason: "en_direct 매칭, 출처 미연결"
-    detected_by: "L2"  # L2 | L2a
+    reason: "retrieval 없는 구체값"
+    detected_by:                      # cycle 5: 배열화
+      - "L0-user"                     # L0 사용자 경로 감지
+      - "L2-en_direct"                # L2 warning (어느 정규식인지 명시)
     detected_at: "2026-04-21T..."
 ---
 ```
+
+**detected_by 값**:
+- `L0-ai`: L0 AI 경로에서 LLM이 규칙 어기고 제시 → 사용자 수락
+- `L0-user`: L0 사용자 경로 — 미출처 직접 입력
+- `L2-en_direct` / `L2-ko_direct` / `L2-en_suffix` / `L2-ko_suffix`: L2 정규식 매칭
+- `L2-ko_vague` / `L2-en_vague`: vague attribution 매칭 (cycle 5 신규)
+- `L2a-finding_miss`: research/#NNN 미실존
+- `L2a-file_miss`: file:/dir: 경로 미실존
+- `L2a-section_miss`: §N 범위 밖
+
+**중복 감지 처리**: 같은 bullet이 여러 layer에서 플래그되면 `detected_by` 배열에 모두 추가, 별도 엔트리 생성 금지. L4 게이트는 `bullet_index` 기준 unique count.
 
 **인라인 방식** (보조 — 시각 확인 용):
 
 ```markdown
 ## Grounds
 - 구체적 근거 1
-- "McKinsey 2024: 34%" ⚠️ unverified (en_direct match, no source)
+- "McKinsey 2024: 34%" ⚠️ unverified (L0-user, L2-en_direct)
 - 구체적 근거 3
 ```
 

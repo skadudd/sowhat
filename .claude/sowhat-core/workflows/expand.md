@@ -25,7 +25,7 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 
 이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Toulmin Model 전체 구조(Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
-## CRITICAL: AI 제안의 Fabrication 금지
+## L1 Fabrication 차단 (필수 — CRITICAL: AI 제안 경로)
 
 AI가 생성하는 **모든 선택지·제안·예시·힌트·placeholder**에 구체적 수치·기관명·연도·URL·사람 이름·보고서명 같은 fabrication 가능한 고유값을 포함하지 않는다. 구체 내용은 오직 다음 3가지 경로에서만 들어온다:
 
@@ -44,6 +44,48 @@ AI가 생성하는 **모든 선택지·제안·예시·힌트·placeholder**에 
 | `예) 78%가 통합 비용을 언급` | `예) {비율}%가 {요인}을 {결과} 이유로 언급` |
 
 AI가 Step 3/5/7/8에서 제안 선택지를 생성할 때, 구체적 수치·기관명·고유명사가 들어가면 해당 선택지를 무효로 하고 유형 설명 또는 플레이스홀더로 대체한다.
+
+### L0 AI-엄격 실행 조건 (cycle 5 신설 — AU4 해소)
+
+Step 3/5/7/8 선택지 생성 시 **IF-ELSE 조건**으로 구조화. LLM은 이 로직을 따라야 한다:
+
+```
+retrieval_available =
+  (research/ 디렉토리에 해당 섹션 매핑된 #NNN 파인딩 존재)
+  OR
+  (사용자가 /sowhat:inject로 file:/dir: 자료 연결함)
+
+IF retrieval_available:
+  선택지에 구체값 포함 허용:
+    [1] "{finding 원문 인용}: {수치}" (출처: #NNN 또는 file:)
+    [2] "{finding 원문 인용}" (동일)
+    [3] 직접 작성 (unverified 플래그 가능)
+    [6] 🔍 Sub-Research (추가 조사)
+
+ELSE (retrieval 없음):
+  선택지는 다음만 가능:
+    [1] {정성 기술 유형 힌트 1 — 수치 없음}
+    [2] {정성 기술 유형 힌트 2 — 수치 없음}
+    [3] {플레이스홀더 — "{기관} {연도}: {수치}" 형식}
+    [4] 직접 작성 (구체값 입력 시 자동 unverified)
+    [6] 🔍 Sub-Research 실행 (권장)
+  **선택지에 실재 기관명·구체 수치·연도 조합 포함 금지**
+
+사용자가 Sub-Research 거부 ([0] 기각) 시:
+  경고 + unverified 플래그 수용 확인 — 이는 L4 draft 게이트에서 차단됨을 안내
+```
+
+Sub-Research 기각 후 직접 입력 흐름에 다음 프롬프트 삽입:
+
+```
+⚠️ Sub-Research를 거부했습니다.
+   근거 없이 직접 작성 시 unverified 플래그가 부착됩니다.
+   → unverified 항목은 draft/finalize에서 차단됩니다.
+
+   [1] Sub-Research 재시도 (다른 검색어)
+   [2] unverified 수용 후 직접 작성
+   [3] Grounds 생략 (skip)
+```
 
 ---
 

@@ -179,6 +179,33 @@ Grounds/Backing에 수치가 필요한데 research findings가 없으면:
 2. 검색 결과에서 확인된 수치만 사용
 3. 검색으로도 확인 불가 시: **수치 없이 정성적으로 기술** + Qualifier를 `presumably` 이하로 설정
 
+### L0 AI-엄격 실행 조건 (cycle 5 신설 — AU4 해소)
+
+autonomous 모드는 인간 개입 없이 AI가 Toulmin 필드를 자동 생성하므로 L0가 가장 엄격하게 작동해야 한다. 각 필드 생성 시 IF-ELSE 조건:
+
+```
+FOR EACH field IN [Grounds, Backing, Warrant, Rebuttal]:
+  retrieval_available = (매핑된 research/#NNN 파인딩 존재)
+
+  IF retrieval_available:
+    필드 내용: finding 원문 인용 + #NNN 참조 명시
+
+  ELSE:
+    1차 시도: Research-Agent 자동 스폰 (위 3단계)
+    
+    IF Research-Agent 결과 수치/출처 발견:
+      필드 내용: 발견된 값 인용 + 생성된 #NNN 참조
+    
+    ELSE:
+      필드 내용: 정성 기술만 (수치·기관명·연도 조합 금지)
+      Qualifier: "presumably" 이하로 자동 하향
+      메타: unverified: true (L4가 추적)
+      
+      **이 상태로 settle은 가능하지만 draft/finalize에서 L4 게이트가 차단**
+```
+
+autonomous는 배치로 여러 섹션을 처리하므로, 위 로직을 섹션마다 개별 적용. 전체 완료 후 unverified 항목 요약을 사용자에게 보고.
+
 ---
 
 ### Step 2: mini-debate(section) — 1라운드 Con/Pro
