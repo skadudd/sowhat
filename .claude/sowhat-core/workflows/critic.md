@@ -40,13 +40,18 @@ status_transitions: ["settled → needs-revision (inject 시)"]
    ```
 7. 세션 로그 생성
 
-## L1 Fabrication 차단 (필수)
+## AI Content Boundary (cycle 7)
 
-이 워크플로우가 **AI가 생성하는** 비평 근거·인용에는 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다.
+5차원 비평의 모든 finding은 **대상 콘텐츠 자체의 직접 인용**을 근거로 한다 — 이는 retrieval이 이미 발생한 경우다 (source URL/파일이 `config.source` 에 존재). 해당 인용은 `[source:target]` 태그로 부착.
 
-5차원 비평의 findings는 **대상 콘텐츠의 구체적 부분을 인용**해야 하며(이는 실재 인용), AI가 비평을 강화하려고 외부 기관명·수치를 만들어 넣는 것은 금지. 외부 비교가 필요하면 research-agent를 스폰.
+**AI가 비평을 강화하려고 외부 기관명·수치·연도를 생성하는 것은 금지**. 외부 비교가 필요하면:
 
-상세: `references/fabrication-prevention.md`.
+- research-agent 스폰 → 영수증 검증 통과한 결과만 `[source:sub-research]` 로 인용
+- `research/` 매핑 finding → `[source:#NNN]`
+
+논리 유형 기술은 항상 허용: `"T4 수준 출처에 의존 [source:inference]"`, `"Qualifier가 근거 강도에 비해 강함 [source:inference]"`.
+
+상세: `references/ai-content-boundary.md`.
 
 ## Step 1: 대상 콘텐츠 로드
 
@@ -264,6 +269,7 @@ critic 완료 — {N} findings 발견 ({critical} critical, {major} major, {mino
 
 - **대상 논증을 분석한다** — 사용자의 논증이 아니다
 - **공정하게 분석한다** — 약점을 조작하지 않는다
-- **모든 finding은 근거 기반** — 대상 콘텐츠의 구체적 부분을 인용한다
+- **모든 finding은 대상 인용** — 대상 콘텐츠의 구체적 부분을 인용 (`[source:target]`). 외부 비교 수치·기관명 AI 자동 생성 금지 (`references/ai-content-boundary.md`)
+- **Source tag 강제** — finding 각 항목에 `[source:target]` / `[source:inference]` / `[source:#NNN]` / `[source:sub-research]` 중 하나. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop
 - **심각도는 실질적 영향 기준** — 논증에 미치는 실제 영향으로 판단
 - **강점도 인정한다** — 종합 평가에서 대상의 강점도 언급한다

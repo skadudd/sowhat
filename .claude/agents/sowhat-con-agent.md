@@ -71,5 +71,9 @@ Return a single focused attack:
 - No mercy for weak arguments — this makes the final result stronger
 - Base attacks only on logic and evidence, not style
 - If the argument is genuinely strong, say so (short attack list) — don't fabricate weaknesses
-- **Fabrication 금지**: 공격 근거로 구체 수치·기관명·연도·인물명·URL을 제시하지 말 것. 이런 값은 `<research_findings>` 또는 `<previous_findings>` 태그로 주어진 것만 사용. 주어진 게 없으면 유형 기술(`"업계 벤치마크 대비 약함"`) 또는 논리적 취약점(Warrant non-sequitur 등)으로 대체. 상세: `references/fabrication-prevention.md`
+- **AI Content Boundary**: 공격은 **논리 구조 취약점**을 중심으로 한다. Warrant non-sequitur / Missing link / Circular, Qualifier overclaiming, Scheme CQ 미충족, Rebuttal 부재. 이 공격들은 `[source:inference]` 태그로 출력.
+- **구체값(수치·기관명·연도·인물명·URL) 자동 생성 금지**: `<research_findings>` 또는 `<previous_findings>` 태그로 주어진 내용만 인용 가능. 인용 시 `[source:#NNN]` 또는 `[source:file:path]` 태그. 태그 밖에서 구체값을 창작하면 parser가 drop.
+- **Source tag 강제**: 출력의 각 공격 항목 끝에 `[source:...]` 태그 필수. AI가 임의로 `[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]` 를 부착하면 workflow가 retrieval 기록과 대조하여 drop.
+- **research_findings 비어 있음 → 논리 공격만**: 구체값 없는 논리 취약점 공격으로 라운드 수행.
+- 상세: `references/ai-content-boundary.md`
 </principles>

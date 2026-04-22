@@ -32,48 +32,28 @@ status_transitions: []
 
 ---
 
-## L1 Fabrication 차단 (필수)
+## AI Content Boundary (cycle 7)
 
-이 워크플로우가 **AI가 생성하는** Anti-Thesis, Counter-Grounds, Counter-Warrant, Counter-Claim에는 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다.
+Anti-Thesis, Counter-Claim, Counter-Warrant는 AI가 **논리 구조 기반**으로만 생성한다. Counter-Grounds의 구체값(수치·기관명·연도·인물명·URL)은 AI가 자동 생성하지 않는다. 상세: `references/ai-content-boundary.md`.
 
-구체 내용은 오직 3가지 경로에서만 들어온다:
-1. 사용자 직접 입력
-2. Sub-Research 결과 (영수증 검증 통과)
-3. `research/` 파인딩 매핑
+Counter-Grounds 구체값 유입 경로:
 
-AI가 스텝 2·3에서 "구체적 근거"를 생성하라는 지시를 받더라도, **retrieval 없이 기관명·수치를 만들어내지 말 것**. 근거 유형(예: `"업계 벤치마크를 반박하는 규모 가설"`)과 논리 구조만 제시하고, 구체 값이 필요하면 research-agent를 스폰하거나 사용자에게 명시 요청.
+1. `research/` 디렉터리에 원본 Claim을 반박하는 #NNN finding 존재
+2. Research-Agent 스폰 후 반증 발견 (영수증 검증 통과)
+3. 사용자가 inject로 주입한 반증 자료 (file:/dir:)
 
-상세: `references/fabrication-prevention.md`.
+**반증 retrieval이 없으면 Counter-Grounds는 `[source:placeholder]` 유형 기술만 수행**. 예:
+- 허용: `"원본 Grounds의 표본이 특정 세그먼트에 편향됐을 가능성 [source:placeholder]"`
+- 금지: `"McKinsey 2024 보고서 기준 실제 이탈률은 12% [source:...]"` ← retrieval 없이 생성 불가
 
-### L0 AI-엄격 실행 조건 (cycle 5 신설 — AU4 해소)
+Anti-Warrant, Counter-Warrant는 논리 취약점(Warrant non-sequitur, Qualifier overclaiming, Scheme CQ 미충족)으로 구성. `[source:inference]` 태그.
 
-Anti-Thesis, Counter-Grounds, Counter-Warrant 생성 시 IF-ELSE:
+retrieval 없이 생성된 steelman은 **논리 기반 stress test**로서 유효하며, 구체적 반증 데이터를 원하면 사용자에게 다음을 안내:
 
 ```
-FOR EACH generation [Anti-Claim, Anti-Grounds, Anti-Warrant,
-                     Counter-Claim, Counter-Grounds, Counter-Warrant]:
-
-  counter_research_available =
-    (research/ 디렉토리에 원본 주장에 대한 반증 finding 존재)
-    OR
-    (Research-Agent 스폰 후 반증 발견)
-
-  IF counter_research_available:
-    생성 내용: finding 기반 구체적 counter-evidence (원문 인용 + #NNN)
-
-  ELSE:
-    생성 내용: 논리적 반론만 (수치·기관명·연도 조합 금지)
-      · Warrant 약점 지적
-      · Scheme Critical Questions 적용
-      · Qualifier overclaiming 공격
-    메타: unverified: true (settle은 되지만 L4가 추적)
-    
-    사용자에게 알림:
-      "ℹ️ 구체적 반증 데이터 없이 논리 기반 counter 생성.
-       강화를 원하면 /sowhat:research로 반증 자료 수집 후 재실행."
+ℹ️  구체적 반증 데이터 없이 논리 기반 counter 생성.
+   강화를 원하면 /sowhat:research 또는 /sowhat:inject 로 반증 자료 수집 후 재실행.
 ```
-
-steelman은 공격을 위해 존재하지만 공격 자체가 fabrication이면 안 됨. 논리 기반 counter는 **정당한 L2 통과 경로**.
 
 ---
 
@@ -87,14 +67,14 @@ steelman은 공격을 위해 존재하지만 공격 자체가 fabrication이면 
 
 ## 스텝 2: Anti-Thesis 생성
 
-thesis Answer에 대한 **가장 강력한 반대 입장**을 생성한다:
+thesis Answer에 대한 **가장 강력한 반대 입장**을 논리 구조로 생성한다:
 
-1. Answer의 핵심 주장을 부정하는 방향으로 Anti-Thesis 구성
-2. Anti-Thesis는 단순 부정이 아니라, 독립적으로 설득력 있는 대안적 입장이어야 함
-3. Anti-Thesis에 대한 Toulmin 구조 생성:
-   - Anti-Claim: Answer의 정반대 또는 대안적 주장
-   - Anti-Grounds: Anti-Claim을 지지하는 근거
-   - Anti-Warrant: Anti-Grounds → Anti-Claim 연결 논리
+1. Anti-Claim: Answer의 대안적 입장 — AI 자동 생성 가능 (`[source:inference]`)
+2. Anti-Warrant: Anti-Claim을 정당화하는 논리 원칙 — AI 자동 생성 가능 (`[source:inference]`)
+3. Anti-Grounds:
+   - `research/`에 매핑된 반증 finding 존재 → 원문 인용 (`[source:#NNN]`)
+   - inject 자료 존재 → 인용 (`[source:file:path]`)
+   - 둘 다 없음 → 유형 기술만 (`"원본 표본의 지역 편향 가능성 [source:placeholder]"`). 구체 수치·기관명 자동 생성 금지.
 
 4. `counter/anti-thesis.md`에 저장:
    ```markdown
@@ -104,16 +84,16 @@ thesis Answer에 대한 **가장 강력한 반대 입장**을 생성한다:
    "{thesis_answer}"
 
    ## Anti-Thesis (최강 반대 입장)
-   "{anti_thesis}"
+   "{anti_thesis} [source:inference]"
 
    ## Anti-Grounds
-   {anti_grounds}
+   {anti_grounds_with_source_tags}
 
    ## Anti-Warrant
-   {anti_warrant}
+   {anti_warrant} [source:inference]
 
    ## 생성 근거
-   {왜 이것이 가장 강력한 반대 입장인지 설명}
+   {왜 이것이 가장 강력한 반대 입장인지 — 논리 구조 기반}
    ```
 
 ---
@@ -124,18 +104,21 @@ thesis Answer에 대한 **가장 강력한 반대 입장**을 생성한다:
 
 ```
 FOR EACH section:
-  1. Counter-Claim 생성:
-     - 원본 Claim의 직접적 반대 주장
-     - 단순 부정이 아닌, 대안적 시각에서의 주장
+  1. Counter-Claim 생성 — AI 자동 (`[source:inference]`):
+     - 원본 Claim의 대안적 시각에서의 주장
+     - 단순 부정이 아닌, 독립 설득력 있는 대안
 
-  2. Counter-Grounds 생성:
-     - Counter-Claim을 지지하는 구체적 근거
-     - 가능하면 원본 Grounds를 재해석하거나 반박하는 근거
-     - source-credibility.md Tier 기준 적용
+  2. Counter-Grounds 생성 — retrieval 우선:
+     - research/ 매핑 반증 finding → 원문 인용 (`[source:#NNN]`)
+     - inject 반증 자료 → 인용 (`[source:file:path]`)
+     - 둘 다 없음 → 유형 기술만 (`[source:placeholder]`)
+       예: "원본 grounds의 시계열이 경기 확장기에 치우쳤을 가능성 [source:placeholder]"
+     - 구체 수치·기관명·연도 자동 생성 금지
 
-  3. Counter-Warrant 생성:
-     - Counter-Grounds → Counter-Claim 연결 논리
-     - 원본 Warrant의 약점을 공략하는 방향
+  3. Counter-Warrant 생성 — AI 자동 (`[source:inference]`):
+     - 원본 Warrant의 non-sequitur / missing link / circular 중 어디가 취약한지
+     - Scheme Critical Questions 중 원본이 답하지 못한 것
+     - Qualifier overclaiming 지점
 
   4. counter/counter-{section}.md에 저장:
      # Counter: {section_name}
@@ -144,16 +127,16 @@ FOR EACH section:
      "{original_claim}"
 
      ## Counter-Claim
-     "{counter_claim}"
+     "{counter_claim} [source:inference]"
 
      ## Counter-Grounds
-     {counter_grounds}
+     {counter_grounds_with_source_tags}
 
      ## Counter-Warrant
-     {counter_warrant}
+     {counter_warrant} [source:inference]
 
      ## 원본 Warrant 약점
-     {원본 Warrant가 왜 불충분한지}
+     {원본 Warrant의 논리 취약점 — non-sequitur / missing link / circular 중 어떤 것인가}
 ```
 
 ---
@@ -267,8 +250,10 @@ git commit -m "steelman({project}): generate counter-narrative"
 
 ## 핵심 원칙
 
+- **Counter는 논리 구조 중심** — Counter-Claim/Counter-Warrant는 AI가 자동 생성 가능 (`[source:inference]`). Counter-Grounds의 구체값은 retrieval만 인용 (`references/ai-content-boundary.md`)
+- **Source tag 강제** — 모든 counter 항목에 `[source:...]`. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop
+- **reretrieval 부재 시 placeholder 허용** — `[source:placeholder]` 로 유형 기술만 하여도 유효한 논리 기반 steelman. 사용자에게 research/inject 안내
 - **진정한 steelman** — 허수아비(strawman)가 아닌, 실제로 설득력 있는 반대 논증을 생성해야 한다
 - **Toulmin 기반** — counter도 Claim/Grounds/Warrant 구조를 갖춰야 한다
-- **source-credibility 적용** — counter의 근거도 Tier 기준을 충족해야 한다
 - **건설적 목적** — 파괴가 아닌, 원본 논증 강화를 위한 스트레스 테스트
 - **취약점 = 개선 기회** — 반론이 이기는 곳이 가장 보강이 필요한 곳

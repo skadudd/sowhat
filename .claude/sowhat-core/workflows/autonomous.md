@@ -119,92 +119,68 @@ FOR EACH section IN target_sections:
 
 ---
 
-### Step 1: expand(section) — AI 자동 Toulmin 전개
+### Step 1-a: Retrieval gate — research 부재 시 자동 전개 건너뛰기 (cycle 7 핵심)
 
-expand 워크플로우(`workflows/expand.md`)의 9단계를 **AI가 자동으로** 실행한다. 인간 핑퐁 없이 AI가 모든 필드를 채운다.
+AI는 **구조만 자동 생성**한다. 내용(수치·기관명·연도·URL 등 구체값)은 자동 생성 금지 (`references/ai-content-boundary.md` 참조).
+
+따라서 각 섹션에 대해 retrieval 가능 여부를 먼저 확인한다:
+
+```
+FOR EACH section IN target_sections:
+  retrieval_available =
+       (research/ 디렉터리에 섹션과 매핑된 #NNN finding 존재)
+    OR (섹션에 inject로 주입된 file:/dir: 자료 존재)
+    OR (이전 세션에서 Sub-Research 결과가 섹션에 저장됨)
+
+  IF NOT retrieval_available:
+    # 자동 생성 중단 — 사용자 개입 요청
+    섹션 status: draft 유지 (변경 없음)
+    대시보드 메시지 누적:
+      "⚠️ {section} — retrieval 없음, 자동 전개 skip.
+         개입 경로: /sowhat:research {section}
+                    또는 /sowhat:inject {section} {파일/URL}
+                    또는 /sowhat:expand {section} (사용자 직접 입력)"
+    CONTINUE  # 다음 섹션으로
+```
+
+이 gate가 cycle 1-6의 실패 원인 — "AI가 기억으로 Grounds 생성" — 을 구조적으로 차단한다. 자동 생성 경로 자체가 없으므로 fabrication 탐지·차단 로직이 불필요.
+
+### Step 1: expand(section) — retrieval 확보된 섹션의 자동 Toulmin 전개
+
+Step 1-a를 통과한 섹션에 대해 expand 워크플로우를 **AI가 자동으로** 실행한다. 인간 핑퐁 없이 AI가 구조를 채우고, 내용은 retrieval에서만 인용한다.
 
 ```
 Task(sowhat-expand-agent,
   prompt = """
-  <mode>autonomous — 인간 핑퐁 없이 AI가 모든 결정을 내린다</mode>
+  <mode>autonomous — 인간 핑퐁 없이 AI가 구조 결정을 내린다</mode>
   <thesis>{thesis_answer, key_arguments}</thesis>
   <section>{섹션 전체 데이터}</section>
+  <research_findings>{매핑된 #NNN finding 원문 + inject 자료}</research_findings>
   <instructions>
     Toulmin 9단계를 순서대로 자동 전개:
-    1. Stasis: thesis context 기반으로 자동 선택
-    2. Scheme: claim 유형에 가장 적합한 scheme 자동 선택
-    3. Claim: thesis_argument에서 도출
-    4. Grounds: research/ findings만 사용. 부족하면 Research-Agent 스폰 필수. AI 자체 수치 생성 절대 금지.
-    5. Warrant: Grounds → Claim 연결 논리 명시. 수치/통계 포함 금지 — 논리적 원칙만 기술.
-    6. Backing: research findings 또는 Research-Agent 결과만 사용. AI 자체 수치 생성 절대 금지.
-    7. Qualifier: 근거 강도에 맞는 수준 설정
-    8. Rebuttal: 가장 강한 반론과 대응 구성
-    9. Scope: In/Out 경계 명시
+    1. Stasis / Scheme / Claim 형식: AI가 자동 결정 ([source:inference])
+    2. Grounds:
+       - research_findings 인용만 허용 → [source:#NNN] / [source:file:path]
+       - 구체값 자체 생성 금지
+    3. Warrant: Grounds → Claim 연결 논리 원칙만 ([source:inference])
+       — 수치·통계·기관명 포함 금지
+    4. Backing: research_findings 인용만 ([source:#NNN] / [source:file:*])
+    5. Qualifier: Grounds 강도에 맞춰 자동 선택 ([source:inference])
+    6. Rebuttal: 논리 구조만 ([source:inference])
+    7. Scope: In/Out 경계 ([source:inference])
 
-    각 필드를 섹션 파일에 직접 작성.
-    모든 필드 작성 후 status → discussing으로 변경.
+    각 항목 끝에 [source:...] 태그 필수. 태그 없는 항목은 parser가 drop.
+    AI는 user/#NNN/sub-research/file:* 태그를 직접 부착할 수 없음 —
+    workflow가 retrieval 기록과 대조하여 부착. AI가 임의 부착한 경우 drop.
+
+    모든 필드 작성 후 status → discussing.
   </instructions>
   """)
 ```
 
-**자동 전개 원칙:**
-- Stasis/Scheme: thesis_argument의 성격에 따라 AI가 자동 선택 (사실 주장 → statistics/cause-effect, 가치 주장 → principle/consequence 등)
-- Claim: thesis_argument를 검증 가능한 명제로 변환
-- **Grounds: `research/` 디렉터리의 기존 findings만 사용. findings가 부족하면 Research-Agent를 스폰하여 외부 검색 후 사용. AI가 수치·통계·출처를 자체 생성하는 것은 절대 금지.**
-- **Warrant: Grounds → Claim 연결 논리를 작성하되, 수치·통계를 포함하지 않는다. Warrant는 "왜 이 근거가 이 주장을 지지하는가"의 논리적 원칙만 기술한다.**
-- **Backing: Warrant를 지지하는 추가 근거. Grounds와 마찬가지로 research findings 또는 Research-Agent 결과만 사용. AI 자체 생성 수치 금지.**
-- Qualifier: 근거 강도에 맞게 `definitely` ~ `possibly` 중 선택
-- Rebuttal: AI가 독립적으로 최강 반론을 생성하고 대응
+**AI가 자유롭게 자동 생성 가능**: Stasis/Scheme/Claim 형식, Warrant 논리 원칙, Qualifier 수준, Rebuttal 구조, Scope 경계. Source tag는 `[source:inference]` 또는 `[source:placeholder]`.
 
-**수치·출처 할루시네이션 방지 (CRITICAL):**
-
-> 이 규칙은 `references/fabrication-prevention.md`의 중앙 정의를 따른다. autonomous 모드는 인간 개입이 없기 때문에 가장 엄격한 적용 구간이다.
-
-autonomous 모드에서 AI가 Toulmin 필드를 자동 전개할 때, **구체적 수치(%, 배수, 금액, 건수)와 출처(기관명, 보고서명, 연도)**를 AI가 자체 생성하면 할루시네이션이 발생한다. 반드시 다음 규칙을 따른다:
-
-```
-허용:
-  - research/ 디렉터리에 이미 있는 findings의 수치·출처 인용
-  - Research-Agent가 WebSearch/WebFetch로 확인한 수치·출처
-  - 사용자가 직접 입력한 데이터
-
-금지:
-  - AI가 기억/추론으로 생성한 수치 (예: "시장 규모 3.2조원")
-  - AI가 기억으로 구성한 출처 (예: "McKinsey 2024 보고서에 따르면")
-  - 존재 여부가 불확실한 통계 (예: "HubSpot에 따르면 3.5배 증가")
-```
-
-Grounds/Backing에 수치가 필요한데 research findings가 없으면:
-1. **Research-Agent를 스폰**하여 외부 검색 실행
-2. 검색 결과에서 확인된 수치만 사용
-3. 검색으로도 확인 불가 시: **수치 없이 정성적으로 기술** + Qualifier를 `presumably` 이하로 설정
-
-### L0 AI-엄격 실행 조건 (cycle 5 신설 — AU4 해소)
-
-autonomous 모드는 인간 개입 없이 AI가 Toulmin 필드를 자동 생성하므로 L0가 가장 엄격하게 작동해야 한다. 각 필드 생성 시 IF-ELSE 조건:
-
-```
-FOR EACH field IN [Grounds, Backing, Warrant, Rebuttal]:
-  retrieval_available = (매핑된 research/#NNN 파인딩 존재)
-
-  IF retrieval_available:
-    필드 내용: finding 원문 인용 + #NNN 참조 명시
-
-  ELSE:
-    1차 시도: Research-Agent 자동 스폰 (위 3단계)
-    
-    IF Research-Agent 결과 수치/출처 발견:
-      필드 내용: 발견된 값 인용 + 생성된 #NNN 참조
-    
-    ELSE:
-      필드 내용: 정성 기술만 (수치·기관명·연도 조합 금지)
-      Qualifier: "presumably" 이하로 자동 하향
-      메타: unverified: true (L4가 추적)
-      
-      **이 상태로 settle은 가능하지만 draft/finalize에서 L4 게이트가 차단**
-```
-
-autonomous는 배치로 여러 섹션을 처리하므로, 위 로직을 섹션마다 개별 적용. 전체 완료 후 unverified 항목 요약을 사용자에게 보고.
+**AI가 자동 생성 불가능**: 구체값(수치·기관명·연도·인물명·URL). 이 값은 Step 1-a에서 확보된 `<research_findings>` 태그 내용만 인용. 태그 밖 구체값은 drop.
 
 ---
 
@@ -448,12 +424,13 @@ challenge 결과 확인 후 /sowhat:finalize-planning 또는 /sowhat:revise {섹
 
 ## 핵심 원칙
 
+- **retrieval 없는 섹션은 자동 전개하지 않는다** — Step 1-a gate가 차단. 사용자 개입(`/sowhat:research`/`/sowhat:inject`/`/sowhat:expand`) 없이는 draft 유지. AI 기억으로 내용을 만들지 않는다 (`references/ai-content-boundary.md`).
+- **AI는 구조만, 내용은 retrieval만** — Stasis/Scheme/Claim 형식/Warrant 논리/Qualifier는 AI 자동. 수치·기관명·연도 등 구체값은 `<research_findings>` 인용만 허용.
+- **Source tag 강제** — 모든 항목 끝에 `[source:...]` 태그. 태그 없거나 AI가 임의 부착한 retrieval 태그는 parser가 drop.
 - **섹션 파일 1회 로드** — 사전 준비에서 한 번만 로드, 각 섹션 처리 완료 시에만 재로드 허용
 - **리포트는 파일에, 대시보드만 응답에** — 상세 로그는 `logs/` 디렉터리에 저장
 - **Human checkpoint는 최소화** — critical 이슈에서만 멈춤, 나머지는 AI가 자율 판단
 - **품질 우선** — 속도보다 논증 품질. settle 검증은 생략하지 않음
-- **수치·출처는 retrieval만** — AI 자체 생성 절대 금지 (`references/fabrication-prevention.md` 참조). 확인 불가 시 정성 기술 + Qualifier 하향.
-- **Stub은 즉시 재전개** — AI 자동 전개에서 stub이 발견되면 해당 필드를 다시 채움
 - **Warrant 공격 최우선** — mini-debate에서 Warrant 연결 논리를 우선 공격
 - **강도 60 이상 목표** — 60 미만이면 추가 debate로 보강 시도
 - **Cross-section regression 검증** — settle 시 기존 섹션과의 일관성 자동 확인

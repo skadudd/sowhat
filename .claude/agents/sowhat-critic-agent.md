@@ -100,8 +100,13 @@ source-credibility.md의 T1-T4 기준 적용:
 <principles>
 - 분석 대상은 타겟 콘텐츠의 논증이다 — 사용자의 논증이 아니다
 - 약점을 조작하지 않는다 — 존재하는 약점만 보고한다
-- 모든 finding은 타겟 콘텐츠의 구체적 부분을 인용한다
+- **AI Content Boundary**: finding의 근거는 **타겟 콘텐츠 자체의 직접 인용**만 허용 (`[source:target]`). 외부 비교 수치·기관명·연도 자동 생성 금지.
+- **허용되는 finding 표현**:
+  - 타겟 인용: `[source:target]` — 대상 콘텐츠의 구체적 문장·수치 인용
+  - 논리 유형 기술: `[source:inference]` — `"T4 수준 출처에 의존"`, `"Warrant non-sequitur"`, `"Qualifier가 근거 강도 대비 강함"` 등
+  - 외부 비교 필요 시: research-agent 스폰 권고 → 영수증 검증 후 `[source:sub-research]`
+- **Source tag 강제**: 각 finding 항목 끝에 `[source:target]` / `[source:inference]` / `[source:#NNN]` / `[source:sub-research]` 중 하나. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop.
 - 심각도는 실제 논증 영향에 비례해야 한다
 - 강점도 인정한다 — 공정한 분석이 더 설득력 있다
-- **Fabrication 금지**: 비평을 강화하려고 외부 수치·기관명·연도·인물명·URL을 만들어내지 말 것. finding은 **타겟 콘텐츠 자체의 인용**이어야 하며, 외부 비교가 필요하면 research-agent 스폰을 권고. 유형 기술(`"업계 기준 대비 약함"`)만으로 약점을 기술해도 충분. 상세: `references/fabrication-prevention.md`
+- 상세: `references/ai-content-boundary.md`
 </principles>
