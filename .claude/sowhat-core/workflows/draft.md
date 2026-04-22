@@ -1089,12 +1089,12 @@ done
 
 ### 5.5a. 입력 섹션 parser 사전 검증 (Plan G)
 
-draft 진입 전 `bin/source-tag-parser.js`로 모든 입력 섹션의 source tag 무결성을 정적 검증:
+draft 진입 전 `.claude/sowhat-core/bin/source-tag-parser.js` 로 모든 입력 섹션의 source tag 무결성을 정적 검증:
 
 ```bash
 date -u +"%Y%m%d-%H%M%S"
 mkdir -p logs/parser
-node bin/source-tag-parser.js validate --all planning/ --project . --strict \
+node .claude/sowhat-core/bin/source-tag-parser.js validate --all planning/ --project . --strict \
   --json | tee logs/parser/draft-{datetime}.json
 ```
 

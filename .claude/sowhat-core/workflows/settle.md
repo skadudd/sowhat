@@ -56,7 +56,7 @@ status_transitions: ["discussing → settled"]
 7. **Open Questions** — 미해결 항목이 있으면 거부
 8. **scheme 필드** — 설정되어 있어야 함
 9. **Filler stub detection** — Toulmin 필드가 형식만 채워져 있고 실질 내용이 없는 "빈 껍데기"를 탐지. 거부.
-10. **Source tag 완전성** — `bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
+10. **Source tag 완전성** — `.claude/sowhat-core/bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
 11. **Cross-section regression** — 이 섹션을 settle함으로써 기존 settled 섹션과의 논증 일관성이 깨지는지 검증. 충돌 시 경고.
 
 ### Filler Stub Detection (빈 껍데기 탐지)
@@ -85,12 +85,12 @@ AI 구조 자동 생성에서도 여전히 발생 가능한 **filler stub** (형
 
 ### Source Tag 완전성 검증 (Plan G parser 호출)
 
-cycle 7 Plan G parser(`bin/source-tag-parser.js`)를 settle 진입 전 **실제로 호출**하여 태그 준수를 구조적으로 보증한다. 이 검증은 LLM semantic 판정이 아닌 코드 기반 정적 검사다.
+cycle 7 Plan G parser(`.claude/sowhat-core/bin/source-tag-parser.js`)를 settle 진입 전 **실제로 호출**하여 태그 준수를 구조적으로 보증한다. 이 검증은 LLM semantic 판정이 아닌 코드 기반 정적 검사다.
 
 ```bash
 date -u +"%Y%m%d-%H%M%S"
 mkdir -p logs/parser
-node bin/source-tag-parser.js validate {section_file} --project . \
+node .claude/sowhat-core/bin/source-tag-parser.js validate {section_file} --project . \
   --json | tee logs/parser/settle-{section}-{datetime}.json
 ```
 

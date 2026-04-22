@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * test-source-tags — regression test for bin/source-tag-parser.js
+ * test-source-tags — regression test for .claude/sowhat-core/bin/source-tag-parser.js
  *
  * Runs the parser against fixtures and asserts the expected counts.
  * Exits 0 on success, 1 on failure.
@@ -13,7 +13,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const repoRoot = path.resolve(__dirname, '..');
-const parser = path.join(repoRoot, 'bin', 'source-tag-parser.js');
+const parser = path.join(repoRoot, '.claude', 'sowhat-core', 'bin', 'source-tag-parser.js');
 const fixturesRoot = path.join(repoRoot, 'scripts', 'fixtures');
 
 function runParser(file) {

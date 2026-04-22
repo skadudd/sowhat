@@ -183,14 +183,14 @@ source 허용값:
 
 ### Parser 구현 (검증 단계)
 
-**구현 위치**: `bin/source-tag-parser.js` (Node.js, 의존성 0).
+**구현 위치**: `.claude/sowhat-core/bin/source-tag-parser.js` (Node.js, 의존성 0).
 
 **호출 시점**:
 
 | 진입점 | 호출 | 거부 기준 |
 |---|---|---|
-| `/sowhat:settle {section}` | `node bin/source-tag-parser.js validate {section_file} --project .` | exit 1 → settle 거부 |
-| `/sowhat:draft` (Step 5.5a) | `node bin/source-tag-parser.js validate --all planning/ --project . --strict` | exit 1 → draft 중단 |
+| `/sowhat:settle {section}` | `node .claude/sowhat-core/bin/source-tag-parser.js validate {section_file} --project .` | exit 1 → settle 거부 |
+| `/sowhat:draft` (Step 5.5a) | `node .claude/sowhat-core/bin/source-tag-parser.js validate --all planning/ --project . --strict` | exit 1 → draft 중단 |
 | `npm test` (CI 회귀) | `node scripts/test-source-tags.js` | regression fixture 불일치 |
 
 **Parser가 수행하는 4가지 정적 검사**:
@@ -242,7 +242,7 @@ challenge Stage 0 (사실 검증)은 완전 폐기하지 않는다. 단 **역할
 
 **달성 조건** (이 조건이 모두 참이어야 "구조적 구별"이 성립):
 
-1. 모든 Toulmin 불릿이 `[source:...]` 태그를 갖는다 — parser(`bin/source-tag-parser.js`)로 정적 검증
+1. 모든 Toulmin 불릿이 `[source:...]` 태그를 갖는다 — parser(`.claude/sowhat-core/bin/source-tag-parser.js`)로 정적 검증
 2. Retrieval 태그(`user/#NNN/sub-research/file/target`)의 대상이 실존 — parser가 research/ 디렉토리와 파일 시스템 대조
 3. LLM이 retrieval 태그를 허위 부착한 경우 challenge Stage 0에서 의미 수준 검증으로 탐지
 4. 사용자가 `--force`를 사용하지 않음 (sandbox escape 상태 밖)
@@ -273,7 +273,7 @@ cycle 1-6 실패 패턴(각 cycle이 자기 scope 내에서 "완벽" 선언)을 
 **현 대응**:
 - Parser가 수치·%·연도·URL·DOI 같은 명시적 구체값만 탐지
 - 구체값 없는 정성적 표현은 `[source:inference]` 허용
-- `bin/source-tag-parser.js`의 `CONCRETE_PATTERNS` 는 경계 사례 추가 시 확장
+- `.claude/sowhat-core/bin/source-tag-parser.js`의 `CONCRETE_PATTERNS` 는 경계 사례 추가 시 확장
 
 **잔여 위험**: 정성적 과장("압도적 다수", "혁명적 변화")이 inference 태그로 통과. challenge Stage 2(Scheme CQ) 영역.
 

@@ -10,10 +10,10 @@
  *       §"Plan G: Structured Output Parser"
  *
  * Usage:
- *   node bin/source-tag-parser.js validate <file.md>            # single file
- *   node bin/source-tag-parser.js validate --all <dir>          # directory
- *   node bin/source-tag-parser.js validate <file> --json        # JSON output
- *   node bin/source-tag-parser.js validate <file> --project <.> # retrieval root
+ *   node .claude/sowhat-core/bin/source-tag-parser.js validate <file.md>            # single file
+ *   node .claude/sowhat-core/bin/source-tag-parser.js validate --all <dir>          # directory
+ *   node .claude/sowhat-core/bin/source-tag-parser.js validate <file> --json        # JSON output
+ *   node .claude/sowhat-core/bin/source-tag-parser.js validate <file> --project <.> # retrieval root
  *
  * Exit codes:
  *   0 — no issues
@@ -382,8 +382,8 @@ function parseArgs(argv) {
 
 function usage() {
   console.error(`Usage:
-  node bin/source-tag-parser.js validate <file.md> [--project <root>] [--json] [--strict]
-  node bin/source-tag-parser.js validate --all <dir> [--project <root>] [--json] [--strict]
+  node .claude/sowhat-core/bin/source-tag-parser.js validate <file.md> [--project <root>] [--json] [--strict]
+  node .claude/sowhat-core/bin/source-tag-parser.js validate --all <dir> [--project <root>] [--json] [--strict]
 
 Modes:
   validate  Check source tag existence, whitelist, and retrieval-path reality.
