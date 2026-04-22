@@ -282,7 +282,7 @@ spec 05-func-req > 기능 3/8
 [3] 잘 모르겠다 → Open Question 등록
 ```
 
-> 예시 표현의 `{중괄호}` 플레이스홀더는 실제 값이 사용자 입력 또는 retrieval에서만 채워져야 함을 의미한다. 상세: `references/fabrication-prevention.md`.
+> 예시 표현의 `{중괄호}` 플레이스홀더는 실제 값이 사용자 입력 또는 retrieval에서만 채워져야 함을 의미한다. 상세: `references/ai-content-boundary.md`.
 
 ### 금지 패턴
 

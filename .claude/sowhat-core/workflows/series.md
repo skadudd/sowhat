@@ -17,21 +17,7 @@ status_transitions: []
 
 이 커맨드는 크로스 프로젝트 시리즈 콘텐츠를 관리한다. 각 에피소드는 독립적인 sowhat 프로젝트이며, 시리즈 레이어는 에피소드 간 맥락 연결, 용어 일관성, 서사 흐름을 추적한다.
 
-## L1 Fabrication 차단 (필수)
-
-시리즈 생성·에피소드 등록·맥락 요약·digest 작성 시 **AI가 생성하는** 콘텐츠에 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다. 특히:
-
-- **에피소드 digest**: 이전 에피소드의 핵심 논증 요약 시 **원본 섹션의 인용을 그대로** 옮긴다. 재구성·보강 금지.
-- **arc.md (서사 아크)**: 시리즈 전체 흐름 기술 시 AI가 "시장 34% 성장" 같은 구체값 추가 금지. 플레이스홀더로 유지 (`{수치}`).
-- **terminology.json**: 용어 정의에 실명·수치 삽입 금지. 개념 설명만.
-- **shared-research/pool.md**: 에피소드 간 공유 리서치. 각 항목은 반드시 원본 finding ID 또는 URL 참조 필수.
-
-구체 내용은 오직 3가지 경로에서만 들어온다:
-1. 사용자 직접 입력
-2. Sub-Research 결과 (영수증 검증 통과)
-3. 에피소드 프로젝트의 `research/` 파인딩 매핑 (finding ID 그대로 참조)
-
-상세: `references/fabrication-prevention.md` §L0 AI-엄격 경로.
+> **AI Content Boundary**: 시리즈 digest·arc·terminology 작성 시 AI는 원본 에피소드 섹션의 인용만 사용 — 재구성·구체값 추가 금지. 에피소드 digest의 구체값은 원본 섹션의 source tag를 그대로 보존 (`[source:#NNN]` 등). shared-research 항목은 원본 finding ID 참조 필수. 상세: `references/ai-content-boundary.md`.
 
 ## 데이터 모델
 

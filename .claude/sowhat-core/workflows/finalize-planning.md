@@ -29,14 +29,14 @@ status_transitions: ["layer: planning → spec"]
 
 모든 섹션이 `settled`여야만 진행한다.
 
-## Challenge 자동 실행 (생략 불가 — L4 Fabrication 게이트)
+## Challenge 자동 실행 (생략 불가)
 
 `/sowhat:challenge`를 자동 실행한다.
 
 - 문제가 발견되면 → **즉시 중단**. 인간이 문제를 해결한 후 다시 실행해야 한다.
 - 문제가 없으면 → 다음 단계 진행
 
-> **Fabrication 방어선 역할**: 이 단계는 `references/fabrication-prevention.md` §"Layer 책임 분리"의 **L4 게이트키핑**이다. L2 settle은 출처 표기의 **형식적 존재**만 검증하므로, 가짜 URL·인물명·보고서명 fabrication은 이 단계의 L3(challenge Stage 0)에서 실제 fetch·semantic 대조로 탐지된다. 이 자동 실행을 생략할 수 없는 이유: L4를 건너뛰면 L2를 통과한 fabrication이 명세 레이어까지 전파되어 최종 산출물에 남는다.
+> **역할**: challenge Stage 0(사용자 입력 citation 실존 확인) + Stage 1-7(논리 검증) 전체를 기획→명세 전환 전에 수행한다. Stage 0에서 발견된 citation 오류는 즉시 revise 경로로 해소 (`references/ai-content-boundary.md`).
 
 ## 디렉터리 준비
 

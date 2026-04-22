@@ -13,7 +13,7 @@ All sowhat sections use the Toulmin Model with 6 mandatory fields.
 | **Qualifier** | 한정어 | Confidence level. How certain is the Claim. | "usually" (1등급) |
 | **Rebuttal** | 반박 조건 | Conditions under which the Claim would be false. | "단, 규제 환경이 급변하지 않는 한" |
 
-> 예시의 `{중괄호}` 플레이스홀더는 실제 값이 retrieval(사용자 입력, Sub-Research, `research/` finding)을 통해서만 채워져야 함을 의미한다. AI가 이 자리를 구체 고유값으로 자체 생성하면 **fabrication**이다. 상세: `references/fabrication-prevention.md`.
+> 예시의 `{중괄호}` 플레이스홀더는 실제 값이 retrieval(사용자 입력, Sub-Research, `research/` finding)을 통해서만 채워져야 함을 의미한다. AI가 이 자리를 구체 고유값으로 자체 생성하면 **fabrication**이다. 상세: `references/ai-content-boundary.md`.
 
 ## Qualifier Scale (5-level)
 

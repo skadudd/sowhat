@@ -69,18 +69,7 @@ Field 값: `claim` / `grounds` / `warrant` / `qualifier` / `rebuttal` / `backing
 
 ---
 
-## L1 Fabrication 차단 (필수)
-
-사용자가 "데이터 보강", "근거 추가" 등 수정을 요청할 때, **AI가 자체 생성하는** 수정 제안에는 구체 수치·기관명·연도·인물명·URL 같은 fabrication 가능 고유값을 포함하지 않는다.
-
-구체 내용이 필요하면:
-1. 사용자에게 직접 입력 요청
-2. research-agent 스폰 (`/sowhat:research` 경유)
-3. `research/` 파인딩 매핑
-
-AI가 "McKinsey 2024: 34%" 같은 예시 수정안을 제시하는 것 금지. 유형 기술(`"업계 벤치마크 수치를 Backing으로 추가"`)과 플레이스홀더로 대체.
-
-상세: `references/fabrication-prevention.md`.
+> **AI Content Boundary**: AI의 수정 제안은 구조·유형 기술만(`[source:inference]`). 구체값이 필요하면 사용자 직접 입력(`[source:user]`) / research-agent 스폰(`[source:sub-research]`) / `research/` 매핑(`[source:#NNN]`). "McKinsey 2024: 34%" 같은 예시 수정안 제시 금지. 상세: `references/ai-content-boundary.md`.
 
 ---
 

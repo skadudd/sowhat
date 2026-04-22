@@ -310,57 +310,27 @@ scheme: "cause-effect"              # argument scheme (expand에서 설정)
 ---
 ```
 
-### Fabrication Prevention 메타데이터 (cycle 4-6 신설)
-
-```yaml
----
-# ... 기본 필드 ...
-
-last_challenged_at: "2026-04-21T..."  # cycle 5 신설 — challenge Stage 0 통과 시각
-                                      # challenge.md / finalize-planning.md가 기록
-                                      # draft.md L4 게이트가 auto-invoke 판정에 사용
-                                      # 섹션이 updated 된 후 challenge 재실행 전까지는 null
-
-unverified_items:                    # cycle 4 신설, cycle 5 detected_by 배열화
-  - field: "grounds"                 # grounds | backing | warrant | rebuttal
-    bullet_index: 2                  # 0-indexed
-    value: "McKinsey 2024: 34%"      # 실제 텍스트 (감사용)
-    reason: "retrieval 없는 구체값"   # 사람이 읽는 설명
-    detected_by:                     # cycle 5 — 배열, 여러 layer 중복 감지 가능
-      - "L0-user"                    # L0-ai | L0-user | L2-en_direct | L2-ko_direct
-                                     # L2-en_suffix | L2-ko_suffix | L2-ko_vague | L2-en_vague
-                                     # L2a-finding_miss | L2a-file_miss | L2a-section_miss
-                                     # L3-stage0 (challenge에서 추가 감지)
-    detected_at: "2026-04-21T..."    # 최초 감지 시각
----
-```
-
-### Frontmatter 필드별 업데이트 책임 (cycle 6 명확화)
+### Frontmatter 필드별 업데이트 책임
 
 | 필드 | 생성 | 갱신 | 삭제 |
 |---|---|---|---|
 | `status` | init/expand | settle/challenge/revise | finalize (settled → archived은 현재 없음) |
 | `updated` | init | 섹션 수정하는 모든 workflow | — |
-| `last_challenged_at` | — | **challenge.md Stage 0 통과 시** / **finalize-planning.md challenge 자동 실행 시** | 섹션 내용 수정 시 null로 리셋(optional) |
-| `unverified_items` | **settle.md** L2 warning / L2a 독립 실행 시 append | **challenge.md Stage 0** 해소된 항목 제거, 새 이슈 append (L3-stage0) / **revise.md** 사용자 해소 시 제거 | — |
-
-> **중복 감지 처리**: 같은 (`field`, `bullet_index`)가 이미 있으면 새 엔트리 생성 대신 `detected_by` 배열에만 추가. `L4 draft 게이트`는 **(field, bullet_index) 기준 unique count**.
 
 ### 검증 규칙 (섹션 파일)
 
 1. `status` 유효성: `references/status-transitions.md` 전이 규칙 준수
 2. `updated >= created`
-3. `last_challenged_at`이 있으면 `last_challenged_at >= created`
-4. `unverified_items` 빈 배열이거나 올바른 스키마
 
-### 기존 프로젝트 마이그레이션 (cycle 6)
+### 폐기된 필드 (cycle 7)
 
-이 스키마의 신규 필드(`last_challenged_at`, `unverified_items`)는 기존 프로젝트에 없을 수 있음:
+cycle 4-6에서 도입한 fabrication prevention 관련 frontmatter 필드는 cycle 7에서 모두 폐기. AI가 구체값을 자동 생성할 경로 자체를 제거했으므로 사후 탐지·집계가 불필요 (`references/ai-content-boundary.md`).
 
-- `last_challenged_at` 부재 → L4 draft 게이트는 "challenge 미실행"으로 간주, `/sowhat:challenge --all` 자동 실행
-- `unverified_items` 부재 → 빈 배열로 간주, 차단 안 함
+- `last_challenged_at`: 폐기. draft.md L4 auto-invoke 로직이 제거됐으므로 기록 불필요
+- `unverified_items`: 폐기. L2/L2a 정규식·참조 실존 탐지가 제거됐으므로 플래그 불필요
+- `detected_by`: 폐기 (unverified_items의 하위 필드)
 
-워크플로우 실행 시 필드가 없으면 보수적으로 처리 (차단이 안전).
+기존 프로젝트에 남아있는 이 필드들은 workflow가 무시 (noop). 삭제하지 않아도 안전.
 
 ---
 

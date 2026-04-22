@@ -20,17 +20,7 @@ status_transitions: ["(none) → draft"]
 - **content-critique 모드** (`--from`): 외부 콘텐츠를 분석 대상으로 삼아, 인간이 그에 대한 입장을 세운다.
 - **research 모드** (`--research`): 자료를 먼저 수집·분석하여 패턴과 인사이트를 발견하고, 근거로부터 thesis를 bottom-up으로 도출한다. "자료는 있는데 무슨 주장을 해야 할지 모르겠다"는 상황에 적합.
 
-## L1 Fabrication 차단 (필수)
-
-Thesis Answer와 Key Arguments는 **전체 프로젝트의 출발점**이다. AI가 이 단계에서 구체 수치·기관명·연도·인물명·URL을 제안하면, 이후 모든 섹션이 fabrication 위에 세워진다.
-
-- Thesis Answer 후보를 제시할 때 실명 인용 금지 — 추상적·구조적 명제로 제시 (예: `"{주제}의 {측면}이 {속성}이며 따라서 {판단}이 정당하다"`)
-- Key Arguments에도 구체 기관명·수치 삽입 금지
-- 구체값이 필요하면 사용자 직접 입력 또는 `--research` 모드로 retrieval 후 반영
-
-content-critique 모드(`--from`)에서 가져온 대상 콘텐츠의 인용을 thesis에 반영할 때는 **원본 그대로** 보존. AI 재구성 금지.
-
-상세: `references/fabrication-prevention.md`.
+> **AI Content Boundary**: Thesis/KA는 프로젝트 출발점이다. AI가 제시하는 Answer/KA 후보는 구조적 명제(`[source:inference]`). 구체값(수치·기관명·연도·URL)은 사용자 입력 또는 `--research` 모드 retrieval만(`[source:user]` / `[source:#NNN]`). content-critique 모드(`--from`) 대상 콘텐츠 인용은 원본 그대로(`[source:target]`), AI 재구성 금지. 상세: `references/ai-content-boundary.md`.
 
 ## 인자 파싱
 

@@ -66,9 +66,9 @@ finalize 시작 — challenge 자동 실행 중
   인간의 선택을 기다린다.
 - 문제가 없으면 → 다음 단계 진행
 
-> **Fabrication 방어선 역할**: 이 단계는 `references/fabrication-prevention.md` §"Layer 책임 분리"의 **L4 게이트키핑**이다. L2 settle은 출처 표기의 **형식적 존재**만 검증하므로, 가짜 URL·인물명·보고서명 fabrication은 이 단계의 L3(challenge Stage 0)에서 실제 fetch·semantic 대조로 탐지된다.
+> **역할**: finalize 전 challenge Stage 0-7 최종 검증. Stage 0은 사용자 입력 citation의 실존·값 정확성 확인(`[source:user]`/`[source:#NNN]`/`[source:sub-research]`/`[source:file:*]`), Stage 1-7은 논리 검증. 상세: `references/ai-content-boundary.md`.
 >
-> **`--force` 주의**: `--force` 사용 시 L3를 건너뛰므로 fabrication 방어선 전부가 무너진다. L2를 통과한 가짜 URL이 최종 산출물에 남을 수 있다. 인지된 문제가 fabrication이 아닌 다른 경미한 이슈일 때만 사용.
+> **`--force` 주의**: `--force` 사용 시 challenge를 건너뛴다. 통과하지 못한 논리·사실 이슈가 최종 산출물에 남을 수 있다. 인지된 문제가 경미할 때만 사용.
 
 ## Export 생성
 

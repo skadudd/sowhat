@@ -1087,7 +1087,7 @@ git commit -m "expand({section}): complete toulmin structure"
 - **Grounds 결합 방식 명시** — Linked/Convergent에 따라 challenge 공격 전략이 달라짐
 - **예시는 맥락 기반** — generic 예시 금지, 인간의 실제 Claim/Grounds에서 파생
 - **즉시 기록 확인** — 각 답변 후 기록된 내용을 바로 보여주고 추가/계속 선택
-- **Claude는 질문만 한다** — 내용을 대신 채우지 않는다. 특히 **구체 수치·기관명·연도·인물명은 절대 AI가 생성하지 않는다** (`references/fabrication-prevention.md` 참조)
+- **Claude는 질문만 한다** — 내용을 대신 채우지 않는다. 특히 **구체 수치·기관명·연도·인물명은 절대 AI가 생성하지 않는다** (`references/ai-content-boundary.md` 참조)
 - **항상 thesis와의 연결을 확인한다** — 모든 필드는 thesis Answer로 거슬러 올라간다
 - **Warrant는 생략 불가** — Implicit Warrant는 경고 후 계속 가능하나 위험함을 고지
 - **각 스텝 완료마다 커밋** — 작업 손실 방지

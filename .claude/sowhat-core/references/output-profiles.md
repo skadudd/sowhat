@@ -348,7 +348,7 @@ export/
 물론 {반론 조건} 가능성은 있지만, {반론에 대한 대응}.
 ```
 
-> 예시의 `{중괄호}` 값은 실제 섹션 데이터에서 치환된다. AI가 자체로 구체 수치·출처를 생성하면 fabrication이다. `references/fabrication-prevention.md` 참조.
+> 예시의 `{중괄호}` 값은 실제 섹션 데이터에서 치환된다. AI가 자체로 구체 수치·출처를 생성하면 fabrication이다. `references/ai-content-boundary.md` 참조.
 
 - Claim + 핵심 Grounds 1-2개
 - Warrant: 자연스러운 연결 문장으로

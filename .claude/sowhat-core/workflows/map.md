@@ -112,7 +112,7 @@ Thesis: "{thesis answer 40자}"
 ----------------------------------------
 ```
 
-> 예시의 `{중괄호}` 값은 실제 섹션 파일에서 렌더링 시점에 치환된다. AI가 자체로 구체 수치·출처를 생성해 넣으면 fabrication이다. `references/fabrication-prevention.md` 참조.
+> 예시의 `{중괄호}` 값은 실제 섹션 파일에서 렌더링 시점에 치환된다. AI가 자체로 구체 수치·출처를 생성해 넣으면 fabrication이다. `references/ai-content-boundary.md` 참조.
 
 ---
 
@@ -208,7 +208,7 @@ Rebuttal:
 ----------------------------------------
 ```
 
-> 예시의 `{중괄호}` 값은 실제 섹션 파일에서 렌더링 시점에 치환된다. AI가 자체로 구체 수치·출처를 생성해 넣으면 fabrication이다. `references/fabrication-prevention.md` 참조.
+> 예시의 `{중괄호}` 값은 실제 섹션 파일에서 렌더링 시점에 치환된다. AI가 자체로 구체 수치·출처를 생성해 넣으면 fabrication이다. `references/ai-content-boundary.md` 참조.
 
 ---
 

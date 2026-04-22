@@ -350,7 +350,7 @@ graph LR
   {주장 문장} ({저자/기관}, {연도}).
 ```
 
-> 예시의 `{중괄호}` 값은 실제 retrieval된 출처에서 치환된다. AI가 자체로 기관명·저자·제목·연도·수치를 생성하면 fabrication이다. `references/fabrication-prevention.md` 참조.
+> 예시의 `{중괄호}` 값은 실제 retrieval된 출처에서 치환된다. AI가 자체로 기관명·저자·제목·연도·수치를 생성하면 fabrication이다. `references/ai-content-boundary.md` 참조.
 
 ### Tier별 그룹핑
 
