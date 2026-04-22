@@ -25,67 +25,31 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 
 이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Toulmin Model 전체 구조(Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
-## L1 Fabrication 차단 (필수 — CRITICAL: AI 제안 경로)
+## AI Content Boundary (cycle 7 — Plan A+G)
 
-AI가 생성하는 **모든 선택지·제안·예시·힌트·placeholder**에 구체적 수치·기관명·연도·URL·사람 이름·보고서명 같은 fabrication 가능한 고유값을 포함하지 않는다. 구체 내용은 오직 다음 3가지 경로에서만 들어온다:
+AI는 **구조만 제안**한다. **내용은 제안하지 않는다**.
 
-1. 사용자 직접 입력 (`[N] 직접 작성`)
-2. Sub-Research 결과 (실제 웹 검색)
-3. `research/` 파인딩 매핑
+- **구조**: Claim 형식, Warrant 논리 연결, Scheme 선택, Qualifier 추정, Stasis 유형 — **AI 자유**
+- **내용**: 구체 수치, 기관명, 인물명, 보고서명, URL — **AI 금지**
 
-상세 규칙: `references/fabrication-prevention.md`.
+내용은 오직 4가지 경로로만 들어온다:
+1. 사용자 직접 입력 → `[source:user]`
+2. research/ 파인딩 매핑 → `[source:#NNN]`
+3. Sub-Research 실행 결과 → `[source:sub-research]`
+4. file:/dir: 자료 (inject로 주입) → `[source:file:path]`
 
-### 선택지 생성 치환 규칙
+AI가 Step 3/5/7/8에서 선택지를 제시할 때 **구체값 포함 선택지 자체를 만들지 않는다**. 상세: `references/ai-content-boundary.md`.
 
-| 금지 | 허용 |
-|------|------|
-| `[1] McKinsey 2024 리포트: 이탈률 34%` | `[1] 업계 벤치마크 이탈률 수치 (출처: Sub-Research 또는 직접 입력)` |
-| `[2] IDC 2024: CAGR 27.8%` | `[2] 시장 성장률 지표 (출처 필요)` |
-| `예) 78%가 통합 비용을 언급` | `예) {비율}%가 {요인}을 {결과} 이유로 언급` |
+### Source Tag 강제 (Plan G)
 
-AI가 Step 3/5/7/8에서 제안 선택지를 생성할 때, 구체적 수치·기관명·고유명사가 들어가면 해당 선택지를 무효로 하고 유형 설명 또는 플레이스홀더로 대체한다.
+AI 생성물 각 항목 끝에 `[source:...]` 태그 필수. 태그 없는 항목은 parser가 drop.
 
-### L0 AI-엄격 실행 조건 (cycle 5 신설 — AU4 해소)
+AI가 자유롭게 사용할 수 있는 source:
+- `placeholder` — `{기관} {연도}: {수치}` 같은 구체값 없는 플레이스홀더
+- `inference` — 구조·논리 추론 (구체값 없음)
 
-Step 3/5/7/8 선택지 생성 시 **IF-ELSE 조건**으로 구조화. LLM은 이 로직을 따라야 한다:
-
-```
-retrieval_available =
-  (research/ 디렉토리에 해당 섹션 매핑된 #NNN 파인딩 존재)
-  OR
-  (사용자가 /sowhat:inject로 file:/dir: 자료 연결함)
-
-IF retrieval_available:
-  선택지에 구체값 포함 허용:
-    [1] "{finding 원문 인용}: {수치}" (출처: #NNN 또는 file:)
-    [2] "{finding 원문 인용}" (동일)
-    [3] 직접 작성 (unverified 플래그 가능)
-    [6] 🔍 Sub-Research (추가 조사)
-
-ELSE (retrieval 없음):
-  선택지는 다음만 가능:
-    [1] {정성 기술 유형 힌트 1 — 수치 없음}
-    [2] {정성 기술 유형 힌트 2 — 수치 없음}
-    [3] {플레이스홀더 — "{기관} {연도}: {수치}" 형식}
-    [4] 직접 작성 (구체값 입력 시 자동 unverified)
-    [6] 🔍 Sub-Research 실행 (권장)
-  **선택지에 실재 기관명·구체 수치·연도 조합 포함 금지**
-
-사용자가 Sub-Research 거부 ([0] 기각) 시:
-  경고 + unverified 플래그 수용 확인 — 이는 L4 draft 게이트에서 차단됨을 안내
-```
-
-Sub-Research 기각 후 직접 입력 흐름에 다음 프롬프트 삽입:
-
-```
-⚠️ Sub-Research를 거부했습니다.
-   근거 없이 직접 작성 시 unverified 플래그가 부착됩니다.
-   → unverified 항목은 draft/finalize에서 차단됩니다.
-
-   [1] Sub-Research 재시도 (다른 검색어)
-   [2] unverified 수용 후 직접 작성
-   [3] Grounds 생략 (skip)
-```
+AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
+- `user`, `#NNN`, `sub-research`, `file:...`
 
 ---
 
@@ -401,21 +365,9 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 
 파인딩 활용 시: 파인딩 파일의 `status`를 `applied`로 변경, `applied_to` 필드 업데이트.
 
-파인딩이 없으면 (idea 모드 또는 미매핑) 아래 일반 흐름으로 진행:
+파인딩이 없으면 (idea 모드 또는 미매핑) 아래 일반 흐름으로 진행.
 
-scheme에 따라 다른 근거 유형을 안내한다.
-
-**scheme별 증거 요건:**
-- `statistics`: 수치/데이터 필수
-- `cause-effect`: 인과 메커니즘 설명 필수 (수치 있으면 강함)
-- `authority`: 전문가 이름/출처 (수치 불필요)
-- `analogy`: 유사 사례와 유사성 설명 (수치 불필요)
-- `example`: 대표적 사례와 대표성 설명 (수치 불필요)
-- `sign`: 패턴 관찰 (수치 있으면 좋음)
-- `principle`: 원칙 출처/적용 조건 (수치 불필요)
-- `consequence`: 결과 흐름 설명 (수치 있으면 강함)
-
-#### 4-1. 근거 유형 선택 (서브질문 트리)
+#### 4-1. 근거 출처 선택 (cycle 7 — Plan A 3-choice)
 
 ```
 > [expand {section} > 스텝 4/9 Grounds]
@@ -424,50 +376,60 @@ scheme에 따라 다른 근거 유형을 안내한다.
 > Stasis: {stasis} | Scheme: {scheme}
 > Claim: "{Claim 40자}"
 
-❓ 이 주장을 지지하는 근거의 유형은?
-   (scheme: {scheme} — 아래 유형에 따라 세부 질문이 달라집니다)
+❓ 근거 출처를 선택하세요.
 
-  [1] 수치/데이터     → 출처, 규모, 시기를 묻겠습니다
-  [2] 인터뷰/설문     → 대상, 샘플 수, 핵심 응답을 묻겠습니다
-  [3] 사례/비교       → 어떤 회사/상황, 어떤 유사성인지 묻겠습니다
-  [4] 전문가 의견     → 누구, 어떤 발언인지 묻겠습니다
-  [5] 직접 서술       → 자유 형식으로 입력
-  [6] 🔍 Sub-Research → agent-browser로 인라인 검색 (Semi-Async 전환)
+  [1] 직접 입력 — 내가 가진 자료·경험·수치를 타이핑
+  [2] 🔍 Sub-Research 실행 — AI가 외부 조사 수행 (영수증 검증 통과)
+  [3] research/ 파인딩에서 선택 — 이미 수집한 자료 활용
+  [4] 🗃️ file:/dir: 자료 주입 — /sowhat:inject 실행 후 돌아오기
 ```
 
-**[1] 수치/데이터 선택 시 세부 질문:**
+AI는 **구체값을 포함한 선택지를 만들지 않는다**. 위 4개가 전부. 각 선택 후 source 태그가 자동 부착된다.
+
+**[1] 직접 입력 선택 시:**
+
 ```
-  ❓ 출처는?
-    [1] 공개 리서치 리포트 (업계/시장 조사기관 등)
-    [2] 정부·공공 통계 (공식 통계 포털 등)
-    [3] 자체 조사/실험 데이터
-    [4] 기타 (직접 입력)
+❓ 근거를 자유롭게 입력하세요. 수치·기관명·연도가 있으면 그대로 쓰세요.
+   (예: "자체 조사 결과 이탈률 34%", "2024 사내 워크샵 의견" 등)
 
-  → 선택 후: "구체적으로 어떤 수치입니까? (예: {기관} {연도}: {수치} {단위})"
-```
-
-> **Fabrication 방지**: 이 [1][2] 카테고리 힌트에는 구체 기관명을 포함하지 않는다. 사용자가 실제로 가진 출처를 [4] 선택 시 직접 입력하게 하거나, Sub-Research(스텝 4-1 [6])로 검증된 출처를 확보한다. (`references/fabrication-prevention.md` §"허용되는 표현")
-
-**[2] 인터뷰/설문 선택 시 세부 질문:**
-```
-  ❓ 조사 규모와 대상은?
-    [1] 소규모 (n < 30) — 심층 인터뷰
-    [2] 중규모 (n = 30~200) — 설문
-    [3] 대규모 (n > 200) — 통계적 유의성 있음
-    [4] 직접 입력
-
-  → 선택 후: "핵심 발견은 무엇입니까? (예: {비율}%가 {주요 요인}을 {결과} 이유로 언급)"
+   [Enter 한 번 더 누르면 입력 완료]
 ```
 
-**[3] 사례/비교 선택 시 세부 질문:**
-```
-  ❓ 어떤 사례입니까?
-    [1] 국내 유사 기업/상황
-    [2] 해외 유사 기업/상황
-    [3] 직접 입력
+사용자 입력 그대로 저장. Source tag: `[source:user]`.
 
-  → 선택 후: "우리 Claim과 이 사례의 유사성은 무엇입니까?"
+구체값 포함 시 출처 표기는 **권장** (강제 아님):
 ```
+ℹ️ 입력에 구체 수치·기관명이 있습니다. 가능하면 URL/파일 경로/DOI를 함께 적어주세요.
+   외부 공유(draft) 시 출처가 사용자 입력임이 태그로 표시됩니다.
+```
+
+**[2] Sub-Research 선택 시:**
+
+`workflows/research.md` Sub-Research 흐름 호출. 결과는 `[source:sub-research]` 태그로 저장. 영수증 검증 실패 시 결과 drop (사용자에게 Web Research fallback 선택 제시).
+
+**[3] research/ 파인딩 선택 시:**
+
+해당 섹션 매핑 여부 확인 후:
+- 매핑된 finding 있음 → finding 목록 제시 → 사용자 선택 → `[source:#NNN]` 태그
+- 매핑 없음 → 전체 `research/` 파인딩 목록 → 사용자 선택 → 매핑 생성 + 태그
+
+**[4] file:/dir: 주입 선택 시:**
+
+`/sowhat:inject {section}` 흐름으로 전환. 주입 완료 후 expand Step 4로 돌아와 source tag `[source:file:path]` 부착.
+
+---
+
+**scheme별 증거 요건** (참고 — 사용자 입력에 대한 가이드라인):
+- `statistics`: 수치/데이터 권장
+- `cause-effect`: 인과 메커니즘 설명 권장
+- `authority`: 전문가 이름/출처
+- `analogy`: 유사 사례와 유사성 설명
+- `example`: 대표적 사례와 대표성 설명
+- `sign`: 패턴 관찰
+- `principle`: 원칙 출처/적용 조건
+- `consequence`: 결과 흐름 설명
+
+AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 
 #### 4-2. 즉시 기록 확인
 
