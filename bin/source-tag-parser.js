@@ -191,12 +191,30 @@ function checkFindingExists(nnn, projectRoot) {
   }
 }
 
+/**
+ * Returns: { ok: true } | { ok: false, reason: string }
+ *
+ * file: paths must resolve under projectRoot (sandbox). Absolute paths and
+ * `..` traversal outside the project are rejected so `[source:file:...]`
+ * cannot point at arbitrary filesystem locations.
+ */
 function checkFileExists(filePath, projectRoot) {
-  // file: paths are relative to project root
   const absolute = path.isAbsolute(filePath)
-    ? filePath
-    : path.join(projectRoot, filePath);
-  return fs.existsSync(absolute);
+    ? path.resolve(filePath)
+    : path.resolve(projectRoot, filePath);
+
+  const root = path.resolve(projectRoot);
+  const rel = path.relative(root, absolute);
+  const escapesSandbox =
+    rel.startsWith('..') || path.isAbsolute(rel);
+
+  if (escapesSandbox) {
+    return { ok: false, reason: 'projectRoot 밖 경로 (sandbox 이탈)' };
+  }
+  if (!fs.existsSync(absolute)) {
+    return { ok: false, reason: '경로 미실존' };
+  }
+  return { ok: true };
 }
 
 // ---------------------------------------------------------------------------
@@ -270,13 +288,14 @@ function validateFile(filePath, projectRoot) {
           }
         } else if (sourceType === 'file') {
           const fp = tag.value.slice(5); // strip "file:"
-          if (!checkFileExists(fp, projectRoot)) {
+          const check = checkFileExists(fp, projectRoot);
+          if (!check.ok) {
             issues.push({
               severity: 'error',
               field: section.field,
               bulletIndex: i,
               line: bullet.lineNumber,
-              reason: `[source:${tag.value}] — 파일 미실존`,
+              reason: `[source:${tag.value}] — ${check.reason}`,
               text: bullet.text,
             });
           }

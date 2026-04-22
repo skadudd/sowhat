@@ -42,7 +42,7 @@ const cases = [
   {
     name: 'invalid fixture reports exact issues',
     file: path.join(fixturesRoot, 'invalid-section.md'),
-    expect: { exitCode: 1, errorCount: 5, warningCount: 1 },
+    expect: { exitCode: 1, errorCount: 6, warningCount: 1 },
   },
 ];
 
