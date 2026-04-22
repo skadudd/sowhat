@@ -50,7 +50,7 @@ saved: {current_datetime}
 finalize 시작 — challenge 자동 실행 중
 ```
 
-## Challenge 자동 실행 (L4 Fabrication 게이트)
+## Challenge 자동 실행
 
 `$ARGUMENTS`에 `--force`가 있으면 challenge를 건너뛴다.
 

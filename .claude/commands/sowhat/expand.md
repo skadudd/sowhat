@@ -21,7 +21,7 @@ allowed-tools:
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
 @.claude/sowhat-core/references/toulmin-model.md
-@.claude/sowhat-core/references/fabrication-prevention.md
+@.claude/sowhat-core/references/ai-content-boundary.md
 </execution_context>
 
 <context>

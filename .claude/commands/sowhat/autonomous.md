@@ -27,7 +27,7 @@ allowed-tools:
 @.claude/sowhat-core/references/toulmin-model.md
 @.claude/sowhat-core/references/challenge-algorithm.md
 @.claude/sowhat-core/references/checkpoints.md
-@.claude/sowhat-core/references/fabrication-prevention.md
+@.claude/sowhat-core/references/ai-content-boundary.md
 </execution_context>
 
 <context>

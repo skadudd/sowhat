@@ -36,6 +36,7 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "prepublishOnly": "npm run build"
+    "test": "node scripts/test-source-tags.js",
+    "prepublishOnly": "npm run test && npm run build"
   }
 }
