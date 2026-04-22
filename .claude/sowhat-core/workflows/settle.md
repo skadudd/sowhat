@@ -88,8 +88,13 @@ AI 구조 자동 생성에서도 여전히 발생 가능한 **filler stub** (형
 cycle 7 Plan G parser(`bin/source-tag-parser.js`)를 settle 진입 전 **실제로 호출**하여 태그 준수를 구조적으로 보증한다. 이 검증은 LLM semantic 판정이 아닌 코드 기반 정적 검사다.
 
 ```bash
-node bin/source-tag-parser.js validate {section_file} --project .
+date -u +"%Y%m%d-%H%M%S"
+mkdir -p logs/parser
+node bin/source-tag-parser.js validate {section_file} --project . \
+  --json | tee logs/parser/settle-{section}-{datetime}.json
 ```
+
+Parser 출력을 `logs/parser/settle-{section}-{datetime}.json`에 영구 저장. dogfooding·cycle 8 audit에서 실제 parser 판정 이력을 추적 가능.
 
 Parser가 검증하는 항목:
 

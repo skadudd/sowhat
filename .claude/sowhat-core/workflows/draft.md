@@ -1092,10 +1092,15 @@ done
 draft 진입 전 `bin/source-tag-parser.js`로 모든 입력 섹션의 source tag 무결성을 정적 검증:
 
 ```bash
-node bin/source-tag-parser.js validate --all planning/ --project . --strict
+date -u +"%Y%m%d-%H%M%S"
+mkdir -p logs/parser
+node bin/source-tag-parser.js validate --all planning/ --project . --strict \
+  --json | tee logs/parser/draft-{datetime}.json
 ```
 
-Parser가 errors 보고 시 draft 중단. 사용자에게 `/sowhat:revise {section}` 경로 안내. `--strict` 플래그로 warnings도 차단(draft는 외부 공유용이므로 보수적).
+`planning/` 디렉토리가 없으면(init 직후) parser는 exit 2. 이 경우 "입력 섹션 없음"으로 판단하고 Step 5.5b만 진행.
+
+Parser가 errors 보고 시(exit 1) draft 중단. `logs/parser/draft-{datetime}.json`에 영구 저장된 리포트를 사용자에게 보여주고 `/sowhat:revise {section}` 안내. `--strict`로 warnings도 차단(draft는 외부 공유용이므로 보수적).
 
 ### 5.5b. 산출물 구체값 매칭 (LLM-semantic)
 
