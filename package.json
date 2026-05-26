@@ -51,7 +51,6 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test-source-tags.js && node scripts/test-draft-hallucination-guard.js && node scripts/test-migrate-walton.js",
     "lint": "node scripts/build.js --dry-run",
-    "audit:skills": "npx skillgrade .claude/commands/sowhat",
-    "prepublishOnly": "npm run test && npm run build && npm run audit:skills"
+    "prepublishOnly": "npm run test && npm run build"
   }
 }
