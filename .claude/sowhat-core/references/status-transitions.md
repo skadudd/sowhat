@@ -55,16 +55,16 @@ Valid status values, transition rules, and cascading invalidation algorithm for 
 | 수정 필드 | 조건 | 분류 |
 |-----------|------|------|
 | 모든 필드 | 포맷팅/오타만 변경 (의미 동일) | `cosmetic` |
-| `backing` | 항상 | `reinforcing` |
 | `open-questions` | 항상 | `cosmetic` |
+| `cq_responses` | 미답변 CQ에 새 답변 추가 | `reinforcing` |
 | `grounds` | Claim 변경 없음 | `reinforcing` |
 | `grounds` | Claim도 변경됨 | `structural` |
 | `claim` | 의미 동일한 재표현 | `substantive` |
 | `claim` | 의미 변경 | `structural` |
-| `warrant` | Claim 변경 없음 | `substantive` |
-| `warrant` | Claim도 변경됨 | `structural` |
-| `qualifier` | 항상 | `substantive` |
-| `rebuttal` | 항상 | `substantive` |
+| `scheme` | scheme 종류 변경 | `structural` |
+| `cq_responses` | 기존 답변 의미 변경 | `substantive` |
+| `confidence` | 항상 | `substantive` |
+| `scope` | 범위 변경 | `substantive` |
 
 **감지 원칙:** 판단이 모호할 때는 항상 상위 등급으로 분류한다 (safe-by-default).
 

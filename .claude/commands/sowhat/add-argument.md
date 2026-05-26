@@ -53,7 +53,7 @@ thesis에 새 Key Argument를 추가하고, 대응 섹션 파일·config·GitHub
 @.claude/sowhat-core/workflows/add-argument.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 </execution_context>
 
 <context>

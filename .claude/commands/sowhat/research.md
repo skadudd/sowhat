@@ -59,7 +59,7 @@ URL 분석, 로컬 파일/폴더 분석, 토픽 검색, 자율 리서치 모드�
 @.claude/sowhat-core/workflows/research.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 @.claude/sowhat-core/references/source-credibility.md
 </execution_context>
 

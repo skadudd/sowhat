@@ -102,14 +102,14 @@ status_transitions: []
          "name": "{current-name}",
          "created": "{ISO8601}",
          "status": "active",
-         "qualifier": "{현재 qualifier 값}",
+         "confidence": "{현재 confidence band}",
          "strength": null
        },
        {
          "name": "{new-name}",
          "created": "{ISO8601}",
          "status": "active",
-         "qualifier": null,
+         "confidence": null,
          "strength": null
        }
      ],
@@ -176,7 +176,7 @@ status_transitions: []
    - 반박 커버리지 (Defense): 미충족 CQ 수 + Steelman 대응
    - Confidence 정합성 (Calibration): 주장 수준과 근거 수준 일치도
 
-4. `branches.json`에 계산된 `qualifier`와 `strength` 값을 갱신
+4. `branches.json`에 계산된 `confidence`와 `strength` 값을 갱신
 
 5. 비교 결과 출력:
    ```
@@ -241,9 +241,9 @@ status_transitions: []
       - 각 패배 브랜치의 CQ 응답 내용 중 유용한 부분 추출
       - 승인 브랜치의 CQ Responses에 아직 반영 안 된 항목만 추가 제안:
         ```
-        패배 브랜치에서 수집한 추가 반론:
-        - [{패배 브랜치명}] {rebuttal 내용 1}
-        - [{패배 브랜치명}] {rebuttal 내용 2}
+        패배 브랜치에서 수집한 유용한 CQ 응답:
+        - [{패배 브랜치명}] {유용한 CQ 응답 1}
+        - [{패배 브랜치명}] {유용한 CQ 응답 2}
 
         이 CQ 응답 보강 내용을 승인 브랜치의 CQ Responses에 추가하시겠습니까? (y/n/선택)
         ```

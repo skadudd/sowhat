@@ -90,7 +90,7 @@ thesis Answer에 대한 **가장 강력한 반대 입장**을 논리 구조로 �
    {anti_grounds_with_source_tags}
 
    ## Counter-CQ
-   {anti_warrant} [source:inference]
+   {anti_cq_challenge} [source:inference]
 
    ## 생성 근거
    {왜 이것이 가장 강력한 반대 입장인지 — 논리 구조 기반}
@@ -133,7 +133,7 @@ FOR EACH section:
      {counter_grounds_with_source_tags}
 
      ## Counter-CQ
-     {counter_warrant} [source:inference]
+     {counter_cq_challenge} [source:inference]
 
      ## 원본 scheme CQ 약점
      {원본 scheme CQ의 논리 취약점 — non-sequitur / missing link / circular 중 어떤 것인가}

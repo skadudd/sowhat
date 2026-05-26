@@ -60,7 +60,7 @@ disable-model-invocation: true
 @.claude/sowhat-core/references/source-credibility.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 @.claude/sowhat-core/references/challenge-algorithm.md
 @.claude/sowhat-core/references/checkpoints.md
 @.claude/sowhat-core/references/ai-content-boundary.md

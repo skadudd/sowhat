@@ -290,7 +290,7 @@ settle 완료 — {N}-{section} settled 전환. Claim: {claim 한 줄}
 
 📋 논증 구조 요약
 
-  📌 Claim [{scheme} / {qualifier}]
+  📌 Claim [{scheme} / confidence {confidence}/4]
     {Claim 전문}
 
   🔍 Grounds

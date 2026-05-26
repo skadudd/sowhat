@@ -554,7 +554,7 @@ URL 모드와 동일 (Tier 표시 포함).
     [1] CQ 보강으로 accept
     [2] reject
   ```
-  [1] 선택 시: `applied_to` 필드에 `(backing-only)` 태그 추가
+  [1] 선택 시: `applied_to` 필드에 `(cq-support-only)` 태그 추가
 - **T3 출처 + 대상 섹션 Confidence가 uncertain 이하인 경우**:
   ```
   ℹ️ 이 파인딩은 T3 (준전문 출처)입니다.

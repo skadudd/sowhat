@@ -62,7 +62,7 @@ sowhat 프로젝트를 초기화한다. 세 가지 모드: idea 모드(기본)�
 @.claude/sowhat-core/workflows/init.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 @.claude/sowhat-core/references/source-credibility.md
 @.claude/sowhat-core/references/research-lifecycle.md
 </execution_context>

@@ -43,7 +43,7 @@ status_transitions: ["draft → discussing → settled (자동 순환)"]
 2. `00-thesis.md` 로드 → `thesis_answer`, `key_arguments` 추출
    - thesis가 `settled` 상태가 아니면: `❌ thesis가 settled 상태가 아닙니다. /sowhat:settle thesis 먼저 실행하세요.`
 3. 모든 섹션 파일을 **한 번에** 로드 (숫자 순서대로)
-   - 각 섹션에서 추출: `status`, `thesis_argument`, `scheme`, `claim`, `grounds`, `warrant`, `backing`, `qualifier`, `rebuttal`
+   - 각 섹션에서 추출: `status`, `thesis_argument`, `scheme`, `claim`, `grounds`, `cq_responses`, `confidence`
 4. 대상 섹션 필터링:
    - `draft`, `needs-revision`, `discussing` 상태 섹션만 대상
    - `settled`, `invalidated` 섹션은 건너뜀

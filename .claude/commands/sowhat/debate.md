@@ -64,7 +64,8 @@ Round 3/3:
 @.claude/sowhat-core/workflows/debate.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
+@.claude/sowhat-core/references/walton-pitfalls.md
 @.claude/sowhat-core/references/checkpoints.md
 </execution_context>
 

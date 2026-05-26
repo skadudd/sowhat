@@ -78,7 +78,7 @@ draft/finalize/finalize-planning 실행 시 session.md의 `preview_event` 필드
   "last_command": "expand",
   "target_section": "02-market",
   "stopped_at": "complete",
-  "completed_fields": ["stasis", "scheme", "claim", "grounds", "warrant", "qualifier", "rebuttal"],
+  "completed_fields": ["stasis", "scheme", "claim", "grounds", "cq_responses", "confidence"],
   "pending_decisions": [],
   "active_research": [],
   "open_questions_count": 0,

@@ -693,9 +693,9 @@ Answer: {00-thesis.md의 Answer 전문}
 
 ## 확립된 결론 (Established Conclusions)
 (다음 에피소드의 전제로 사용 가능)
-1. "{01 섹션의 Claim}" — qualifier: {Q}, scheme: {S}
+1. "{01 섹션의 Claim}" — confidence: {C}/4, scheme: {S}
    핵심 근거: {가장 강한 Ground, 한 줄}
-2. "{02 섹션의 Claim}" — qualifier: {Q}, scheme: {S}
+2. "{02 섹션의 Claim}" — confidence: {C}/4, scheme: {S}
    핵심 근거: {가장 강한 Ground}
 
 ## 열린 실마리 (Open Threads)

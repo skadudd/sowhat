@@ -53,7 +53,7 @@ compatibility: "Claude Code >=2.1.3"
 @.claude/sowhat-core/references/strength-scoring.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 </execution_context>
 
 <context>

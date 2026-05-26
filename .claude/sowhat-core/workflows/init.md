@@ -251,7 +251,7 @@ URL fetch 실패 시:
 
 [2] 선택 시 인간이 수정할 부분을 지시하면 Claude가 반영한다. 확정될 때까지 반복.
 
-분석 결과를 변수로 저장: `target_claim`, `target_grounds`, `target_warrant`, `target_qualifier`, `target_rebuttal`
+분석 결과를 변수로 저장: `target_claim`, `target_grounds`, `target_scheme`, `target_confidence`, `target_cq_summary`
 
 ### 1.6. 입장 선택 (content-critique 모드 전용)
 

@@ -67,7 +67,7 @@ settled 섹션들의 논증 구조를 종합하여, 바바라 민토의 피라�
 @.claude/sowhat-core/references/output-profiles.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 </execution_context>
 
 <context>

@@ -56,7 +56,7 @@ compatibility: "Claude Code >=2.1.3"
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md
 @.claude/sowhat-core/workflows/steelman.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 @.claude/sowhat-core/references/strength-scoring.md
 @.claude/sowhat-core/references/source-credibility.md
 @.claude/sowhat-core/references/challenge-algorithm.md

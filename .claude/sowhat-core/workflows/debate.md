@@ -79,7 +79,7 @@ Con/Pro 에이전트는 **논리적 공격·방어**만 자동 생성한다. 구
         객관적 검증이 목적이라면 --stance 없이 실행하세요 (critique 기본값).
      ```
 2. `00-thesis.md` 로드 → `thesis_answer`, `key_arguments` 추출
-   - stance 모드 시: `## Source Content` 섹션에서 `target_toulmin` 추출 (에이전트 프롬프트에 전달용)
+   - stance 모드 시: `## Source Content` 섹션에서 `target_argument` 추출 (scheme + claim + grounds 묶음; 에이전트 프롬프트에 전달용)
 3. **작업 트리 확인**:
    ```bash
    git status --porcelain
@@ -96,7 +96,7 @@ Con/Pro 에이전트는 **논리적 공격·방어**만 자동 생성한다. 구
    - 없으면 → `❌ 섹션을 찾을 수 없습니다: {section}`
    - status가 `invalidated` → `❌ 이미 invalidated 상태입니다. debate 불필요.`
    - status가 `draft` → `❌ draft 상태입니다. /sowhat:expand로 먼저 전개하세요.`
-   - 로드 후 추출: `scheme`, `claim`, `grounds`, `warrant`, `qualifier`, `rebuttal` → 라운드 전체에서 재사용
+   - 로드 후 추출: `scheme`, `claim`, `grounds`, `cq_responses`, `confidence` → 라운드 전체에서 재사용
 5. **전체 모드**: settled 또는 discussing 상태 섹션 수 확인
    - 0개이면 → `❌ debate 가능한 섹션이 없습니다. /sowhat:expand로 섹션을 전개하세요.`
 6. `logs/` 및 `logs/debate/` 디렉터리 생성:

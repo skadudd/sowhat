@@ -57,7 +57,7 @@ disable-model-invocation: true
 @.claude/sowhat-core/workflows/finalize-planning.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
 </execution_context>
 
 <context>

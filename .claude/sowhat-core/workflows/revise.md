@@ -84,7 +84,7 @@ Field 값: `claim` / `grounds` / `cq-responses` / `confidence` / `unmet-cq` / `o
 🧩 Key Argument
   {thesis_argument — 이 섹션이 지지하는 상위 논거}
 
-📌 Claim  [{scheme} / {qualifier}]
+📌 Claim [{scheme} / confidence {confidence}/4]
   {Claim 전문}
 
 🔍 Grounds
@@ -158,8 +158,11 @@ FUNCTION classify_revision(field, old_content, new_content, claim_changed):
 
   # 2. 필드별 분류
   SWITCH field:
-    CASE "backing":
-      RETURN "reinforcing"  # CQ 보조 인용 추가는 항상 보강
+    CASE "cq_responses":
+      IF is_new_answer(old_content, new_content):
+        RETURN "reinforcing"  # 미답변 CQ에 새 답변 추가는 보강
+      ELSE:
+        RETURN "substantive"  # 기존 답변 의미 변경은 실질적
 
     CASE "open-questions":
       RETURN "cosmetic"  # Open Questions 변경은 논증 구조에 영향 없음
@@ -176,17 +179,14 @@ FUNCTION classify_revision(field, old_content, new_content, claim_changed):
       ELSE:
         RETURN "structural"  # 의미 변경
 
-    CASE "warrant":
-      IF NOT claim_changed:
-        RETURN "substantive"  # Claim 불변 + CQ 응답 변경 = 실질적
-      ELSE:
-        RETURN "structural"
+    CASE "scheme":
+      RETURN "structural"  # Scheme 종류 변경은 논증 전체 구조 변경
 
-    CASE "qualifier":
+    CASE "confidence":
       RETURN "substantive"  # Confidence 변경은 항상 재검증 필요
 
-    CASE "rebuttal":
-      RETURN "substantive"  # 새로운 방어 각도
+    CASE "scope":
+      RETURN "substantive"  # 범위 변경은 실질적 논증 변화
 
   # 기본값: 판단 불가 시 상위 등급으로
   RETURN "substantive"

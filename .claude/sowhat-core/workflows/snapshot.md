@@ -114,9 +114,9 @@ status_transitions: ["(restore) → needs-revision"]
       "claim": "{full Claim text}",
       "grounds_summary": "{N} grounds: {brief list}",
       "cq_responses": "{CQ Responses 요약}",
-      "qualifier": "{qualifier value}",
       "scheme": "{scheme value}",
-      "rebuttal_count": 0,
+      "confidence": "{confidence band: primary/supporting/tentative}",
+      "cq_answered_count": 0,
       "open_questions_count": 0
     }
   },

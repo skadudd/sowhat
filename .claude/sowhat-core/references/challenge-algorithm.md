@@ -35,7 +35,7 @@ challenge-agent와 challenge 워크플로우가 이 문서를 단일 진실 소�
 
 ```
 FOR EACH section:
-  claims = extract_verifiable_claims(section.grounds, section.backing)
+  claims = extract_verifiable_claims(section.grounds, section.cq_responses)
   # 추출 대상:
   #   - 정량 데이터: 수치, %, 건수, 금액, 비율
   #   - 시점 주장: "2024년 기준", "전년 대비"

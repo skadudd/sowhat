@@ -118,7 +118,7 @@ Stage 0은 외부 데이터 접근이 필요하므로 sowhat-research-agent를 �
 ```
 # Stage 0: 각 섹션의 검증 가능한 주장을 추출하고 research-agent로 검증
 FOR EACH section IN target_sections:
-  claims = extract_verifiable_claims(section.grounds, section.backing)
+  claims = extract_verifiable_claims(section.grounds, section.cq_responses)
   # 정량 데이터, 시점 주장, 사실 주장, 사례 인용 모두 추출
 
   IF claims.length > 0:

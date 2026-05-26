@@ -61,7 +61,8 @@ compatibility: "Claude Code >=2.1.3"
 @.claude/sowhat-core/workflows/critic.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
-@.claude/sowhat-core/references/toulmin-model.md
+@.claude/sowhat-core/references/walton-schemes.md
+@.claude/sowhat-core/references/critique-dimensions.md
 @.claude/sowhat-core/references/source-credibility.md
 @.claude/sowhat-core/references/challenge-algorithm.md
 </execution_context>

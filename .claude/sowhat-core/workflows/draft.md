@@ -1330,7 +1330,7 @@ diff export/generated/{profile}/DOCUMENT.original.md export/generated/{profile}/
 |------|----------|
 | `stylistic` | 같은 의미, 다른 표현. 어휘 교체, 문장 길이 조절, 어미 변경, 접속사 변경 |
 | `structural` | 문단 순서 변경, 섹션 추가/삭제/병합, 소제목 변경 |
-| `substantive` | 주장(Claim)의 의미가 변경됨, 수치/데이터가 변경됨, 근거가 삭제/교체됨, qualifier 강도가 변경됨 |
+| `substantive` | 주장(Claim)의 의미가 변경됨, 수치/데이터가 변경됨, 근거가 삭제/교체됨, confidence가 변경됨 |
 | `additive` | 원본에 없던 새로운 주장, 근거, 사례, 데이터가 추가됨 |
 
 분류 알고리즘:
