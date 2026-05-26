@@ -1,0 +1,8 @@
+{
+  "project": "fixture-hallucination-test",
+  "layer": "planning",
+  "source": {
+    "type": "file",
+    "path": "19w-anon.md"
+  }
+}

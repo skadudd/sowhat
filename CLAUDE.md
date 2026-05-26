@@ -54,6 +54,8 @@ Multi-step command는 반드시 `logs/session.md` 저장 포함.
 - `@.claude/sowhat-core/references/status-transitions.md` — 상태 전이 게이트
 - `@.claude/sowhat-core/references/command-flow.md` — command 간 의존성
 
+**cross-platform**: Parser·로그 호출 시 `tee` 대신 `> file && cat file` 패턴 사용 (PowerShell에서 `tee` silent fail 가능).
+
 ---
 
 ## 빌드·배포

@@ -90,11 +90,17 @@ cycle 7 Plan G parser(`.claude/sowhat-core/bin/source-tag-parser.js`)를 settle 
 ```bash
 date -u +"%Y%m%d-%H%M%S"
 mkdir -p logs/parser
+LOG="logs/parser/settle-{section}-{datetime}.json"
 node .claude/sowhat-core/bin/source-tag-parser.js validate {section_file} --project . \
-  --json | tee logs/parser/settle-{section}-{datetime}.json
+  --json > "$LOG"
+cat "$LOG"
+# 로그 생성 여부 확인 (PowerShell 환경에서 tee silent fail 방지)
+test -f "$LOG" || echo "⚠️ parser 로그 미생성 — 호출 누락 또는 파일 시스템 권한 문제. logs/parser/ 디렉토리를 확인하세요."
 ```
 
 Parser 출력을 `logs/parser/settle-{section}-{datetime}.json`에 영구 저장. dogfooding·cycle 8 audit에서 실제 parser 판정 이력을 추적 가능.
+
+> **cross-platform 주의**: `tee`는 PowerShell에서 alias 충돌·UTF-8 BOM 이슈가 발생할 수 있으므로 `> "$LOG"` + `cat "$LOG"` 패턴 사용. `test -f` 명령으로 로그 생성 여부를 최종 확인한다.
 
 Parser가 검증하는 항목:
 

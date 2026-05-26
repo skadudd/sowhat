@@ -119,15 +119,29 @@ draft는 외부 공유용 산출물을 생성한다. AI는 산출물에서 **기
 
    3. `layer == "spec"` 또는 `"finalized"` → 통과, 단계 6.6으로 진행
 
-6.6. **Source tag 수집 (Step 5 렌더링 준비)**:
+6.6. **Anchor corpus 수집 (Step 5 렌더링 준비 + Step 5.5b 검증 기반)**:
 
-   Step 5에서 생성물에 구체값을 옮길 때 source tag를 보존하기 위한 사전 준비:
+   Step 5에서 생성물에 구체값을 옮길 때 source tag를 보존하고, Step 5.5b 환각 탐지의 anchor로 사용하기 위한 사전 준비:
 
-   1. 각 settled 섹션의 Grounds/Claim/Backing/Warrant에서 `[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]` 태그가 붙은 불릿을 수집
-   2. 변수 `planning_sourced_items[]`에 저장 — `{section, field, bullet_index, text, source_tag}` 구조
-   3. 이 목록이 Step 5 렌더링 시 산출물에 구체값이 등장할 수 있는 **유일한 출처**
+   1. 각 settled 섹션의 Grounds/Claim/Backing/Warrant에서 `[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]` 태그가 붙은 불릿을 수집 → `planning_sourced_items[]`에 저장 (`{section, field, bullet_index, text, source_tag}` 구조)
 
-   AI가 이 목록에 없는 구체값을 산출물에 추가하려 하면 Step 6 검증에서 drop된다. cycle 1-6의 L4 Unverified 게이트(`unverified_items` 집계)와 L1 렌더링 검증 정규식 차집합은 cycle 7에서 폐기 — source tag가 모든 구체값을 사전에 추적하므로 사후 탐지·차집합이 불필요 (`references/ai-content-boundary.md`).
+   2. **anchor_corpus** 구성 — Step 5.5b 환각 탐지에 사용되는 전체 anchor 범위:
+
+      ```
+      anchor_corpus = {
+        sourced_items:  planning_sourced_items[] (source 태그 불릿, 위 1번)
+        settled_bodies: planning/*.md 본문 전체 — Claim/Grounds/Backing/Warrant/Qualifier/Rebuttal/Scope 텍스트
+        thesis_body:    00-thesis.md 본문
+        raw_sources:    planning/config.json의 source.path 필드가 가리키는 파일(들)
+                        — 파일 부재 또는 config에 source.path 없으면 skip
+      }
+      ```
+
+      `planning/config.json`의 `source.path` 필드를 읽어 원본 파일을 anchor에 포함한다. 파일이 없거나 config에 해당 필드가 없으면 raw_sources는 빈 집합.
+
+   3. `planning_sourced_items[]`가 source tag 각주 부착(Step 5 렌더링)에 사용되고, `anchor_corpus` 전체가 Step 5.5b literal 1차 매칭 대상이다.
+
+   AI가 anchor_corpus에 없는 구체값을 산출물에 추가하려 하면 Step 5.5b 검증에서 차단된다. cycle 1-6의 L4 Unverified 게이트와 L1 렌더링 검증 정규식 차집합은 cycle 7에서 폐기 — source tag가 모든 구체값을 사전에 추적하므로 사후 탐지·차집합이 불필요 (`references/ai-content-boundary.md`).
 
 7. 시리즈 확인 (config.json에 `series` 필드가 있으면):
    - 시리즈 캐릭터가 지정되어 있으면 자동 적용 (사용자가 다른 캐릭터를 선택하지 않는 한)
@@ -1094,38 +1108,95 @@ draft 진입 전 `.claude/sowhat-core/bin/source-tag-parser.js` 로 모든 입�
 ```bash
 date -u +"%Y%m%d-%H%M%S"
 mkdir -p logs/parser
+LOG="logs/parser/draft-{datetime}.json"
 node .claude/sowhat-core/bin/source-tag-parser.js validate --all planning/ --project . --strict \
-  --json | tee logs/parser/draft-{datetime}.json
+  --json > "$LOG"
+cat "$LOG"
+# 로그 생성 여부 확인 (PowerShell 환경에서 tee silent fail 방지)
+test -f "$LOG" || echo "⚠️ parser 로그 미생성 — 호출 누락 또는 파일 시스템 권한 문제. logs/parser/ 디렉토리를 확인하세요."
 ```
 
 `planning/` 디렉토리가 없으면(init 직후) parser는 exit 2. 이 경우 "입력 섹션 없음"으로 판단하고 Step 5.5b만 진행.
 
 Parser가 errors 보고 시(exit 1) draft 중단. `logs/parser/draft-{datetime}.json`에 영구 저장된 리포트를 사용자에게 보여주고 `/sowhat:revise {section}` 안내. `--strict`로 warnings도 차단(draft는 외부 공유용이므로 보수적).
 
-### 5.5b. 산출물 구체값 매칭 (LLM-semantic)
+> **cross-platform 주의**: `tee` 대신 `> "$LOG"` + `cat "$LOG"` 패턴 사용 (PowerShell 호환). `test -f` 명령으로 로그 생성 여부 최종 확인.
 
-Step 5로 생성된 산출물에 대해 planning에 없는 신규 구체값이 삽입되지 않았는지 확인:
+### 5.5b. 산출물 구체값 매칭 (literal-first + 보수적 LLM-semantic)
 
-1. 산출물에서 **구체값**(수치·기관명·연도·인물명·URL·보고서명)을 스캔
-2. 각 구체값이 `planning_sourced_items[]`의 항목과 매칭되는지 확인 — 동일 값 literal 또는 동일 맥락 paraphrase
-3. 매칭되는 source 항목이 있으면: 해당 source tag로 각주 부착 (예: `¹ 출처: #003`)
-4. 매칭 없는 구체값이 있으면:
+Step 5로 생성된 산출물에 대해 planning에 없는 신규 구체값이 삽입되지 않았는지 확인.
 
-   ```
-   🔴 산출물 source 검증 실패
+**Step 1. 구체값 추출 — 정규식 패턴 4종**
 
-   기획 섹션에 없는 구체값이 산출물에 나타났습니다:
-     - 산출물 위치 {para/line}: "{문제 문장}"
-       · 신규 구체값: {value}
-       · planning_sourced_items에 매칭 없음
+산출물 전체에서 아래 패턴에 해당하는 후보를 모두 추출한다:
 
-   해소:
-     [1] 해당 문장 삭제 후 draft 재생성
-     [2] 기획 섹션에 해당 구체값 추가 (/sowhat:revise) 후 재draft
-     [3] --force (우회, 사용자 책임)
-   ```
+| 카테고리 | 패턴 | 예 |
+|---------|------|-----|
+| 비율·배수·조건 수치 | `\d+%`, `\d+배`, `\d+(이하\|이상\|미만\|초과)` | "5% 이하", "4배", "95% 이상" |
+| 절대 수치 + 단위 | `\d+(명\|건\|개\|주\|분\|회\|년\|월)` | "3명", "27개", "4배" |
+| 고유 사례 명사구 | `20\d\d-Q\d`, 따옴표·인용부 안의 *구체 사례명* | "2025-Q1 경쟁사 X 런칭", "2025-여름 계절성" |
+| 외부 출처 토큰 | URL, DOI, 기관명, 보고서명, 인물명 | "McKinsey 2024" |
 
-5.5a의 parser가 정적 구조를 검증하고, 5.5b의 LLM-semantic이 의미 수준을 검증한다. 두 레이어 조합이 cycle 1-6의 L1 정규식 + LLM 차집합 방식을 대체한다.
+**Step 2. 각 후보에 대해 2단계 매칭**
+
+```
+2a. literal 1차: anchor_corpus(Step 6.6에서 구성)에서 {value}가 *그대로* substring 출현하는가?
+    - 출현 → matched (pass, 즉시 source 각주 부착 후 다음 후보로)
+    - 미출현 → 2b로
+
+2b. LLM 2차 (보수적 판정):
+    System prompt에 다음 제약을 명시하여 호출:
+    """
+    산출물 구체값: {value}
+    산출물 맥락: {surrounding_sentence}
+    anchor 후보 (literal partial match top-K): {anchor_passages}
+
+    판정 기준 — 엄격하게 적용:
+    - anchor에 동일 *구체 사실*(같은 숫자·이름·날짜·기관)이 명시되어 있는가?
+    - 추상 frame이 산출물 구체값을 paraphrase-cover한다고 판정 금지.
+      (예: anchor "쿼리 비용 발생" → 산출물 "5% 이하" = paraphrase-cover 아님 → unmatched)
+    - "근사 수치"(예: anchor "4배", 산출물 "5배")는 unmatched.
+    - "암묵적 추론"(anchor에서 도출 가능하지만 명시 없음)도 unmatched.
+    
+    출력: matched | unmatched (판정 근거 한 줄 포함)
+    """
+    
+    결과:
+    - matched → pass (source 각주 부착)
+    - unmatched → 차단 대상으로 수집
+```
+
+**Step 3. 차단 처리**
+
+unmatched 후보가 1개 이상이면:
+
+```
+🔴 산출물 source 검증 실패
+
+기획 섹션에 없는 구체값이 산출물에 나타났습니다:
+  - 산출물 위치 {para/line}: "{문제 문장}"
+    · 신규 구체값: {value}
+    · literal 1차: 미일치
+    · LLM 2차 판정: unmatched ({reason 한 줄})
+    · anchor 검사 범위:
+      - sourced_items: {N}개
+      - settled bodies: {M} sections
+      - 00-thesis: 있음
+      - raw sources: {config.source.path 또는 "없음"}
+
+해소:
+  [1] 해당 문장 삭제 후 draft 재생성
+  [2] 기획 섹션에 해당 구체값 추가 (/sowhat:revise) 후 재draft
+  [3] --force (우회, 사용자 책임)
+```
+
+`--force` 모드에서는 차단 없이 경고만 출력 후 진행.
+
+**배경 (왜 이 방식인가)**
+
+dogfood-cycle7 분석에서 anchor set이 `planning_sourced_items[]`(source 태그 불릿)만일 때, settled 본문이 추상 frame 위주여서 anchor set이 거의 비어있고, 이전 paraphrase 허용 매칭이 환각 수치("5% 이하")와 환각 사례("2025-Q1 경쟁사 X 런칭")를 통과시켰다. anchor_corpus 확장 + literal-first 매칭이 이 경로를 차단한다.
+
+5.5a의 parser가 정적 구조를 검증하고, 5.5b의 literal-first + 보수적 LLM이 의미 수준을 검증한다.
 
 ---
 

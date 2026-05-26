@@ -249,6 +249,8 @@ Grounds/Backing에 포함된 **사용자 입력 citation**(`[source:user]`) 또�
 4. **해석 정합성**: 원본 데이터가 섹션의 해석을 지지하는지
 5. **사례 대표성**: 특정 거래/사건 인용 시 특수 거래(증여, 직거래 등) 여부
 6. **Cross-Section 정합성**: 동일 데이터가 여러 섹션에서 일관되게 인용되는지
+7. **도메인 용어 정의 일관성** (cycle 7.1 추가): 동일 용어(예: "SSOT", "분리 설계", "거시/미시")가 여러 섹션에서 다른 정의로 쓰이는지 확인. 불일치 발견 시 → ⚠️ minor
+8. **draft 산출물 Cross-Section** (cycle 7.1 추가, 조건부): `export/generated/**/DOCUMENT.md`가 존재하면 settled 섹션 수치와 산출물 수치를 교차 검사. 산출물에서 섹션에 없는 수치 발견 시 → ⚠️ major (draft 환각 가능성). 파일 없으면 skip.
 
 사실 오류 발견 시: 사용자에게 revise 경로 안내 (`/sowhat:revise {section}` 으로 citation 수정 또는 교체). `unverified_items` frontmatter 기록은 cycle 7에서 폐기 — 오류는 즉시 revise 트리거.
 

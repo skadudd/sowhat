@@ -36,7 +36,7 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "test": "node scripts/test-source-tags.js",
+    "test": "node scripts/test-source-tags.js && node scripts/test-draft-hallucination-guard.js",
     "prepublishOnly": "npm run test && npm run build"
   }
 }

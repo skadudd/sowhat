@@ -1,0 +1,28 @@
+{
+  "_comment": "dogfood-cycle7 환각 가드 회귀 테스트 — H1/H2는 unmatched(환각), N1은 matched(정상 인용)",
+  "hallucinations": [
+    {
+      "id": "H1",
+      "value": "5%",
+      "context": "flatten 쿼리 비율이 전체 분석의 5% 이하였고",
+      "expected_verdict": "unmatched",
+      "reason": "03-mart.md Rebuttal에 수치 없음. '쿼리 성능 비용이 발생한다'만 있음"
+    },
+    {
+      "id": "H2",
+      "value": "2025-Q1 경쟁사 X 런칭",
+      "context": "별도 카테고리 티켓(예: \"2025-Q1 경쟁사 X 런칭\", \"2025-여름 계절성\")",
+      "expected_verdict": "unmatched",
+      "reason": "04-ops-loop.md R2에 카테고리 티켓 사례 없음. 메커니즘 직접 연결성만 있음"
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "N1",
+      "value": "27개",
+      "context": "27개 이종 콘텐츠를 4-tuple grain으로 통합",
+      "expected_verdict": "matched",
+      "reason": "03-mart.md G1에 '27개 이종 콘텐츠' literal anchor 있음"
+    }
+  ]
+}
