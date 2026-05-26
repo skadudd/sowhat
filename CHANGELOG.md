@@ -4,6 +4,114 @@ All notable changes to sowhat are documented here.
 
 ---
 
+## [3.0.0] — 2026-05-26
+
+### Breaking Changes — Toulmin → Walton Argumentation Schemes
+
+sowhat의 논증 검증 기반이 **Toulmin Model**에서 **Walton's Argumentation Schemes**로 전면 교체된다.
+재정의된 목적: "rigorous writer가 N회 글을 써도 일관된 품질을 유지하기 위한 보조도구."
+
+#### 섹션 파일 필드 변경
+
+| 삭제 필드 | 대체 | 마이그레이션 |
+|---|---|---|
+| `scheme` (authority/analogy/cause-effect/statistics/example/sign/principle/consequence) | `scheme` (Walton 10 schemes: Expert Opinion/Analogy/Cause to Effect/…) | `migrate-toulmin-to-walton.js` |
+| `qualifier` (definitely/usually/in most cases/presumably/possibly) | `confidence` (Tetlock band: virtually certain/very likely/likely/uncertain/unlikely) | `migrate-toulmin-to-walton.js` |
+| `claim_tier: A/B` | `confidence ≥60%` = Primary; `<60%` = Supporting | `calibration-guide.md` |
+| `## Warrant` | 삭제 — scheme 선택으로 흡수 | 아카이브 → `## CQ Responses` 주석에 보존 |
+| `## Backing` | 해당 CQ 답변의 근거로 흡수 | 아카이브 → `## CQ Responses` 주석에 보존 |
+| `## Rebuttal` | 미충족 CQ로 흡수 | 아카이브 → `## CQ Responses` 주석에 보존 |
+
+#### 새 섹션 파일 필드 (필수)
+
+```yaml
+scheme: {Walton scheme — 복합이면 쉼표 구분}
+confidence: {Tetlock anchor 어휘 또는 %}
+```
+
+```markdown
+## CQ Responses
+
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| CQ1 | ... | ... | 3 |
+
+## Confidence
+
+likely (60-80%)
+```
+
+#### settle 게이트 변경
+
+- 구 Claim Tier A/B 게이트 → 신 Confidence × Source Tier 매트릭스 (`source-credibility.md`)
+- **신규**: CQ Confidence 게이트 — 미충족 CQ(confidence ≤1)가 scheme별 허용 상한 초과 시 settle 차단
+  - Cause to Effect, Classification: 0개 허용 (엄격)
+  - Expert Opinion, Analogy 등: 1개 허용
+  - Sign, Position to Know, Popular Opinion: 2개 허용
+
+#### challenge 알고리즘 변경
+
+- Stage 3: Warrant 유효성 → CQ 응답 충분성 (depth=2 cap, 복합 scheme 완전성)
+- Stage 5: Qualifier별 최소 기준 → Confidence별 최소 Tier 기준
+- Stage 6: Qualifier 보정 → Confidence 보정 (Tetlock band + CQ confidence 평균)
+- Issue ID: `W`(Warrant) → `CQ`, `Q`(Qualifier) → `CF`, `B`(Backing) → 삭제, `BS`(Blind Spot) 신규
+
+#### 폐기 참조 파일
+
+- `references/toulmin-model.md` → breaking change stub으로 대체
+- 원본 보존: `references/archive/toulmin-model.md`
+
+### New Files
+
+- `references/walton-schemes.md` — 10 scheme 카탈로그 + CQs (3-5개/scheme) + 복합 scheme 가이드
+- `references/calibration-guide.md` — Tetlock probability bands + CQ confidence 0-4 + scheme별 settle 임계값
+- `references/walton-pitfalls.md` — 함정 3가지(오분류/CQ진위/무한후퇴) + harness 대응 규칙 D1·D2·D3
+- `references/archive/toulmin-model.md` — Toulmin model 원본 보존 (마이그레이션 참조용)
+- `scripts/migrate-toulmin-to-walton.js` — v2.x → v3.0.0 섹션 파일 변환 도구
+- `scripts/test-migrate-walton.js` — 마이그레이션 스크립트 회귀 테스트 (20 assertions)
+- `scripts/fixtures/v2x-section.md` — 마이그레이션 테스트 fixture
+
+### Modified Files
+
+**워크플로우**: `expand.md`, `settle.md`
+**알고리즘**: `challenge-algorithm.md`
+**비평 기준**: `critique-dimensions.md`, `source-credibility.md`
+**에이전트**: `sowhat-critic-agent.md`, `sowhat-self-critic-agent.md`, `sowhat-con-agent.md`, `sowhat-pro-agent.md`, `sowhat-challenge-agent.md`
+**참조**: `ai-content-boundary.md`, `character-system.md`, `toulmin-model.md` (stub)
+
+### Migration Guide
+
+```bash
+# 1. 단일 섹션 마이그레이션 (검토용 .migrated.md 생성)
+node scripts/migrate-toulmin-to-walton.js planning/sections/01-*.md
+
+# 2. 디렉토리 전체 마이그레이션
+node scripts/migrate-toulmin-to-walton.js --dir planning/sections/
+
+# 3. 확인 후 덮어쓰기
+node scripts/migrate-toulmin-to-walton.js --inplace planning/sections/01-*.md
+```
+
+**MIGRATION-TODO 블록을 반드시 검토해야 한다**:
+- scheme 선택이 올바른지 확인 (ambiguous scheme은 경고 포함)
+- CQ Responses 테이블의 `[WRITER: answer here]`를 채워야 settle 가능
+- confidence band를 grounds 강도 + CQ 점수에 맞게 조정
+
+### Test
+
+```
+npm test
+```
+→ `test-source-tags.js` + `test-draft-hallucination-guard.js` + `test-migrate-walton.js` 모두 통과 확인.
+
+### 설계 참조
+
+- Walton, Reed, Macagno, *Argumentation Schemes* (Cambridge, 2008) — 60+ scheme 카탈로그
+- Walton, *Methods of Argumentation* (Cambridge, 2013) — 적용 방법론
+- Tetlock & Gardner, *Superforecasting* (Crown, 2015) — Calibration probability bands
+
+---
+
 ## [2.3.1] — 2026-05-26
 
 ### Removed — cargo-cult retraction

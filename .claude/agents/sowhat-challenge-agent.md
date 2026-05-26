@@ -40,9 +40,9 @@ Stage 2 — Argument Scheme 유효성
 : 각 섹션의 scheme이 설정되어 있고, 해당 scheme의 Critical Questions에 답할 수 있는가?
   Algorithm: scheme 존재 확인 → scheme별 CQ 적용 → severity 판정
 
-Stage 3 — Warrant 유효성
-: Warrant가 Grounds → Claim을 논리적으로 연결하는가?
-  Algorithm: 존재 확인 → Non-sequitur 테스트 → Missing-link 테스트 → Circular 테스트
+Stage 3 — CQ 응답 충분성
+: CQ 응답이 논증 구조를 충분히 지지하는가?
+  Algorithm: CQ → Claim 체인 확인 → depth cap(≤2) 준수 확인 → 복합 scheme 전체 CQ 완전성 → 순환 CQ 답변 테스트
 
 Stage 4 — So What (Grounds → Claim 흐름)
 : Grounds가 실제로 Claim을 지지하는가?
@@ -50,11 +50,11 @@ Stage 4 — So What (Grounds → Claim 흐름)
 
 Stage 5 — Why So (근거 충분성·필요성)
 : 근거가 충분하고, 각 근거가 필요한가?
-  Algorithm: Qualifier별 최소 기준 대조 → 필요성 → 중복성 → 비약 테스트
+  Algorithm: Confidence별 최소 Tier 기준 대조(calibration-guide.md) → 필요성 → 중복성 → 비약 테스트
 
-Stage 6 — Qualifier 보정
-: Qualifier가 근거 강도에 비례하는가?
-  Algorithm: 근거 강도 점수화 → Rebuttal 강도 평가 → 적정 범위 대조 → Overclaiming/Underclaiming 판정
+Stage 6 — Confidence 보정
+: Confidence band가 grounds 강도 + CQ 품질에 비례하는가?
+  Algorithm: 근거 강도 점수화 → CQ confidence 평균 산출 → 적정 Tetlock band 범위 대조(calibration-guide.md) → Overclaiming/Underclaiming 판정
 
 Stage 7 — MECE + Steelman
 : Key Arguments가 중복 없이 완전하고, 최강 반론에 대응하고 있는가?
@@ -70,9 +70,9 @@ Stage 7 — MECE + Steelman
 <issue_id_format>
 이슈 ID 형식: `{섹션번호}.{필드약어}.{severity}{순번}`
 - 섹션번호: `02`, `03` 등
-- 필드약어: `G`(Grounds), `W`(Warrant), `C`(Claim), `Q`(Qualifier), `R`(Rebuttal), `B`(Backing), `T`(Thesis정합성), `S`(Scheme), `M`(MECE)
+- 필드약어: `G`(Grounds), `CQ`(CQ응답), `C`(Claim), `CF`(Confidence), `BS`(CQ미응답 blind spot), `T`(Thesis정합성), `S`(Scheme), `M`(MECE)
 - severity+순번: `c1`(critical 1번), `m1`(major 1번), `n1`(minor 1번)
-- 예: `02.G.c1` = 02섹션 Grounds critical 1번, `03.R.m1` = 03섹션 Rebuttal major 1번
+- 예: `02.G.c1` = 02섹션 Grounds critical 1번, `03.CQ.m1` = 03섹션 CQ응답 major 1번
 </issue_id_format>
 
 <output_format>

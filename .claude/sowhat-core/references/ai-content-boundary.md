@@ -14,10 +14,10 @@ sowhat의 근본 원칙을 구현하는 단일 규칙:
 
 | 영역 | 담당 | 예시 |
 |---|---|---|
-| **구조 (Structure)** | AI 제안 | Claim 형식, Warrant 논리 연결, Scheme 선택, Qualifier 추정 |
+| **구조 (Structure)** | AI 제안 | Claim 형식, CQ 논리 연결, Scheme 선택, Confidence 추정 |
 | **내용 (Content)** | 사용자·research·Sub-Research | 구체 수치, 기관명, 인물명, 보고서명, URL, 사례 |
 
-**AI는 구조 영역에서 자유롭다**. 논리 구조, 논쟁 유형, 공격 각도 등은 AI가 제안. Toulmin scheme, IBIS 프레이밍, Stasis 선택도 AI가 제시.
+**AI는 구조 영역에서 자유롭다**. 논리 구조, 논쟁 유형, 공격 각도 등은 AI가 제안. Walton scheme, IBIS 프레이밍, Stasis 선택도 AI가 제시.
 
 **AI는 내용 영역에서 제안하지 않는다**. 구체값을 포함한 선택지·예시·플레이스홀더를 "AI가 먼저 제시"하는 경로를 **워크플로우에서 제거**.
 
@@ -43,9 +43,9 @@ AI 생성물의 모든 불릿·항목에 `[source:...]` 태그가 붙어야 한�
 
 cycle 7 외부 감사에서 지적된 경계 사례에 대한 판정 규칙. parser의 `CONCRETE_PATTERNS`는 정량 구체값을 잡고, 아래 규칙은 경계 사례를 LLM이 판정할 때 참조한다.
 
-**C1. Warrant의 비교값 / 임계치 침투**
+**C1. CQ 답변의 비교값 / 임계치 침투**
 
-> 예: "대규모 데이터셋은 통계적 유의성을 가진다" (statistics scheme의 Warrant)
+> 예: "대규모 데이터셋은 통계적 유의성을 가진다" (Sample to Population scheme의 CQ 답변)
 
 - 구체 수치 없음 → `[source:inference]` 허용
 - "표본 N ≥ 1000이면" 같은 **구체 임계치 포함** → `[source:inference]` 부족. 해당 임계치의 출처(통계 교과서, 업계 기준)를 Backing으로 분리 + `[source:#NNN]` 또는 `[source:user]` 부착
@@ -144,7 +144,7 @@ if not research/:
 **이전**: Con/Pro 에이전트가 자체 근거 생성. fabrication 위험.
 
 **cycle 7 (Plan A)**:
-- 에이전트는 **논리적 취약점**(Warrant non-sequitur, Qualifier overclaiming, Scheme CQ 미충족)만 공격
+- 에이전트는 **논리적 취약점**(Scheme 오분류, CQ 미충족, Confidence overclaiming)만 공격
 - 구체값 필요 시 `<research_findings>` 태그로 오케스트레이터가 미리 주입한 finding만 사용
 - 주어진 findings 없으면 논리 공격만 수행. 구체값 생성 시도 0.
 
@@ -172,7 +172,7 @@ if not research/:
 AI 호출 시 에이전트·워크플로우 프롬프트가 다음을 명시:
 
 ```
-각 Grounds/Backing/Warrant/Rebuttal 항목 끝에 반드시 [source:type] 태그.
+각 Grounds/CQ Responses/Confidence/Claim 항목의 불릿 끝에 반드시 [source:type] 태그.
 태그 없는 항목은 parser가 drop한다.
 
 source 허용값:
@@ -195,7 +195,7 @@ source 허용값:
 
 **Parser가 수행하는 4가지 정적 검사**:
 
-1. **태그 존재**: Toulmin 필드(Grounds/Backing/Warrant/Rebuttal)의 모든 불릿에 `[source:...]` 부착 여부
+1. **태그 존재**: Walton 필드(Grounds/CQ Responses/Confidence)의 모든 불릿에 `[source:...]` 부착 여부
 2. **화이트리스트**: `user / #\d{3} / sub-research / file:.+ / target / placeholder / inference` 정규식 매칭. 외 값은 error
 3. **Retrieval 실존**: `[source:#NNN]` → `research/NNN-*.md` 파일 존재 확인, `[source:file:{path}]` → 경로 실존 확인. 미실존 시 error
 4. **구조/내용 경계 경고**: `[source:placeholder]` / `[source:inference]` 태그인데 구체값(수치·%·URL·DOI·연도) 포함 → warning (retrieval 태그 필요 의심)
@@ -242,7 +242,7 @@ challenge Stage 0 (사실 검증)은 완전 폐기하지 않는다. 단 **역할
 
 **달성 조건** (이 조건이 모두 참이어야 "구조적 구별"이 성립):
 
-1. 모든 Toulmin 불릿이 `[source:...]` 태그를 갖는다 — parser(`.claude/sowhat-core/bin/source-tag-parser.js`)로 정적 검증
+1. 모든 Walton 필드의 불릿이 `[source:...]` 태그를 갖는다 — parser(`.claude/sowhat-core/bin/source-tag-parser.js`)로 정적 검증
 2. Retrieval 태그(`user/#NNN/sub-research/file/target`)의 대상이 실존 — parser가 research/ 디렉토리와 파일 시스템 대조
 3. LLM이 retrieval 태그를 허위 부착한 경우 challenge Stage 0에서 의미 수준 검증으로 탐지
 4. 사용자가 `--force`를 사용하지 않음 (sandbox escape 상태 밖)

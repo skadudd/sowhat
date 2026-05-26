@@ -165,15 +165,15 @@ T4 도메인이라도 다음 조건 충족 시 T3으로 상향:
 ### Grounds 사용 규칙
 
 ```
-Qualifier별 최소 Tier 요구:
+Confidence band별 최소 Tier 요구 (v3.0.0 — Tetlock band):
 
-| Qualifier | 단독 사용 가능 Tier | T3 허용 조건 | T4 허용 |
+| Confidence | 단독 사용 가능 Tier | T3 허용 조건 | T4 허용 |
 |-----------|:------------------:|:------------:|:-------:|
-| definitely (0) | T1만 | T1 2개 + T3 1개 보조 | ❌ |
-| usually (1) | T1, T2 | T2 1개 + T3 보조 | ❌ |
-| in most cases (2) | T1, T2 | T3 2개 교차검증 | ❌ |
-| presumably (3) | T1, T2, T3 | T3 단독 가능 | ❌ |
-| possibly (4) | 모든 Tier | 모든 Tier | Backing으로만 |
+| virtually certain (95%+) | T1만 | T1 2개 + T3 1개 보조 | ❌ |
+| very likely (80-95%) | T1, T2 | T2 1개 + T3 보조 | ❌ |
+| likely (60-80%) | T1, T2 | T3 2개 교차검증 | ❌ |
+| uncertain (40-60%) | T1, T2, T3 | T3 단독 가능 | ❌ |
+| unlikely / very unlikely (<40%) | 모든 Tier | 모든 Tier | Backing으로만 |
 ```
 
 ### Backing 사용 규칙
@@ -192,23 +192,24 @@ T3 출처를 Grounds에 단독 사용할 수 없을 때:
 
 ---
 
-## Claim Tier × Source Tier 정합성 매트릭스
+## Confidence × Source Tier 정합성 매트릭스
 
-섹션의 `claim_tier`와 출처 Tier 조합이 정합하는지 확인한다. `challenge-algorithm.md` Stage 0, `settle.md`가 이 매트릭스를 참조한다.
+섹션의 `confidence` band와 출처 Tier 조합이 정합하는지 확인한다. `challenge-algorithm.md` Stage 0, `settle.md`가 이 매트릭스를 참조한다.
+v3.0.0: `claim_tier: A/B` → `confidence` Tetlock band로 대체 (`calibration-guide.md`).
 
-| claim_tier | 출처 Tier | 결과 | 비고 |
+| Confidence | 출처 Tier | 결과 | 비고 |
 |:---:|:---:|---|---|
-| **A** (핵심) | T1 | ✅ 완전 정합 | — |
-| **A** (핵심) | T2 | ✅ 허용 | — |
-| **A** (핵심) | T3 | ⚠️ major 경고 | 교차검증 2개 이상 시 조건부 허용 |
-| **A** (핵심) | T4 | ❌ settle 거부 | Grounds에 T4 단독 불가 |
-| **A** (핵심) | 출처 없음 | ⚠️ major | 출처 추가 또는 claim_tier 하향 검토 |
-| **B** (보조) | T1-T2 | ✅ 완전 정합 | — |
-| **B** (보조) | T3 | ✅ 허용 | 단독 사용 가능 (qualifier 약화 권장) |
-| **B** (보조) | T4 | ⚠️ minor 경고 | qualifier `possibly` 이상 강제 |
-| **B** (보조) | 출처 없음 | 💡 minor | qualifier `presumably`/`possibly`이면 허용. 강한 qualifier 시 major |
+| **Primary** (≥60%, `likely` 이상) | T1 | ✅ 완전 정합 | — |
+| **Primary** (≥60%) | T2 | ✅ 허용 | — |
+| **Primary** (≥60%) | T3 | ⚠️ major 경고 | 교차검증 2개 이상 시 조건부 허용 |
+| **Primary** (≥60%) | T4 | ❌ settle 거부 | Grounds에 T4 단독 불가 |
+| **Primary** (≥60%) | 출처 없음 | ⚠️ major | 출처 추가 또는 confidence 하향 검토 |
+| **Supporting** (<60%, `uncertain` 이하) | T1-T2 | ✅ 완전 정합 | — |
+| **Supporting** (<60%) | T3 | ✅ 허용 | 단독 사용 가능 (confidence 하향 권장) |
+| **Supporting** (<60%) | T4 | ⚠️ minor 경고 | confidence `uncertain` 이하 강제 |
+| **Supporting** (<60%) | 출처 없음 | 💡 minor | confidence `unlikely` 이면 허용. `likely` 이상 시 major |
 
-> **핵심**: Tier-A 주장은 T1/T2 수준 출처가 필요하다. Tier-B 주장은 qualifier를 충분히 약화하면 T3/T4 또는 출처 없는 inference도 허용된다 (`[source:inference]` 태그 사용).
+> **핵심**: Primary 주장(≥60%)은 T1/T2 수준 출처가 필요하다. Supporting 주장(<60%)은 confidence를 충분히 낮추면 T3/T4 또는 출처 없는 inference도 허용된다 (`[source:inference]` 태그 사용).
 
 ---
 
@@ -236,16 +237,17 @@ Tier 보정:
   total_strength = sum(각 ground의 보정된 strength)
 ```
 
-### Stage 6 (Qualifier 보정) 강화
+### Stage 6 (Confidence 보정) 강화
 
-Tier를 고려한 적정 Qualifier 범위 추정:
+Tier를 고려한 적정 Confidence 범위 추정:
 
 ```
 highest_tier = min(각 ground의 tier)  # 가장 좋은 출처
 tier_penalty:
   - 모든 Grounds가 T1/T2 → 0 (감점 없음)
-  - T3 비율 > 50% → +1 (qualifier 1단계 하향 압력)
-  - T4가 Grounds에 있음 → +2 (사용 위반 경고 + qualifier 하향)
+  - T3 비율 > 50% → Confidence 1단계 하향 압력
+    (예: very likely → likely, likely → uncertain)
+  - T4가 Grounds에 있음 → ⚠️ 사용 위반 경고 + Confidence 강제 하향
 
 adjusted_range = 기존 적정 범위 + tier_penalty
 ```

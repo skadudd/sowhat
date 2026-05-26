@@ -23,7 +23,7 @@ continuation:
 status_transitions: ["draft → discussing", "needs-revision → discussing"]
 -->
 
-이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Toulmin Model 전체 구조(Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
+이 커맨드는 기획 섹션을 핑퐁 방식으로 전개한다. Walton Argumentation Schemes 기반으로 논증 구조(Claim/Grounds/Scheme+CQs/Confidence Band)를 구축한다. `$ARGUMENTS`에 섹션 이름 또는 번호가 전달된다.
 
 ## AI Content Boundary (cycle 7 — Plan A+G)
 
@@ -273,59 +273,79 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 
 ---
 
-### 스텝 2: Argument Scheme 선택
+### 스텝 2: Walton Scheme 선택 (D1 — 하이브리드)
 
 섹션의 `scheme` 필드가 이미 설정돼 있으면 이 스텝 건너뜀.
 
+**D1 하이브리드 원칙**: Writer가 1차 scheme을 선택하고, LLM이 복합 scheme 가능성을 보조 제안한다. 최종 확정은 Writer가 한다.
+
 ```
-> [expand {section} > 스텝 2/9 Argument Scheme]
+> [expand {section} > 스텝 2/7 Walton Scheme]
 > Thesis: "{Answer 40자}"
 > 이 섹션 논거: "{thesis_argument}"
 > Stasis: {선택된 stasis}
 
-❓ 이 섹션은 어떤 방식으로 논증합니까?
+❓ 이 주장은 어떤 종류의 추론인가? (Walton Argumentation Schemes)
 
-  예) "전문가들이 이것이 맞다고 한다"   → authority
-      "A가 성공했으니 B도 성공할 것이다" → analogy
-      "X 때문에 Y가 발생한다"          → cause-effect
-      "데이터가 이것을 증명한다"        → statistics
+  [1]  Expert Opinion       — 전문가·권위자 인용으로 주장
+  [2]  Sample to Population — 통계·데이터로 일반화
+  [3]  Cause to Effect      — 인과 추론 (X이면 Y가 생긴다)
+  [4]  Effect to Cause      — 역 인과·진단 (Y가 보이므로 X가 있었다)
+  [5]  Analogy              — 유사 사례 비교로 주장
+  [6]  Sign                 — 정황 증거로 주장
+  [7]  Classification       — 정의·분류로 주장
+  [8]  Practical Reasoning  — 목표 → 수단으로 주장
+  [9]  Position to Know     — 목격·내부자 증언으로 주장
+  [10] Popular Opinion      — 사회 통념으로 주장
+  [11] Custom               — 직접 CQ 작성
 
-  [1] authority    — 전문가/권위자의 의견으로 주장
-  [2] analogy      — 유사 사례 비교로 주장
-  [3] cause-effect — 인과관계로 주장
-  [4] statistics   — 데이터/수치로 주장
-  [5] example      — 대표적 사례로 주장
-  [6] sign         — 신호/징후로 주장
-  [7] principle    — 원칙/규칙으로 주장
-  [8] consequence  — 결과/영향으로 주장
+  복합 선택: 번호를 여러 개 입력 (예: 1 3 → Expert Opinion + Cause to Effect)
 ```
 
-인간 선택 → `scheme` 필드에 저장 → `wip({section}): add stasis+scheme` 커밋.
+**[LLM 보조 제안] Writer 선택 직후**:
+- 선택된 scheme이 단일이면: 복합 scheme 가능성을 확인한다
+  ```
+  ℹ️ 복합 scheme 확인:
+    선택: {선택한 scheme}
+    이 주장에 {다른 scheme}도 해당될 수 있습니다.
+    예) Expert Opinion + Cause to Effect: 전문가가 인과 관계를 주장할 때
+
+  [1] 단일 scheme 유지
+  [2] 복합 scheme으로 확장 → 어떤 scheme 추가?
+  ```
+- 복합 scheme이 확정되면 → 모든 scheme의 CQs를 스텝 5에서 다 적용
+- 복합 scheme 패턴 상세: `@walton-pitfalls.md`
+
+인간 선택 → `scheme` 필드에 저장 (복합이면 쉼표 구분: `Expert Opinion, Cause to Effect`) → `wip({section}): add stasis+scheme` 커밋.
 
 ---
 
-### 스텝 2.5: Claim Tier 설정
+### 스텝 2.5: Confidence 설정 (구 Claim Tier)
 
-`claim_tier` 필드가 이미 설정돼 있으면 이 스텝 건너뜀.
+`confidence` 필드가 이미 설정돼 있으면 이 스텝 건너뜀.
 
-이 섹션 주장의 등급을 결정한다. Tier에 따라 settle 시 요구되는 출처 수준이 달라진다 (`references/source-credibility.md`의 Claim Tier × Source Tier 매트릭스 참조).
+이 섹션 주장의 확신 수준을 결정한다. confidence에 따라 settle 시 요구되는 출처 수준이 달라진다 (`references/calibration-guide.md` 참조).
 
-**자동 추론 시도**: `thesis_argument`가 thesis의 Key Arguments와 직결되면 → `A` (핵심). 보조 주장이면 → `B`.
+- **≥60% (likely 이상)** = Primary claim → T1/T2 source 필요
+- **<60% (uncertain 이하)** = Supporting claim → T3/T4 허용
 
-확신할 수 있으면 자동 설정하고 알린다. 확신할 수 없으면:
+**자동 추론 시도**: Grounds 강도·수·출처 Tier를 기반으로 적정 confidence를 추정한다.
 
 ```
-> [expand {section} > 스텝 2.5/9 Claim Tier]
-> Thesis KA: {Key Arguments 목록}
+> [expand {section} > 스텝 2.5/7 Confidence]
+> Claim: "{Claim 40자}"
 
-이 섹션이 thesis 핵심 논거에 직결됩니까, 아니면 보조·배경 주장입니까?
+이 주장의 확신 수준(confidence)은?
 
-[1] Tier-A — 핵심 주장 (thesis KA에 직결 → T1/T2 출처 필요)
-[2] Tier-B — 보조 주장 (배경·보강·예시 → qualifier 약화로 출처 유연)
-[3] 자동 추론에 맡기기
+  [1] virtually certain (95%+) — 강한 empirical 증거 + 전문가 합의
+  [2] very likely (80-95%)     — 충분한 증거, 반론 약함
+  [3] likely (60-80%)          — 근거 있으나 불확실성 존재 [Primary claim 하한]
+  [4] uncertain (40-60%)       — 증거 불충분 또는 상충    [Supporting claim 상한]
+  [5] unlikely (20-40%)        — 반증이 더 강함
+  [자동]                        — Grounds 기반 자동 추정
 ```
 
-인간 선택(또는 자동 추론) → `claim_tier` 필드에 `A` 또는 `B` 저장. 별도 커밋 없이 다음 스텝 진행.
+인간 선택(또는 자동 추론) → `confidence` 필드에 anchor 어휘 저장. `claim_tier` 필드는 v3.0.0부터 deprecated (confidence로 흡수). 별도 커밋 없이 다음 스텝 진행.
 
 ---
 
@@ -665,136 +685,80 @@ Deep Research 결과의 신뢰도는 `references/source-credibility.md` Tier 시
 
 ---
 
-### 스텝 5: Warrant 핑퐁
+### 스텝 5: CQ 응답 (Walton Critical Questions)
 
 **SUB-RESEARCH Semi-Async 중이었다면: 여기서 Grounds 결과를 먼저 확인한다.**
 
-Warrant는 Grounds와 Claim 사이의 논리적 연결고리다. **이 스텝이 논증의 핵심이다.**
+scheme(s)에 해당하는 CQs를 자동 호출한다. 각 CQ에 답변하고 confidence 0-4를 부여한다.
+CQ 전체 목록: `@walton-schemes.md` | 함정 대응 규칙: `@walton-pitfalls.md`
+
+**복합 scheme 처리**: 여러 scheme이 확정된 경우 모든 scheme의 CQs를 연달아 출력한다.
 
 ```
-> [expand {section} > 스텝 5/9 Warrant]
-> Thesis: "{Answer 40자}"
-> 이 섹션 논거: "{thesis_argument}"
-> Stasis: {stasis} | Scheme: {scheme}
+> [expand {section} > 스텝 5/7 CQ 응답]
 > Claim: "{Claim 40자}"
-> Grounds: {근거 요약 (40자)}
+> Scheme: {scheme(s)}
+> Grounds: {근거 요약 40자}
 
-❓ Warrant: 이 근거가 주장을 어떻게 지지합니까?
-   "{Grounds 핵심}" 이기 때문에 → "{Claim}" 이 성립하는 이유
+CQ {N}/{총수} [{scheme명}]: {CQ 질문}
 
-  예) 귀하의 Grounds: "{Grounds 핵심 30자}"
-      귀하의 Claim:   "{Claim 30자}"
-      Warrant 예시:   "{Grounds → Claim 연결 논리를 Claude가 파생하여 제안}"
+  ❓ 이 질문에 답하세요:
 
-  [1] {이 Grounds-Claim 연결에 맞는 구체적 Warrant 제안 1}
-  [2] {구체적 Warrant 제안 2}
-  [3] {구체적 Warrant 제안 3}
-  [4] 직접 작성
-  [5] 이건 당연하다 (Implicit) — /sowhat:challenge 공격에 가장 취약
+  답변 입력 후 → 답변의 근거 강도(confidence 0-4):
+  [4] 강한 근거 — T1/T2 source 직접 인용
+  [3] 적당 근거 — T3 source 또는 명확한 1차 데이터
+  [2] 약한 근거 — T4 source 또는 정황
+  [1] 추측     — 근거 없는 의견
+  [0] 답할 수 없음
 ```
 
-인간이 [5] Implicit을 선택하면: `⚠️ Implicit Warrant는 /sowhat:challenge에서 가장 먼저 공격받습니다. 계속하시겠습니까? [1] 계속  [2] Warrant 작성` 확인 후 진행.
+**Depth=2 cap (D3)**: CQ 답변(=새 주장)에 대해 후속 CQ는 최대 1회만 허용.
 
-인간 답변 → `## Warrant` 필드에 저장 → `wip({section}): add warrant` 커밋.
+```
+  → 후속 CQ (depth 2 — 최종):
+    {CQ 답변에 대한 후속 CQ}
+    [답변 + confidence 입력]
+
+  → depth 3 시도 시: ⛔ depth limit 도달 — 자동 항복 선언 (confidence: 0)
+```
+
+**미충족 CQ 처리**: confidence ≤ 1인 CQ는 미충족으로 집계.
+scheme별 미충족 허용 상한 초과 시 → settle 차단 (`@calibration-guide.md`).
+
+완료 후 `## CQ Responses` 필드에 저장 → `wip({section}): add cq-responses` 커밋.
 
 ---
 
-### 스텝 6: Qualifier 선택
+### 스텝 6: Confidence Band
 
 ```
-> [expand {section} > 스텝 6/9 Qualifier]
-> Thesis: "{Answer 40자}"
-> 이 섹션 논거: "{thesis_argument}"
+> [expand {section} > 스텝 6/7 Confidence Band]
 > Claim: "{Claim 40자}"
-> Grounds: {근거 수}건 ({structure})
+> CQ 결과: 총 {N}개 CQ, 미충족 {M}개
 
-❓ 이 주장의 확신 수준은?
+❓ 이 주장의 최종 확신 수준(confidence)은?
 
-  예) "항상 그렇다 (definitely)" → 반례 하나에도 Claim 전체가 무너짐. 위험.
-      "대부분의 경우 (in most cases)" → 현실적이고 방어하기 쉬움.
+  CQ 결과와 Grounds 강도를 종합하여 선택하세요.
 
-  [1] definitely    — 확실히, 예외 없음 (가장 공격받기 쉬움)
-  [2] usually       — 대체로, 일반적으로
-  [3] in most cases — 대부분의 경우 (권장)
-  [4] presumably    — 추정컨대, 아마도
-  [5] possibly      — 가능성 있음 (약한 주장)
+  [1] virtually certain (95%+) — 강한 empirical 증거 + 전문가 합의
+  [2] very likely (80-95%)     — 충분한 증거, CQ 전부 응답
+  [3] likely (60-80%)          — 근거 있으나 일부 불확실성 [Primary claim 하한]
+  [4] uncertain (40-60%)       — 일부 CQ 미응답 또는 증거 상충 [Supporting claim 상한]
+  [5] unlikely (20-40%)        — 다수 CQ 미응답 또는 반증 강함
 ```
 
-**Grounds 강도와 Qualifier 균형 자동 체크:**
-- `definitely` + 근거 1-2건 → `⚠️ Overclaiming 위험. "usually" 또는 "in most cases" 권장`
-- `possibly` + 강한 데이터 → `⚠️ Underclaiming. 더 강한 qualifier도 방어 가능합니다`
+**자동 경고**:
+- 미충족 CQ ≥ 임계값인데 `very likely` 이상 선택 → `⚠️ Overclaiming: CQ 미충족과 confidence 불일치`
+- 모든 CQ가 confidence 4인데 `uncertain` 이하 → `⚠️ Underclaiming: 더 강한 confidence 가능`
 
-인간 답변 → `## Qualifier` 필드에 저장 → `wip({section}): add qualifier` 커밋.
+인간 답변 → `confidence` 필드에 anchor 어휘 저장 → `wip({section}): add confidence` 커밋.
 
 ---
 
-### 스텝 7: Backing 핑퐁 (선택적)
-
-Backing은 Warrant 자체를 뒷받침하는 추가 근거다.
+### 스텝 7: Scope + Acceptance Criteria
 
 ```
-> [expand {section} > 스텝 7/9 Backing (선택적)]
-> Thesis: "{Answer 40자}"
-> Warrant: "{Warrant 40자}"
-
-❓ Warrant를 뒷받침하는 추가 근거(Backing)가 있습니까?
-   (Warrant "{Warrant 요약}"이 왜 일반적으로 성립하는가)
-
-  [1] {이 Warrant를 뒷받침할 수 있는 구체적 Backing 제안 1}
-  [2] {Backing 제안 2}
-  [3] 생략 (Warrant가 자명함)
-  [4] 직접 작성
-  [5] 🔍 Sub-Research → Backing 근거 검색
-```
-
-**[5] Sub-Research 선택 시**: "스텝 4 SUB-RESEARCH"의 **Deep Research 선택 UX**와 동일한 흐름을 따른다. 단, Backing 검색이므로 Semi-Async 전환 없이 결과를 바로 대기한다.
-
-인간 답변 → `## Backing` 필드에 저장 → `wip({section}): add backing` 커밋.
-
----
-
-### 스텝 8: Rebuttal 핑퐁
-
-scheme의 Critical Questions를 참고하여 가장 강력한 반론(Steelman)을 생성한다.
-
-**scheme별 Critical Questions (Rebuttal 제안 생성 시 참고):**
-- `authority`: 이 권위자가 이 도메인의 진짜 전문가인가? 해당 분야에 합의가 있는가?
-- `analogy`: 두 케이스가 충분히 유사한가? 차이점이 논증에 결정적인가?
-- `cause-effect`: 역인과(reverse causation) 가능성은? Confounding variable은?
-- `statistics`: 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 최신인가?
-- `example`: 대표적인 사례인가? 체리피킹은 아닌가?
-- `sign`: 이 신호가 신뢰할 수 있는 지표인가? 다른 설명은 없는가?
-- `principle`: 이 원칙이 이 상황에 적용되는가? 관련 예외는 없는가?
-- `consequence`: 결과가 현실적인가? 의도치 않은 효과는? 시간대는?
-
-```
-> [expand {section} > 스텝 8/9 Rebuttal]
-> Thesis: "{Answer 40자}"
-> Claim: "{Claim 40자}"
-> Warrant: "{Warrant 40자}"
-> Qualifier: {qualifier}
-
-❓ 가장 강력한 반론(Rebuttal)은 무엇이며, 어떻게 대응합니까?
-   (Steelman: 반론을 가장 강하게 표현한 뒤 대응)
-
-  예) 반론: "시장이 크다고 우리가 그 시장을 잡을 수 있는 건 아니다"
-      대응: "우리 GTM은 니치 세그먼트 선점에 집중하므로 전체 시장 점유율 불필요"
-
-  [1] {scheme CQ에서 도출한 가장 강한 반론 + 대응 제안 1}
-  [2] {반론 + 대응 제안 2}
-  [3] {반론 + 대응 제안 3}
-  [4] 직접 작성
-  [5] 지금은 생략 → Open Question으로 남김
-```
-
-인간 답변 → `## Rebuttal` 필드에 저장 → `wip({section}): add rebuttal` 커밋.
-
----
-
-### 스텝 9: Scope + Acceptance Criteria
-
-```
-> [expand {section} > 스텝 9/9 Scope + AC]
+> [expand {section} > 스텝 7/7 Scope + AC]
 > Thesis: "{Answer 40자}"
 > Claim: "{Claim 40자}"
 ```
@@ -846,8 +810,8 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 ---
 status: discussing
 stasis: {사실|정의|가치|행동}
-scheme: {선택된 scheme}
-qualifier: {선택된 qualifier}
+scheme: {Walton scheme(s) — 복합이면 쉼표 구분}
+confidence: {Tetlock anchor 어휘 또는 %}
 grounds_structure: {linked|convergent|mixed}
 version: 1
 section: {N}
@@ -867,19 +831,16 @@ updated: {current_datetime}
 
 > 결합 방식: {linked|convergent|mixed}
 
-## Warrant (논거 연결)
-> {Grounds가 Claim을 지지하는 이유}
+## CQ Responses
+| CQ | 답변 요약 | confidence |
+|---|---|---|
+| {scheme}: {CQ 질문} | {답변 요약} | {0-4} |
 
-## Backing (Warrant 강화)
-- {Warrant 자체를 뒷받침하는 근거 (없으면 비워둠)}
+> 미충족 CQ (confidence ≤ 1): {수}개
 
-## Qualifier
-> 확신 수준: {definitely|usually|presumably|in most cases|possibly}
-> 조건: {Qualifier가 적용되는 조건}
-
-## Rebuttal (반론 대응)
-> 가장 강력한 반론: {steelman}
-> 대응: {왜 이 반론이 Claim을 무너뜨리지 못하는가}
+## Confidence
+> 확신 수준: {virtually certain|very likely|likely|uncertain|unlikely|very unlikely}
+> 근거: {CQ 결과 + Grounds 강도 요약}
 
 ## Scope
 ### In
@@ -1069,7 +1030,7 @@ expand 핑퐁에서 사용자가 내린 모든 결정에 고유 ID를 부여한�
 최종 커밋:
 ```bash
 git add planning/{section}.md logs/argument-log.md
-git commit -m "expand({section}): complete toulmin structure"
+git commit -m "expand({section}): complete walton structure"
 ```
 
 종료 안내:
@@ -1077,13 +1038,12 @@ git commit -m "expand({section}): complete toulmin structure"
 ```
 ✅ 섹션 {N}-{name} 전개 완료
 
-  Claim:     {Claim 한 줄 요약}
-  Stasis:    {stasis}
-  Scheme:    {scheme}
-  Qualifier: {qualifier}
-  Grounds:   {N}건 ({structure})
-  Warrant:   {Warrant 한 줄 요약}
-  Rebuttal:  {"addressed" 또는 "open question"}
+  Claim:      {Claim 한 줄 요약}
+  Stasis:     {stasis}
+  Scheme:     {scheme(s)}
+  Confidence: {Tetlock anchor}
+  Grounds:    {N}건 ({structure})
+  CQs:        총 {N}개, 미충족 {M}개
 
   status: discussing
   커밋: {N}회

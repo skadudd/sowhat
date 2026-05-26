@@ -5,7 +5,7 @@ output-profiles(포맷: 무엇을 만드는가)와 독립된 레이어로,
 **누가 쓰는가**(톤, 전개, 시그니처)를 정의한다.
 
 ```
-논증 (Toulmin)  →  출력 형식 (output profile)  →  글쓰기 스타일 (character)
+논증 (Walton)   →  출력 형식 (output profile)  →  글쓰기 스타일 (character)
 내용               포맷                          목소리
 ```
 

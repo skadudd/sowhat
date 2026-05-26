@@ -174,9 +174,13 @@ THEN (전체 검증):
 
 ---
 
-## Stage 2: Argument Scheme 유효성
+## Stage 2: Argument Scheme 유효성 (Walton)
 
-**질문**: 각 섹션의 scheme이 설정되어 있고, 해당 scheme의 Critical Questions에 답할 수 있는가?
+**질문**: 각 섹션의 scheme이 설정되어 있고, 해당 scheme의 Critical Questions에 답변(confidence ≥ 2)했는가?
+
+> Walton Schemes 전체 정의 및 CQ 목록: `references/walton-schemes.md`
+> confidence 기준 및 임계값: `references/calibration-guide.md`
+> 함정 대응 규칙: `references/walton-pitfalls.md`
 
 ### 알고리즘
 
@@ -186,110 +190,115 @@ FOR EACH section:
      - 없음 → ⚠️ major: scheme 미설정 (공격 방어 불가)
      - 있음 → Step 2
 
-  2. scheme별 Critical Questions 적용:
+  2. cq_responses 확인
+     - cq_responses 없음 → 🔴 critical: CQ 응답 누락
+     - cq_responses 있음 → Step 3
 
-     authority:
-       CQ1: 이 권위자가 해당 도메인의 전문가인가?
-         - Grounds에 전문가 자격/소속/실적 없음 → 🔴 critical
-       CQ2: 해당 분야에 전문가 합의가 있는가?
-         - 반대 의견 존재 미언급 → ⚠️ major
-       CQ3: 이해충돌 가능성?
-         - 미검토 → 💡 minor
+  3. scheme별 CQ confidence 검증 (walton-schemes.md 참조):
 
-     analogy:
-       CQ1: 두 사례가 핵심 측면에서 유사한가?
-         - 유사성 논거 없음 → 🔴 critical
-       CQ2: 차이점이 결론에 결정적인가?
-         - 차이점 미검토 → ⚠️ major
+     Expert Opinion:
+       CQ1 (전문가 자격): confidence < 2 → 🔴 critical
+       CQ2 (인용 정확성): confidence < 2 → 🔴 critical
+       CQ3 (합의 여부): confidence < 2 → ⚠️ major
+       CQ4 (이해충돌): 미응답 → 💡 minor
 
-     cause-effect:
-       CQ1: 인과 메커니즘이 설명되어 있는가?
-         - 상관관계만 제시 → 🔴 critical
-       CQ2: 역인과/혼재변수 가능성?
-         - 미검토 → ⚠️ major
-       CQ3: 시간 순서가 맞는가?
-         - 역순 또는 불명확 → ⚠️ major
+     Sample to Population:
+       CQ1 (표본 크기): confidence < 2 → ⚠️ major
+       CQ2 (대표성): confidence < 2 → 🔴 critical
+       CQ3 (교란 변수): confidence < 2 → ⚠️ major
+       CQ4 (측정 일관성): 미응답 → 💡 minor
+       CQ5 (통계적 유의성): confidence < 2 → ⚠️ major
 
-     statistics:
-       CQ1: 표본 크기와 대표성?
-         - N 미명시 또는 N<30 → ⚠️ major
-       CQ2: 방법론 기술 여부?
-         - 방법론 없음 → 🔴 critical (검증 불가)
-       CQ3: 데이터 시점?
-         - 3년 이상 경과 → ⚠️ major
+     Cause to Effect:
+       CQ1 (인과 메커니즘): confidence < 2 → 🔴 critical (상관관계만이면 critical)
+       CQ2 (충분/필요 조건): confidence < 2 → ⚠️ major
+       CQ3 (다른 원인): confidence < 2 → ⚠️ major
+       CQ4 (맥락 적용): 미응답 → 💡 minor
 
-     example:
-       CQ1: 사례가 대표적인가?
-         - 1개만 제시 → ⚠️ major
-       CQ2: 선택 편향?
-         - 성공 사례만 → 🔴 critical
-       CQ3: 일반화 가능한가?
-         - 특수 상황 → ⚠️ major
+     Effect to Cause:
+       CQ1 (다른 원인 배제): confidence < 2 → ⚠️ major
+       CQ2 (인과 방향 검증): confidence < 2 → 🔴 critical
+       CQ3 (관찰 신뢰성): confidence < 2 → ⚠️ major
 
-     sign:
-       CQ1: 신호-결과 관계의 신뢰성?
-         - 신뢰도 미검증 → ⚠️ major
-       CQ2: 대안 설명 가능성?
-         - 미검토 → ⚠️ major
+     Analogy:
+       CQ1 (유사성 실질성): confidence < 2 → 🔴 critical
+       CQ2 (차이점 무관성): confidence < 2 → ⚠️ major
+       CQ3 (원사례 근거): confidence < 2 → ⚠️ major
 
-     principle:
-       CQ1: 원칙이 이 상황에 적용 가능한가?
-         - 적용 조건 불명확 → ⚠️ major
-       CQ2: 예외 조건?
-         - 미검토 → 💡 minor
+     Sign:
+       CQ1 (징후 관계 신뢰성): confidence < 2 → ⚠️ major
+       CQ2 (대안 설명 배제): confidence < 2 → ⚠️ major
+       CQ3 (관찰 신뢰성): 미응답 → 💡 minor
 
-     consequence:
-       CQ1: 결과 예측이 현실적인가?
-         - 낙관 편향 → ⚠️ major
-       CQ2: 부작용 검토?
-         - 미검토 → ⚠️ major
-       CQ3: 시간대 적절성?
-         - 미명시 → 💡 minor
+     Classification:
+       CQ1 (분류 기준 충족): confidence < 2 → 🔴 critical
+       CQ2 (기준 맥락 적합성): confidence < 2 → ⚠️ major
+       CQ3 (예외 없음): confidence < 2 → ⚠️ major
+
+     Practical Reasoning:
+       CQ1 (수단 효과성): confidence < 2 → 🔴 critical
+       CQ2 (대안 수단 검토): 미응답 → ⚠️ major
+       CQ3 (부작용 검토): 미응답 → ⚠️ major
+       CQ4 (목표 가치): 미응답 → 💡 minor
+
+     Position to Know:
+       CQ1 (인식 위치 확인): confidence < 2 → 🔴 critical
+       CQ2 (정직 동기): confidence < 2 → ⚠️ major
+       CQ3 (기억/관찰 신뢰성): 미응답 → 💡 minor
+
+     Popular Opinion:
+       CQ1 (다수 의견 증거): confidence < 2 → ⚠️ major
+       CQ2 (전문가 동의): confidence < 2 → ⚠️ major
+       CQ3 (유형 신뢰성): 미응답 → 💡 minor
+
+  4. 미충족 CQ 집계
+     - 미충족(confidence ≤ 1) 수 ≥ scheme별 임계값 → 🔴 critical: CQ 미충족 한계 초과
+     - 임계값 기준: references/calibration-guide.md
+
+  5. 복합 scheme 처리
+     - scheme 필드에 복합 scheme이 있으면 (예: "Expert Opinion, Cause to Effect")
+       모든 scheme의 CQ를 각각 검증 → 어느 하나라도 critical이면 전체 critical
 ```
 
 ### Pass 기준
 - scheme 설정됨
-- 해당 scheme의 CQ 중 🔴 critical 없음
+- cq_responses 존재
+- 해당 scheme(s)의 CQ 중 🔴 critical 없음
+- 미충족 CQ 수 < scheme별 임계값
 
 ---
 
-## Stage 3: Warrant 유효성
+## Stage 3: CQ 응답 충분성 (구 Warrant 유효성)
 
-**질문**: Warrant가 Grounds → Claim을 논리적으로 연결하는가?
+**질문**: CQ 응답이 Grounds → Claim의 논리적 연결을 충분히 뒷받침하는가?
+
+> v3.0.0부터 Warrant 필드는 deprecated. CQ 응답이 Warrant의 역할을 한다.
+> Depth=2 cap: CQ 답변에 대한 후속 CQ는 최대 1회. 초과 시 자동 항복 선언(confidence: 0).
 
 ### 알고리즘
 
 ```
 FOR EACH section:
-  1. Warrant 존재 확인
-     - 비어있음 or "Implicit" → 🔴 critical: Warrant 부재
+  1. CQ 응답 → Claim 연결 테스트:
+     "scheme의 CQ들에 답변한 내용이 종합되면, Grounds → Claim이 자연스럽게 따라오는가?"
+     - CQ 응답이 모두 고 confidence(3-4)인데 Grounds → Claim 흐름이 끊김
+       → 🔴 critical: 논증 체인 단절 (scheme 선택 자체 오류 가능)
+     - CQ 응답이 저 confidence(1-2)이고 핵심 CQ에서 미충족
+       → ⚠️ major: 핵심 연결 취약
 
-  2. 연결 타당성 3중 테스트:
+  2. Depth cap 준수 확인 (D3):
+     - depth 3 이상의 후속 CQ가 응답됨 → ⚠️ major: depth cap 위반
+     - depth 2 도달 시 항복 선언 없음 → 💡 minor: 항복 선언 누락
 
-     Non-sequitur 테스트:
-       "Grounds를 읽고 → Warrant를 적용하면 → Claim이 도출되는가?"
-       - Grounds가 다른 결론도 동등하게 지지 → 🔴 critical
-       - 판정법: Grounds + Warrant로 Claim의 부정도 동등하게 도출 가능하면 Non-sequitur
-
-     Missing-link 테스트:
-       "Grounds에서 Claim까지 Warrant가 메우는 논리적 단계가 1개인가?"
-       - 2개 이상의 중간 단계가 숨어있음 → ⚠️ major
-       - 판정법: Warrant를 A→C로 요약했을 때, 명시되지 않은 B가 필요하면 Missing-link
-
-     Circular 테스트:
-       "Warrant가 Claim을 다른 말로 반복하고 있는가?"
-       - Warrant ≈ Claim (의미적 동치) → 🔴 critical
-       - 판정법: Warrant에서 Claim 특유의 키워드를 제거하면 빈 문장이 되는가?
-
-  3. Backing 강화 확인 (선택적)
-     - Backing 없음 → 💡 minor: Warrant 근거 보강 권고
-     - Backing 있음 → Backing이 Warrant를 실제로 지지하는지 확인
+  3. 복합 scheme 완전성:
+     - 복합 scheme인데 일부 scheme의 CQ가 누락됨
+       → ⚠️ major: 복합 scheme 공격 벡터 누락 (walton-pitfalls.md 함정①)
 ```
 
 ### Pass 기준
-- Warrant 존재
-- Non-sequitur, Circular 테스트 모두 통과
-- Missing-link가 있더라도 major 이하면 pass (단, 권고 포함)
+- Grounds → Claim 논리 체인 끊기지 않음
+- Depth cap 준수
+- 복합 scheme이면 모든 scheme CQ 응답 완전
 
 ---
 
@@ -344,18 +353,18 @@ FOR EACH section:
          - T3가 단독 사용 + Qualifier ≤ 2 (in most cases) → ⚠️ major: 교차검증 필요
 
   1. 충분성 테스트:
-     Qualifier별 최소 근거 기준:
-     | Qualifier | 최소 근거 수 | 최소 근거 유형 | 최소 Tier |
+     Confidence별 최소 근거 기준:
+     | Confidence | 최소 근거 수 | 최소 근거 유형 | 최소 Tier |
      |-----------|-------------|---------------|-----------|
-     | definitely (0) | 3+ | 최소 1개 정량적 데이터 필수 | T1 필수 1개 이상 |
-     | usually (1) | 2+ | 정량 또는 복수 사례 | T1 또는 T2 |
-     | in most cases (2) | 2+ | 유형 무관 | T2 이상 1개 |
-     | presumably (3) | 1+ | 유형 무관 | Tier 무관 |
-     | possibly (4) | 1+ | 유형 무관 | Tier 무관 |
+     | virtually certain (95%+) | 3+ | 최소 1개 정량적 데이터 필수 | T1 필수 1개 이상 |
+     | very likely (80-95%) | 2+ | 정량 또는 복수 사례 | T1 또는 T2 |
+     | likely (60-80%) | 2+ | 유형 무관 | T2 이상 1개 |
+     | uncertain (40-60%) | 1+ | 유형 무관 | Tier 무관 |
+     | unlikely (20-40%) | 1+ | 유형 무관 | Tier 무관 |
 
      근거 수 < 최소 기준 → ⚠️ major: 근거 부족
      근거 유형 미충족 → ⚠️ major: 근거 유형 불일치
-     Tier 미충족 → ⚠️ major: 출처 신뢰도 부족 (Tier 상향 또는 Qualifier 하향 권고)
+     Tier 미충족 → ⚠️ major: 출처 신뢰도 부족 (Tier 상향 또는 confidence 하향 권고)
 
   2. 필요성 테스트:
      FOR EACH ground:
@@ -379,9 +388,12 @@ FOR EACH section:
 
 ---
 
-## Stage 6: Qualifier 보정
+## Stage 6: Confidence 보정
 
-**질문**: Qualifier가 근거 강도에 비례하는가?
+**질문**: Confidence Band가 근거 강도 및 CQ 응답 품질에 비례하는가?
+
+> v3.0.0부터 Qualifier(definitely/usually/...) 대신 Tetlock Probability Band 사용.
+> Anchor 어휘 정의: `references/calibration-guide.md`
 
 ### 알고리즘
 
@@ -403,33 +415,34 @@ FOR EACH section:
 
      total_strength = sum(각 ground의 Tier 보정 strength)
 
-  2. Rebuttal 강도 평가:
-     - 구체적 반론 + 대응 있음 → rebuttal_strength = strong
-     - 반론 있으나 대응 미흡 → rebuttal_strength = moderate
-     - 반론 없음 → rebuttal_strength = weak
+  2. CQ 응답 강도 평가:
+     - 평균 CQ confidence ≥ 3 → cq_strength = strong
+     - 평균 CQ confidence 2-3 → cq_strength = moderate
+     - 평균 CQ confidence < 2 또는 미충족 CQ 다수 → cq_strength = weak
 
-  3. 적정 Qualifier 범위 추정:
+  3. 적정 Confidence 범위 추정:
 
-     | total_strength | rebuttal_strength | 적정 범위 |
-     |---------------|-------------------|-----------|
-     | 5+ | strong | definitely ~ usually (0-1) |
-     | 3-4 | strong | usually ~ in most cases (1-2) |
-     | 3-4 | moderate | in most cases ~ presumably (2-3) |
-     | 1-2 | any | presumably ~ possibly (3-4) |
-     | 0 이하 | any | possibly (4) |
+     | total_strength | cq_strength | 적정 범위 |
+     |---------------|-------------|-----------|
+     | 5+ | strong | virtually certain ~ very likely (95%~80%) |
+     | 3-4 | strong | very likely ~ likely (80%~60%) |
+     | 3-4 | moderate | likely ~ uncertain (60%~40%) |
+     | 1-2 | any | uncertain ~ unlikely (40%~20%) |
+     | 0 이하 | any | unlikely 이하 (<40%) |
 
-  4. 현재 Qualifier와 적정 범위 비교:
-     - 현재 < 적정 하한 (예: definitely인데 적정은 presumably~possibly) → ⚠️ major: Overclaiming
-     - 현재 > 적정 상한 (예: possibly인데 적정은 usually~in most cases) → 💡 minor: Underclaiming
+  4. 현재 Confidence와 적정 범위 비교:
+     - 현재 > 적정 상한 (예: virtually certain인데 적정은 uncertain 이하) → ⚠️ major: Overclaiming
+     - 현재 < 적정 하한 (예: unlikely인데 적정은 very likely 이상) → 💡 minor: Underclaiming
      - 범위 내 → 통과
 
   특수 케이스:
-  - definitely + Rebuttal 없음 → 🔴 critical: 무조건 Overclaiming
-  - definitely + 근거 1개 → 🔴 critical: 무조건 Overclaiming
+  - virtually certain + CQ 미충족 3개 이상 → 🔴 critical: 무조건 Overclaiming
+  - virtually certain + 근거 1개 → 🔴 critical: 무조건 Overclaiming
+  - very likely 이상 + cq_strength = weak → ⚠️ major: CQ 품질 불일치
 ```
 
 ### Pass 기준
-- Qualifier가 적정 범위 내
+- Confidence가 적정 범위 내
 - 특수 케이스 해당 없음
 
 ---

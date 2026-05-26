@@ -1,27 +1,32 @@
 # Critique Dimensions — 5차원 논증 비평 기준
 
 sowhat-critic-agent와 sowhat-self-critic-agent가 공유하는 논증 비평 5차원 정의.
+v3.0.0부터 Toulmin 5차원 → Walton Argumentation Schemes 기반으로 재정의.
 
 ---
 
-## 1. Toulmin 완전성 (Completeness)
+## 1. Walton Scheme 완전성 (Scheme Completeness)
 
-- Missing Claim: 핵심 주장이 명시적인가, 암묵적인가?
-- Missing Grounds: 근거가 제시되었는가? 몇 개인가?
-- Missing Warrant: Grounds → Claim 연결 원칙이 명시되었는가?
-- Missing Backing: Warrant를 지지하는 추가 근거가 있는가?
-- Missing Qualifier: 확실성 수준이 명시되었는가?
-- Missing Rebuttal: 반론 조건이 인정되었는가?
+논증이 Walton scheme 구조를 갖추고 있는가?
 
-각 필드를 `present` | `implicit` | `missing` 으로 분류한다.
+- **Scheme 선택**: scheme 필드가 명시되어 있는가? (`walton-schemes.md` 10개 + Custom)
+- **CQ 응답 존재**: `## CQ Responses` 섹션에 해당 scheme의 CQs가 모두 열거되었는가?
+- **복합 scheme 처리**: 복합 scheme인 경우(예: Expert Opinion + Cause to Effect) 두 scheme의 CQs가 모두 포함되었는가?
+- **depth cap 준수**: CQ 답변 depth가 2를 초과하지 않았는가?
 
-## 2. Warrant 유효성 (Validity)
+각 항목을 `complete` | `partial` | `missing` 으로 분류한다.
 
-`challenge-algorithm.md`의 Warrant 검증과 동일한 기준 적용:
+## 2. CQ 응답 품질 (CQ Response Quality)
 
-- **Non-sequitur**: Grounds가 Claim을 논리적으로 지지하지 않음
-- **Missing link**: A → C 점프, 중간 단계(B) 없음
-- **Circular**: Warrant가 Claim을 그대로 반복
+각 CQ 답변이 충분한 근거를 갖추고 있는가?
+
+- **confidence 분포**: 각 CQ의 confidence 점수(0-4) 확인 — confidence ≤1은 미충족
+- **미충족 CQ 수**: scheme별 허용 상한(`calibration-guide.md`)과 비교
+  - Cause to Effect, Classification: 미충족 0개 허용 (엄격)
+  - Expert Opinion, Sample to Population, Analogy, Practical Reasoning: 1개 허용
+  - Sign, Position to Know, Popular Opinion: 2개 허용 (여유)
+- **depth 2 항복 처리**: 항복 선언된 CQ가 미충족으로 카운트되었는가?
+- **순환 답변**: CQ 답변이 원래 Claim을 반복하지 않는가?
 
 ## 3. 근거 품질 (Evidence Quality)
 
@@ -33,22 +38,25 @@ sowhat-critic-agent와 sowhat-self-critic-agent가 공유하는 논증 비평 5�
 - T4 (의견/추정): 개인 의견, 출처 없는 주장
 
 각 근거를 T1-T4로 평가. 방법론, 표본 크기, 데이터 현재성도 점검.
+CQ 답변에 사용된 출처도 동일 기준으로 평가한다.
 
-## 4. Qualifier 적정성 (Appropriateness)
+## 4. Confidence 적정성 (Calibration)
 
-주장 확실성이 근거 강도에 비해 적절한가?
+Tetlock probability band(`calibration-guide.md`)가 근거·CQ 강도에 비해 적절한가?
 
-- **Overclaiming**: "반드시" + 약한 근거 → 과대 주장
-- **Underclaiming**: 강한 근거인데 "아마도" → 불필요한 약화
-- Qualifier 강도 척도: definitely(0) > usually(1) > in most cases(2) > presumably(3) > possibly(4)
+- **Overclaiming**: `virtually certain` 또는 `very likely` + 약한 grounds 또는 다수 미충족 CQ
+- **Underclaiming**: T1 grounds + 모든 CQ 충족인데 `uncertain` 이하 → 불필요한 약화
+- Confidence band 척도: `virtually certain (95%+)` > `very likely (80-95%)` > `likely (60-80%)` > `uncertain (40-60%)` > `unlikely (20-40%)`
+- Primary claim(≥60%): T1/T2 grounds 필요. Supporting claim(<60%): T3/T4 허용
 
-## 5. Rebuttal 커버리지 (Coverage)
+## 5. CQ 미응답 커버리지 (Blind Spot Coverage)
 
-인지하지 못하는 반론(blind spot) 탐색:
+인지하지 못한 반론과 미응답 CQ가 드러내는 취약점 탐색:
 
-- 어떤 조건에서 Claim이 거짓이 되는가?
-- 언급하지 않은 반례는?
-- Scope 외부에서 발생하는 문제는?
+- **미충족 CQ 함의**: confidence ≤1인 CQ가 지적하는 논증의 실질적 약점은?
+- **scheme 미적용 영역**: 선택한 scheme 외에 추가로 적용 가능한 scheme과 그 CQs가 있는가? (복합 scheme 누락 점검)
+- **Scope 외부 문제**: 어떤 조건에서 Claim이 깨지는가? Scope 바깥의 반례는?
+- **depth 항복 지점**: depth 2에서 항복한 CQ가 남긴 미해결 논점은?
 
 ---
 
@@ -56,6 +64,6 @@ sowhat-critic-agent와 sowhat-self-critic-agent가 공유하는 논증 비평 5�
 
 | 수준 | 정의 |
 |------|------|
-| **critical** | 논증 구조적 실패. Warrant 부재, 순환 논증, 근거 없는 핵심 주장. 주장이 무너질 수 있다. |
-| **major** | 중요한 약점. Qualifier 과대주장, T4 근거 의존, 핵심 반론 미대응. 주장을 약화시키나 즉시 무너뜨리지는 않는다. |
-| **minor** | 개선 가능한 부분. 암묵적 Warrant, 오래된 데이터, 사소한 scope 문제. 실질적 영향 적음. |
+| **critical** | 논증 구조적 실패. Scheme 미선택, CQs 전혀 미응답, 미충족 CQ가 임계값을 크게 초과(2개 이상 초과). Claim이 무너질 수 있다. |
+| **major** | 중요한 약점. Confidence 과대설정(Overclaiming), T4 grounds 의존, 핵심 CQ 미응답 (임계값 1개 초과). 주장을 약화시키나 즉시 무너뜨리지는 않는다. |
+| **minor** | 개선 가능한 부분. CQ depth 2 근접, 오래된 데이터, Confidence 약간 과대설정, 복합 scheme 누락 가능성. 실질적 영향 적음. |

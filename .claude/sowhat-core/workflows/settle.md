@@ -58,10 +58,14 @@ status_transitions: ["discussing → settled"]
 9. **Filler stub detection** — Toulmin 필드가 형식만 채워져 있고 실질 내용이 없는 "빈 껍데기"를 탐지. 거부.
 10. **Source tag 완전성** — `.claude/sowhat-core/bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
 11. **Cross-section regression** — 이 섹션을 settle함으로써 기존 settled 섹션과의 논증 일관성이 깨지는지 검증. 충돌 시 경고.
-12. **Claim Tier 게이트** — `claim_tier` 필드 기반 출처 수준 검증 (`references/toulmin-model.md` 참조):
-    - Tier-A: Grounds에 T1/T2 출처가 없으면 `❌ Tier-A 섹션은 T1/T2 수준 출처가 필요합니다` 출력 후 거부
-    - Tier-B: T3/T4 또는 출처 없음도 허용, 단 qualifier가 `definitely`/`usually`이면 ⚠️ 경고 (qualifier 완화 권고)
-    - `claim_tier` 미설정: thesis KA 직결 여부로 자동 추론, 확신 없으면 A로 처리
+12. **Confidence 게이트** — `confidence` 필드 기반 출처 수준 검증 (`references/calibration-guide.md` 참조):
+    - ≥60% (likely 이상 = Primary claim): Grounds에 T1/T2 출처가 없으면 `❌ Primary claim은 T1/T2 수준 출처가 필요합니다` 출력 후 거부
+    - <60% (uncertain 이하 = Supporting claim): T3/T4 또는 출처 없음도 허용, 단 CQ 응답 confidence가 대부분 높은데 overall confidence가 낮으면 ⚠️ 경고 (Underclaiming)
+    - `confidence` 미설정: Grounds 강도 기반 자동 추론
+13. **CQ Confidence 게이트** (D2) — `cq_responses` 필드 기반 CQ 답변 품질 검증 (`references/calibration-guide.md`):
+    - 미충족 CQ (confidence ≤ 1) 수 ≥ scheme별 임계값 → settle 차단
+    - 미충족 CQ 목록 출력: `❌ CQ 미충족 {N}개 — {미충족 CQ 목록}`
+    - `cq_responses` 없음 → `❌ CQ 응답 누락 — /sowhat:expand로 CQ 응답 필요`
 
 ### Filler Stub Detection (빈 껍데기 탐지)
 
@@ -72,10 +76,8 @@ AI 구조 자동 생성에서도 여전히 발생 가능한 **filler stub** (형
 | 필드 | Stub 판정 기준 | 예시 |
 |------|---------------|------|
 | Grounds | `[source:placeholder]` 만 있고 `[source:user/#NNN/sub-research/file:*]` 항목 0개 | `"{업계 통계} [source:placeholder]"` 만 |
-| Warrant | Claim을 단순 반복하거나 동어반복 | Claim="시장이 크다" + Warrant="시장이 크기 때문에" |
-| Backing | 구체적 출처/근거 없이 권위 호소만 | "업계 전문가 의견", "일반적으로 알려진 사실" |
-| Rebuttal | 구체적 반론 명제 없음 + 대응만 generic | "반론이 있을 수 있으나 극복 가능" |
-| Qualifier | 근거 강도와 무관한 최고 수준 설정 | Grounds의 실제 인용(`[source:#NNN]`) 1건 + `definitely` |
+| CQ Responses | 모든 CQ 답변이 `[source:placeholder]`/`[source:inference]`만 있음 | confidence 4인데 실제 출처 없음 |
+| Confidence | 미충족 CQ 다수인데 최고 confidence 설정 | CQ 미응답 3개인데 `virtually certain` |
 
 **탐지 방법:**
 1. 각 Toulmin 필드를 불릿 단위로 분리
@@ -156,12 +158,15 @@ Parser가 감지하지 못하는 의미 수준 검증(AI가 `[source:#003]` 으�
 
 ---
 
-### Scheme별 추가 검증
+### Scheme별 추가 검증 (Walton 10 scheme)
 
-- `statistics` scheme → 실제 수치/데이터가 Grounds에 있어야 함. 없으면 거부
-- `authority` scheme → 출처/전문가가 Backing에 명시되어야 함. 없으면 거부
-- `analogy` scheme → 비교 대상이 명시되어야 함. 없으면 거부
-- `cause-effect` scheme → 인과 메커니즘이 Warrant에 설명되어야 함. 없으면 경고
+- `Sample to Population` → 실제 수치/데이터가 Grounds에 있어야 함. 없으면 거부
+- `Expert Opinion` → 전문가 자격·소속·출처가 Grounds 또는 CQ 응답에 명시되어야 함. 없으면 거부
+- `Analogy` → 비교 대상과 유사성 논거가 명시되어야 함. 없으면 거부
+- `Cause to Effect` / `Effect to Cause` → 인과 메커니즘이 Grounds 또는 CQ 응답에 설명되어야 함. 없으면 경고
+- `Classification` → 분류 기준이 Grounds에 명시되어야 함. 없으면 거부
+- `Practical Reasoning` → 목표와 수단의 효과성 근거가 CQ 응답에 있어야 함. 없으면 경고
+- `Custom` → CQ 목록 및 응답이 `cq_responses`에 있어야 함. 없으면 거부
 
 검증 방법: 각 항목을 읽고 논리적 정합성을 판단한다.
 

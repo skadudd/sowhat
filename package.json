@@ -1,7 +1,7 @@
 {
   "name": "sowhat-cc",
-  "version": "2.3.1",
-  "description": "Structured argumentation system for Claude Code. Build logic-driven PRDs with Toulmin, Walton, and Minto Pyramid frameworks.",
+  "version": "3.0.0",
+  "description": "Structured argumentation system for Claude Code. Build logic-driven PRDs with Walton Argumentation Schemes and Minto Pyramid frameworks.",
   "bin": {
     "sowhat-cc": "bin/install.js"
   },
@@ -16,7 +16,7 @@
     "claude",
     "claude-code",
     "argumentation",
-    "toulmin",
+    "walton",
     "prd",
     "planning",
     "spec-driven",
@@ -49,7 +49,7 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "test": "node scripts/test-source-tags.js && node scripts/test-draft-hallucination-guard.js",
+    "test": "node scripts/test-source-tags.js && node scripts/test-draft-hallucination-guard.js && node scripts/test-migrate-walton.js",
     "lint": "node scripts/build.js --dry-run",
     "audit:skills": "npx skillgrade .claude/commands/sowhat",
     "prepublishOnly": "npm run test && npm run build && npm run audit:skills"

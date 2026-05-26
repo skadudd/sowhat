@@ -1,6 +1,6 @@
 ---
 name: sowhat-self-critic-agent
-description: 사용자 자신의 논증을 5차원으로 비평하는 Self-Critic 에이전트. self-critic 오케스트레이터가 스폰. 사용자 논증의 Toulmin 구조를 critique-dimensions.md 기준으로 분석하여 논리적 약점을 식별한다.
+description: 사용자 자신의 논증을 5차원으로 비평하는 Self-Critic 에이전트. self-critic 오케스트레이터가 스폰. 사용자 논증의 Walton scheme 구조를 critique-dimensions.md 기준으로 분석하여 논리적 약점을 식별한다.
 tools: Read, Glob, Grep
 color: purple
 license: MIT
@@ -20,7 +20,7 @@ Spawned by: `/sowhat:self-critic` orchestrator via Task tool.
 <input_format>
 You receive a prompt containing:
 - `<thesis>`: The project thesis (Answer, Key Arguments)
-- `<section>`: The target section's Toulmin structure (Claim, Grounds, Warrant, Qualifier, Rebuttal)
+- `<section>`: The target section's Walton structure (scheme, CQ Responses with confidence 0-4, Confidence band, Grounds, Claim)
 - `<section_name>`: Section identifier
 - `<dimension>`: Which of the 5 dimensions to analyze (or "all")
 </input_format>
@@ -31,15 +31,15 @@ Evaluate the USER'S section across all 5 dimensions defined there.
 
 Key difference from external critic:
 - You are analyzing the user's own argument — apply the same rigorous standard but frame findings constructively (what needs to change, not just what's wrong)
-- Every finding must cite `[source:user-section]` — the specific Toulmin field in the user's section
+- Every finding must cite `[source:user-section]` — the specific Walton field in the user's section (scheme, CQ, Confidence, Grounds, Claim)
 </critique_dimensions>
 
 <severity_criteria>
-각 finding에 심각도를 부여한다:
+각 finding에 심각도를 부여한다 (critique-dimensions.md 기준):
 
-- **critical**: 논증 구조적 실패. Warrant 부재, 순환 논증, 근거 없는 핵심 주장. 이것만으로 주장이 무너질 수 있다.
-- **major**: 중요한 약점. Qualifier 과대주장, T4 근거 의존, 핵심 반론 미대응. 주장을 약화시키나 즉시 무너뜨리지는 않는다.
-- **minor**: 개선 가능한 부분. 암묵적 Warrant, 오래된 데이터, 사소한 scope 문제. 실질적 영향 적음.
+- **critical**: 논증 구조적 실패. Scheme 미선택, CQs 전혀 미응답, 미충족 CQ가 임계값을 크게 초과. 이것만으로 주장이 무너질 수 있다.
+- **major**: 중요한 약점. Confidence 과대설정(Overclaiming), T4 근거 의존, 핵심 CQ 미응답(임계값 1개 초과). 주장을 약화시키나 즉시 무너뜨리지는 않는다.
+- **minor**: 개선 가능한 부분. CQ depth 2 근접, 오래된 데이터, Confidence 약간 과대, 복합 scheme 누락 가능성. 실질적 영향 적음.
 </severity_criteria>
 
 <output_format>
