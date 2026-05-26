@@ -32,7 +32,7 @@ Con/Pro 에이전트는 **논리적 공격·방어**만 자동 생성한다. 구
 3. 사용자가 섹션에 직접 입력한 내용 (이전 settle 단계에서 이미 source tag 부착됨)
 4. `/sowhat:inject` 로 주입된 file: 자료
 
-**`<research_findings>` 태그가 비어 있으면 라운드는 논리적 공격/방어만 수행**. Con/Pro는 Warrant non-sequitur, Qualifier overclaiming, Scheme CQ 미충족 같은 구조적 취약점만 공격/방어하며, 구체값을 만들어내지 않는다.
+**`<research_findings>` 태그가 비어 있으면 라운드는 논리적 공격/방어만 수행**. Con/Pro는 scheme CQ 미충족, Confidence 과잉주장 같은 구조적 취약점만 공격/방어하며, 구체값을 만들어내지 않는다.
 
 ### Source tag 강제
 
@@ -392,23 +392,23 @@ Research가 찾은 반박 근거가 Pro의 방어를 약화시키면 판정에 �
 
 ### Step 1: Con-Agent 공격
 
-1. 섹션 파일의 Warrant, Qualifier, scheme, Grounds, Rebuttal 순서로 점검
-2. **Warrant 취약점 우선 확인**:
+1. 섹션 파일의 scheme CQs, Confidence, Grounds 순서로 점검
+2. **scheme CQ 미충족 우선 확인**:
    - Non-sequitur: Grounds → Claim이 논리적으로 연결되지 않음
    - Missing link: A → C 점프, 중간 단계 없음
-   - Circular: Warrant가 Claim을 그대로 반복
-3. Warrant 이상 없으면 **Qualifier Overclaiming** 확인:
-   - `definitely` + 약한 근거 (인터뷰 1-3건, 사례 1-2개) → 공격
-   - `definitely` + Rebuttal 없음 → 공격
-4. 위 이상 없으면 **scheme CQ 적용**: scheme의 Critical Questions 중 현재 Grounds/Warrant를 가장 직접적으로 무력화하는 질문 선택
-5. 위 이상 없으면 **Steelman**: 섹션의 Rebuttal을 먼저 보지 않고, 독립적으로 이 섹션에 대한 최강 반론 생성. Rebuttal 필드와 대조하여 대응 못한 부분 공격
+   - Circular: CQ 답변이 Claim을 그대로 반복
+3. CQ 전부 충분(confidence ≥ 2)하면 **Confidence Overclaiming** 확인:
+   - `virtually certain` + 약한 근거 (인터뷰 1-3건, 사례 1-2개) → 공격
+   - `virtually certain` + 미충족 CQ 있음 → 공격
+4. 위 이상 없으면 **Steelman**: scheme의 Critical Questions 중 현재 Grounds를 가장 직접적으로 무력화하는 질문 선택
+5. **Steelman**: 섹션의 미충족 CQ를 먼저 보지 않고, 독립적으로 이 섹션에 대한 최강 반론 생성. CQ 응답과 대조하여 커버 못한 부분 공격
 
 출력 형식:
 ```
 🔴 Con [라운드 N]
-  공격 유형: {Warrant취약 | Qualifier과잉 | SchemesCQ | Steelman}
+  공격 유형: {SchemeCQ미충족 | Confidence과잉 | Steelman}
   공격: {구체적 논리 공격 — 단 하나, 명확하게}
-  취약 지점: {Grounds/Warrant/Qualifier/Rebuttal 중 어디가 표적인가}
+  취약 지점: {Grounds/CQ응답/Confidence 중 어디가 표적인가}
 ```
 
 ### Step 2: Pro-Agent 방어
@@ -455,7 +455,7 @@ Pro-Agent 또는 Con-Agent가 다음 표현을 사용할 때만 활성화:
 🔍 Research — 외부 근거
   검색: {검색어}
   발견: {핵심 데이터 포인트}
-  삽입 위치: Grounds 항목 {N} 또는 Backing
+  삽입 위치: Grounds 항목 {N}
 ```
 
 ### Step 4: 오케스트레이터 판정 + verify-argument Checkpoint
@@ -480,8 +480,8 @@ Pro-Agent의 방어가 공격의 논리적 취약점을 **직접 해소했는가
 
 | 결과 | 판정 기준 | 섹션 status 변경 |
 |------|-----------|------------------|
-| `strengthened` | Pro가 공격 취약점을 직접 해소 + Rebuttal 강화됨 | 유지 |
-| `modified` | Qualifier/Scope 조정으로 공격 범위를 벗어남 (약화 수용) | 유지 (내용 수정) |
+| `strengthened` | Pro가 공격 취약점을 직접 해소 + CQ 커버리지 강화됨 | 유지 |
+| `modified` | Confidence/Scope 조정으로 공격 범위를 벗어남 (약화 수용) | 유지 (내용 수정) |
 | `weakened` | Pro가 방어했으나 취약점 일부 잔존 — "방어는 했으나 논리 손상" | `needs-revision` |
 | `broken` | Pro가 완전 양보 | `invalidated` |
 | `synthesized` | (consensus 모드) Pro가 양측 핵심 논리를 보존한 통합 제안 + Con 피상성 반박 실패 | 유지 (내용 수정) |
@@ -490,11 +490,11 @@ Pro-Agent의 방어가 공격의 논리적 취약점을 **직접 해소했는가
 **판정 기준 세부:**
 - `strengthened` vs `weakened` 경계: Pro가 취약점을 **직접** 해소했는가 vs 다른 논거로 우회했는가
 - 우회 방어는 `weakened`로 판정 (공격 지점이 해소되지 않았으므로)
-- `modified`는 Pro가 Qualifier/Scope를 좁혀 "그 범위에서는 여전히 참"임을 보인 경우만 (1단계 하락 허용, 2단계 이상이면 `broken`)
+- `modified`는 Pro가 Confidence/Scope를 좁혀 "그 범위에서는 여전히 참"임을 보인 경우만 (1단계 하락 허용, 2단계 이상이면 `broken`)
 
 **증명 책임(Burden of Proof) 추적:**
-- Con 공격이 성립하면 → BoP가 Pro에게 이동 (Pro는 새 Grounds 또는 Warrant 제시 의무)
-- Pro가 새 Grounds/Warrant를 제시하면 → BoP가 Con에게 이동
+- Con 공격이 성립하면 → BoP가 Pro에게 이동 (Pro는 새 Grounds 또는 CQ 응답 제시 의무)
+- Pro가 새 Grounds/CQ 응답을 제시하면 → BoP가 Con에게 이동
 - Pro가 Claim 재주장만 하면 → BoP 이동 없음 → `weakened` 판정
 - BoP가 2라운드 연속 Pro에게 머물면 → `broken` 판정
 
@@ -561,7 +561,7 @@ saved: {current_datetime}
 ---
 
 ## 마지막 컨텍스트
-{이번 라운드 Con-Agent 공격 요약 + 현재 판정 대기 중인지 여부. 예: "round-2 진행 중. Con: Warrant의 인과관계 약점 공격. Pro: 상관관계 데이터로 방어 중. 오케스트레이터 판정 대기"}
+{이번 라운드 Con-Agent 공격 요약 + 현재 판정 대기 중인지 여부. 예: "round-2 진행 중. Con: scheme CQ 미충족 공격. Pro: CQ 응답 보강 방어 중. 오케스트레이터 판정 대기"}
 
 ## 재개 시 첫 질문
 {판정 결과를 적용하고 다음 라운드 시작할 것, 또는 Post-Debate 요약 제시할 것}
@@ -633,16 +633,16 @@ stagnant 조건 (하나라도 해당되면 정체):
 
 1. 동일 공격 반복:
    - Con-Agent의 공격 유형이 이전 라운드와 동일
-   - AND 공격 대상 필드(Grounds/Warrant/Qualifier)도 동일
+   - AND 공격 대상 필드(Grounds/CQ응답/Confidence)도 동일
    - → stagnant (Con이 새 약점을 찾지 못함)
 
 2. 동일 방어 반복:
    - Pro-Agent의 방어 방식이 이전 라운드와 동일
-   - AND 새로운 Grounds/Warrant/Backing 추가 없음
+   - AND 새로운 Grounds/CQ 응답 추가 없음
    - → stagnant (Pro가 새 근거를 제시하지 못함)
 
-3. Qualifier 진동:
-   - 최근 3라운드에서 Qualifier가 A→B→A로 진동
+3. Confidence 진동:
+   - 최근 3라운드에서 Confidence가 A→B→A로 진동
    - → stagnant (합의 불가능)
 
 4. 연속 무변화:
@@ -657,7 +657,7 @@ stagnant 조건 (하나라도 해당되면 정체):
 ⚠️  Debate 정체 감지 — 자동 종료
 
   라운드: {N}
-  정체 유형: {동일 공격 반복 | 동일 방어 반복 | Qualifier 진동 | 연속 무변화}
+  정체 유형: {동일 공격 반복 | 동일 방어 반복 | Confidence 진동 | 연속 무변화}
   마지막 유의미한 변화: Round {M}
 
   [1] 추가 라운드 강제 진행 (최대 2라운드 더)
@@ -676,8 +676,8 @@ stagnant 조건 (하나라도 해당되면 정체):
 
 ```
 round_history = [
-  { round: 1, attack_type: "Warrant", target_field: "Warrant", outcome: "modified", changes: ["Qualifier: definitely→usually"] },
-  { round: 2, attack_type: "Warrant", target_field: "Warrant", outcome: "modified", changes: [] },
+  { round: 1, attack_type: "SchemeCQ", target_field: "CQ응답", outcome: "modified", changes: ["Confidence: virtually certain→very likely"] },
+  { round: 2, attack_type: "SchemeCQ", target_field: "CQ응답", outcome: "modified", changes: [] },
   { round: 3, ... }
 ]
 ```
@@ -690,7 +690,7 @@ round_history = [
 
 1. `needs-revision` 상태 섹션 먼저
 2. `discussing` 상태 섹션
-3. `settled` 상태 섹션 (공격 강도 낮춤 — Qualifier 검증 위주)
+3. `settled` 상태 섹션 (공격 강도 낮춤 — Confidence 검증 위주)
 4. thesis 자체 (`--until-broken` 또는 모든 섹션 완료 후)
 
 브랜치: `debate/global-{YYYYMMDD-HHMM}`
@@ -840,7 +840,7 @@ outcome에 따라 다음 안내를 표시한다:
 ### 라운드 중
 - 각 라운드 결과를 브랜치에 커밋
 - `logs/debate/{section}-round-{N}.md` 파일 생성
-- 섹션 파일 직접 수정 (Grounds, Warrant, Qualifier 등)
+- 섹션 파일 직접 수정 (Grounds, CQ Responses, Confidence 등)
 
 ### 종료 시 인간 결정 (decision checkpoint)
 - `[1] merge` → main에 merge, 섹션 status를 discussing으로 복원
@@ -921,14 +921,14 @@ ID는 섹션 파일의 `## Decision Log`와 debate discussion log 양쪽에 기�
 
 - **Con/Pro는 논리 공격·방어만** — 구체값 자동 생성 금지. 구체값은 `<research_findings>` 태그 인용만 허용 (`references/ai-content-boundary.md`)
 - **Source tag 강제** — 공격·방어 항목에 `[source:inference]` / `[source:#NNN]` / `[source:file:*]` 중 하나. 태그 없거나 AI 임의 부착한 retrieval 태그는 drop
-- **research_findings 비어 있으면 논리 공격만** — Warrant non-sequitur, Qualifier overclaiming, Scheme CQ 미충족 같은 구조적 취약점으로만 공격/방어
-- **Warrant 취약점 우선** — Con-Agent는 항상 Warrant Non-sequitur/Missing link/Circular 먼저 점검
-- **Steelman 독립 생성** — Rebuttal을 먼저 보지 않고 최강 반론 생성 후 대조
+- **research_findings 비어 있으면 논리 공격만** — scheme CQ 미충족, Confidence 과잉주장 같은 구조적 취약점으로만 공격/방어
+- **scheme CQ 미충족 우선** — Con-Agent는 항상 scheme CQ 미응답/부실 응답 먼저 점검
+- **Steelman 독립 생성** — 미충족 CQ를 먼저 보지 않고 최강 반론 생성 후 대조
 - **공격은 하나만** — 여러 약점 나열 금지, 가장 치명적인 것 하나에 집중
 - **우회 방어는 weakened** — 공격 지점을 직접 해소하지 않은 방어는 성공이 아님
 - **Pro-Agent 단순 재주장 금지** — Claim 반복은 방어가 아님
 - **Claim이 무너져야 한다면 무너뜨린다** — 방어를 위한 방어 없음
-- **Research-Agent는 자동 트리거 + 요청 시 활성화** — 근거 불충분/데이터 오래됨/Qualifier 분쟁 시 자동 발동
+- **Research-Agent는 자동 트리거 + 요청 시 활성화** — 근거 불충분/데이터 오래됨/Confidence 분쟁 시 자동 발동
 - **브랜치는 인간이 결정한다** — 자동 merge 없음
 - **Thesis 위기는 즉시 PAUSE** — 임의로 처리하지 않는다
 - **에스컬레이션은 단계적** — Claim → Key Argument → Thesis 순서 준수

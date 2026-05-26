@@ -48,8 +48,8 @@ compatibility: "Claude Code >=2.1.3"
 
   [Factual]   {N}건 발견 / {M}건 철회 / {K}건 수용
   [Scheme]    {N}건 발견 / {M}건 철회 / {K}건 수용
-  [Warrant]   {N}건 발견 / {M}건 철회 / {K}건 수용
-  [Qualifier] {N}건 발견 / {M}건 철회 / {K}건 수용
+  [CQ 미충족] {N}건 발견 / {M}건 철회 / {K}건 수용
+  [Confidence] {N}건 발견 / {M}건 철회 / {K}건 수용
 
   모든 섹션 검증 완료
 ```

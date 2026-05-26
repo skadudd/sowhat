@@ -123,14 +123,14 @@ draft는 외부 공유용 산출물을 생성한다. AI는 산출물에서 **기
 
    Step 5에서 생성물에 구체값을 옮길 때 source tag를 보존하고, Step 5.5b 환각 탐지의 anchor로 사용하기 위한 사전 준비:
 
-   1. 각 settled 섹션의 Grounds/Claim/Backing/Warrant에서 `[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]` 태그가 붙은 불릿을 수집 → `planning_sourced_items[]`에 저장 (`{section, field, bullet_index, text, source_tag}` 구조)
+   1. 각 settled 섹션의 Grounds/Claim에서 `[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]` 태그가 붙은 불릿을 수집 → `planning_sourced_items[]`에 저장 (`{section, field, bullet_index, text, source_tag}` 구조)
 
    2. **anchor_corpus** 구성 — Step 5.5b 환각 탐지에 사용되는 전체 anchor 범위:
 
       ```
       anchor_corpus = {
         sourced_items:  planning_sourced_items[] (source 태그 불릿, 위 1번)
-        settled_bodies: planning/*.md 본문 전체 — Claim/Grounds/Backing/Warrant/Qualifier/Rebuttal/Scope 텍스트
+        settled_bodies: planning/*.md 본문 전체 — Claim/Grounds/CQ Responses/Confidence/Scope 텍스트
         thesis_body:    00-thesis.md 본문
         raw_sources:    planning/config.json의 source.path 필드가 가리키는 파일(들)
                         — 파일 부재 또는 config에 source.path 없으면 skip
@@ -412,7 +412,7 @@ draft 시작 — 사전 검증 완료. 산출물 브리프 작성 대기 중.
       - {Ground 3.1 요약}
 
   V.  반론과 대응
-      - {Rebuttal 요약}
+      - {미충족 CQ 대응 요약}
 
   VI. 결론 및 제언
       - {CTA}
@@ -638,7 +638,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 ## {KA1 — grouping 순서에 따라 가장 먼저}
 
 {evidence_depth에 맞춰 Grounds 렌더링}
-{Warrant를 자연스러운 연결 문장으로}
+{scheme 논리 연결을 자연스러운 연결 문장으로}
 
 ## {KA2}
 
@@ -650,7 +650,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 반론과 대응
 
-{각 섹션 Rebuttal 종합 — evidence_depth 3 이상이면 개별 대응, 이하면 통합}
+{각 섹션 CQ 커버리지 + 미충족 CQ 대응 — evidence_depth 3 이상이면 개별 대응, 이하면 통합}
 
 ## 결론
 
@@ -692,7 +692,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 원인 분석
 
-{Warrant — 왜 이 문제가 발생하는가}
+{scheme 논리 연결 — 왜 이 문제가 발생하는가}
 
 ## 해결책
 
@@ -700,7 +700,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 효과 증명
 
-{Backing + 사례 Grounds}
+{CQ 보조 인용 + 사례 Grounds}
 
 ## 다음 단계
 
@@ -722,7 +722,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 평가 기준
 
-{Warrant에서 추출한 판단 기준}
+{scheme 논리에서 추출한 판단 기준}
 
 ## 분석
 
@@ -734,7 +734,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 근거
 
-{Backing}
+{CQ 응답 근거}
 ```
 
 #### PREP (Point-Reason-Example-Point)
@@ -742,7 +742,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 ```markdown
 # {Point — Answer 한 문장}
 
-{Reason — Warrant 기반}
+{Reason — scheme CQ 논리 기반}
 
 {Example — 가장 강한 Ground}
 
@@ -764,7 +764,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 2. 선행 연구
 
-{Backing + Research findings — 출처 정식 인용}
+{CQ 보조 근거 + Research findings — 출처 정식 인용}
 
 ## 3. 방법론
 
@@ -775,14 +775,14 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 {각 KA = 하위 섹션, 전체 Walton 구조 기술}
 
 ### 4.1 {KA1}
-{Claim + Grounds + Warrant + Qualifier 명시}
+{Claim + Grounds + scheme/CQ 응답 + Confidence 명시}
 
 ### 4.2 {KA2}
 {동일}
 
 ## 5. 논의
 
-{Rebuttal 상세 분석 + 한계점}
+{미충족 CQ + 한계점 분석}
 
 ## 6. 결론
 
@@ -842,9 +842,9 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 그래서?
 
-{이 KA가 전체 Answer에 기여하는 방식 — Warrant}
+{이 KA가 전체 Answer에 기여하는 방식 — scheme 논리}
 
-{Rebuttal 대응 (있으면)}
+{미충족 CQ 대응 (있으면)}
 
 ---
 *다음 편: {Part M+1 제목} — {예고}*
@@ -871,7 +871,7 @@ cliffhanger=false이면 "다음 편" 라인 생략.
 
 ## "하지만..."
 
-{통합 Rebuttal + 대응}
+{통합 미충족 CQ 대응}
 
 ## 결론: {CTA}
 
@@ -913,7 +913,7 @@ cliffhanger=false이면 "다음 편" 라인 생략.
 📊 {가장 강한 Ground}
 
 {N-1}/{N}
-⚠️ "하지만 {Rebuttal}?"
+⚠️ "하지만 {반론}?"
 → {대응}
 
 {N}/{N}
@@ -946,7 +946,7 @@ cliffhanger=false이면 "다음 편" 라인 생략.
 
 <!-- Slide N+1: Counter -->
 ## "하지만..." → "그럼에도"
-{Rebuttal 요약 → 대응}
+{반론 요약 → 대응}
 
 <!-- Slide N+2: Conclusion -->
 ## {Answer}
@@ -970,7 +970,7 @@ cliffhanger=false이면 "다음 편" 라인 생략.
 [전환] "{다음 슬라이드로 넘기는 브릿지 문장}"
 
 ### Slide N+1 — Counter
-"물론 이런 우려도 있습니다. {Rebuttal}. 하지만 {대응}."
+"물론 이런 우려도 있습니다. {반론}. 하지만 {대응}."
 
 ### Slide N+2 — Conclusion
 "{Answer 재강조}. {CTA — 구체적 요청}."
@@ -999,7 +999,7 @@ git commit -m "draft({profile-id}): generate slide deck + speaker script"
 [자막] {핵심 수치}
 
 ### 반론 대응 ({M}:00-{M+1}:00)
-[내레이션] "물론 {Rebuttal}이라는 의견도 있습니다. 하지만..."
+[내레이션] "물론 {반론}이라는 의견도 있습니다. 하지만..."
 
 ### 마무리
 [내레이션] "{Answer}. {CTA}."
@@ -1068,7 +1068,7 @@ git commit -m "draft({profile-id}): generate slide deck + speaker script"
 
 {08-edge-cases.md 내용}
 
-(없는 경우: 각 섹션의 Rebuttal에서 제약 조건 추출)
+(없는 경우: 각 섹션의 미충족 CQ에서 제약 조건 추출)
 
 ## Acceptance Criteria
 
@@ -1448,7 +1448,7 @@ FOR EACH substantive_change:
   원본 논증:
     Claim: "{settled claim}"
     Grounds: "{supporting evidence}"
-    Qualifier: {qualifier}
+    Confidence: {confidence}
   
   인간의 수정이 이 논증을 약화/부정합니다.
   

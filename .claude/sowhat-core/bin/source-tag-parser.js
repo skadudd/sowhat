@@ -30,7 +30,7 @@ const path = require('path');
 // Configuration
 // ---------------------------------------------------------------------------
 
-const TOULMIN_FIELDS = ['Grounds', 'Backing', 'Warrant', 'Rebuttal'];
+const SECTION_FIELDS = ['Grounds'];
 
 // Whitelist of allowed source values (ai-content-boundary.md §"허용 source 값")
 const SOURCE_VALIDATORS = [
@@ -144,7 +144,7 @@ function extractFieldBullets(rawLines, bodyStartLine) {
         sections.push({ field: currentField, bullets: currentBullets });
       }
       const title = headerMatch[1].trim();
-      const canonical = TOULMIN_FIELDS.find((f) => title === f);
+      const canonical = SECTION_FIELDS.find((f) => title === f);
       if (canonical) {
         currentField = canonical;
         currentBullets = [];

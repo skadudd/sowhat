@@ -29,7 +29,7 @@ Valid status values, transition rules, and cascading invalidation algorithm for 
 - `needs-revision` / `invalidated` → `discussing`: expand restarts development
 
 ### Gates
-- `settled` requires: Claim + Grounds + Warrant + Qualifier + Rebuttal + Scheme all non-empty
+- `settled` requires: Claim + Grounds + scheme + CQ Responses + Confidence all non-empty
 - `finalize-planning` requires: all planning sections (01-03) settled
 - `finalize` requires: all spec sections (04-09) settled
 
@@ -44,8 +44,8 @@ Valid status values, transition rules, and cascading invalidation algorithm for 
 | 유형 | 설명 | 예시 | 상태 변경 | 전파 |
 |------|------|------|----------|------|
 | `cosmetic` | 오타, 포맷팅, 인용 형식 수정 | 맞춤법 교정, 마크다운 형식 변경, open-questions 수정 | 없음 (settled 유지) | 없음 |
-| `reinforcing` | 기존 논증을 강화하는 추가 | Backing 추가, Claim 불변인 Grounds 보강, 증거 추가 | 없음 (settled 유지) | 없음 |
-| `substantive` | 논증 구조의 실질적 변경 (의미는 보존) | Claim 재표현 (의미 동일), Qualifier 축소, Rebuttal 추가 | settled → needs-revision | 스코프 검증만 (자동 invalidation 없음) |
+| `reinforcing` | 기존 논증을 강화하는 추가 | CQ 응답 보강, Claim 불변인 Grounds 보강, 증거 추가 | 없음 (settled 유지) | 없음 |
+| `substantive` | 논증 구조의 실질적 변경 (의미는 보존) | Claim 재표현 (의미 동일), Confidence 하향, 미충족 CQ 대응 추가 | settled → needs-revision | 스코프 검증만 (자동 invalidation 없음) |
 | `structural` | 논증의 의미나 방향 자체 변경 | Claim 의미 변경, thesis_argument 변경, Scheme 변경 | settled → needs-revision | 전체 전파 (cascading invalidation) |
 
 ### 자동 감지 알고리즘
@@ -114,7 +114,7 @@ structural   →  저장 + 상태 강등 + 전체 전파 (Cascading Invalidation
 
 1. **thesis_argument 의존**: B의 thesis_argument가 A의 Claim을 전제로 함
 2. **Grounds 인용**: B의 Grounds가 A의 Claim 또는 Grounds를 직접 인용함
-3. **Warrant 참조**: B의 Warrant가 A의 결론을 논리적 전제로 사용함
+3. **CQ 참조**: B의 CQ 응답이 A의 결론을 논리적 전제로 사용함
 4. **암묵적 순서**: 번호 순서상 A < B이고, B가 A의 결론 위에 논증을 구축함
 
 ### 의존성 추출 알고리즘
@@ -127,8 +127,8 @@ FOR EACH section B:
      - "01-problem에서 확인한 바와 같이..." → dependencies[B].append("01-problem")
      - 파일명, 섹션 번호, 섹션 이름 패턴 매칭
 
-  2. B의 Warrant가 다른 섹션의 Claim을 전제하는가?
-     - B.Warrant에 A.Claim의 핵심 키워드가 포함 → dependencies[B].append(A)
+  2. B의 CQ 응답이 다른 섹션의 Claim을 전제하는가?
+     - B.CQ 응답에 A.Claim의 핵심 키워드가 포함 → dependencies[B].append(A)
 
   3. B의 thesis_argument가 A의 thesis_argument와 논리적 선후 관계인가?
      - 같은 Key Argument를 지지하는 섹션들 중 번호가 앞선 것 → 잠재적 의존

@@ -240,9 +240,9 @@ URL fetch 실패 시:
 
   Claim:     {대상의 핵심 주장}
   Grounds:   {주요 근거 1-3개}
-  Warrant:   {논리적 연결 — 암묵적이면 "(암묵적)" 표기}
-  Qualifier: {주장의 확실성 수준}
-  Rebuttal:  {대상이 인정한 제한 조건 — 없으면 "(없음)"}
+  scheme:    {주장 유형 — Walton scheme 식별}
+  Confidence: {주장의 확실성 수준}
+  CQ 미충족: {대상이 인정한 제한 조건 — 없으면 "(없음)"}
 
   [1] 분석 확인 — 다음 단계로
   [2] 분석 수정 필요
@@ -297,7 +297,7 @@ Issue를 기반으로 Situation/Complication/Question을 도출하기 위해 **�
 
 **content-critique 모드**: 질문이 대상 콘텐츠를 참조한다. 예:
 - "대상이 '{target_grounds}'를 근거로 들었는데, 이에 대한 당신의 반응은?"
-- "대상의 Warrant '{target_warrant}'가 성립하지 않는 경우는?"
+- "대상의 scheme CQ 응답이 성립하지 않는 경우는?"
 - "대상이 놓치고 있는 핵심 맥락은 무엇인가?"
 
 ```
@@ -430,9 +430,9 @@ updated: {current_datetime}
 |-------|---------|
 | Claim | {target_claim} |
 | Grounds | {target_grounds} |
-| Warrant | {target_warrant} |
-| Qualifier | {target_qualifier} |
-| Rebuttal | {target_rebuttal} |
+| scheme | {target_scheme} |
+| Confidence | {target_confidence} |
+| CQ 미충족 | {target_unmet_cqs} |
 ```
 
 ### 9. Git 초기화
@@ -794,7 +794,7 @@ T1: {N} | T2: {N} | T3: {N} | T4: {N}
 
   [3] "{인간 인사이트 기반, 자료가 부분적으로만 뒷받침}"
       근거: 파인딩 #{N} (T2) + 인간 인사이트
-      ⚠️ 파인딩 #{K}와 충돌 — expand에서 Rebuttal로 다룰 필요
+      ⚠️ 파인딩 #{K}와 충돌 — expand에서 미충족 CQ로 다룰 필요
       근거 강도: ████░░░░░░ 보통
 
   [4] 직접 작성

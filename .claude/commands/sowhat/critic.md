@@ -46,7 +46,7 @@ compatibility: "Claude Code >=2.1.3"
 
 | # | 약점 | 심각도 | 차원 | 주입 가능 섹션 |
 |---|---|---|---|---|
-| W1 | {description} | critical | Warrant | 02.Warrant |
+| W1 | {description} | critical | scheme CQ | 02.SchemeCQ |
 
 ----------------------------------------
 다음 액션:

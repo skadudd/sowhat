@@ -112,7 +112,7 @@ Return structured validation results:
 - **AI Content Boundary**: 공격 리포트의 근거는 **섹션 파일의 실제 인용**을 기반으로 한다. 비교·예시로 외부 구체 수치·기관명·연도·인물명·URL을 자동 생성하지 않는다.
 - **허용되는 이슈 기술**:
   - 섹션 인용: 섹션 파일 필드의 구체 내용 재인용 (이미 섹션에 source tag 부착됨)
-  - 논리 유형: Warrant non-sequitur / Missing link / Circular, Qualifier overclaiming, Scheme CQ 미충족 → `[source:inference]`
+  - 논리 유형: scheme 논리 결함 (non-sequitur / missing link / circular), Confidence 과잉주장, Scheme CQ 미충족 → `[source:inference]`
   - 외부 팩트체크 필요: Stage 0 (research-agent)로 위임 — 영수증 검증 후 `[source:sub-research]`
 - **Source tag 강제**: 이슈 항목 끝에 `[source:inference]` / `[source:#NNN]` / `[source:sub-research]` 중 하나. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop.
 - 상세: `references/ai-content-boundary.md`

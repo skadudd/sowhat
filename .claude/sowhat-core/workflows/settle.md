@@ -108,7 +108,7 @@ Parser 출력을 `logs/parser/settle-{section}-{datetime}.json`에 영구 저장
 
 Parser가 검증하는 항목:
 
-1. **태그 존재**: Grounds/Backing/Warrant/Rebuttal 모든 불릿에 `[source:...]` 부착 여부
+1. **태그 존재**: Grounds 모든 불릿에 `[source:...]` 부착 여부
 2. **화이트리스트**: 허용값(`user` / `#NNN` / `sub-research` / `file:{path}` / `target` / `placeholder` / `inference`) 외 값 거부
 3. **Retrieval 실존**:
    - `[source:#NNN]` → `research/NNN-*.md` 파일 존재 확인
@@ -135,7 +135,7 @@ Parser가 감지하지 못하는 의미 수준 검증(AI가 `[source:#003]` 으�
 3. **thesis 정합성**: 이 섹션을 포함한 전체 settled 섹션의 Claim이 thesis Answer를 논리적으로 지지하는가?
 
 **검증 방법:**
-1. 모든 settled 섹션의 Claim + Grounds + Warrant를 로드
+1. 모든 settled 섹션의 Claim + Grounds + CQ Responses를 로드
 2. 이 섹션의 Claim과 각 settled 섹션의 Claim 간 논리적 모순/충돌 검사
 3. 이 섹션을 인용하는 다른 섹션의 Grounds 텍스트에서 전제 유효성 확인
 4. thesis Answer → Key Arguments → 각 섹션 Claim의 논리 체인 검증
@@ -248,8 +248,8 @@ Key Arguments 체크박스를 체크한다:
   After: settled
   Claim: {claim 한 줄 요약}
   Scheme: {scheme}
-  Qualifier: {qualifier}
-  Warrant: {명시됨 | Implicit}
+  Confidence: {confidence}
+  CQ 미충족: {N}개 (scheme별 허용 상한과 대조)
 ```
 
 ### 7. Git commit (로그 업데이트)
@@ -296,14 +296,11 @@ settle 완료 — {N}-{section} settled 전환. Claim: {claim 한 줄}
   🔍 Grounds
     {Grounds 전문}
 
-  🔗 Warrant
-    {Warrant 전문 | ⚠️ Implicit — 명시화 권장}
+  📋 CQ Responses
+    {CQ Responses 테이블 또는 미충족 CQ 목록}
 
-  📚 Backing
-    {Backing | 없음}
-
-  ⚡ Rebuttal
-    {Rebuttal | 없음}
+  ⚡ 미충족 CQ
+    {confidence ≤ 1인 CQ 목록 | 없음 (전부 응답됨)}
 
 📊 논증 강도: {section_score}/100 [{등급}]
   근거     [{evidence_bar}] {evidence_score}/35
@@ -338,5 +335,5 @@ settle 완료 — {N}-{section} settled 전환. Claim: {claim 한 줄}
 - **Filler stub은 거부** — 형식만 채운 빈 껍데기 논증은 여전히 settle 불가. 단, fabrication 의심은 더 이상 settle 거부 사유가 아니다 — source tag가 모든 구체값을 이미 추적
 - **Source tag 완전성** — 태그 없는 구체값이 있으면 거부 (parser 우회 케이스)
 - **검증 실패 시 거부** — 무엇을 해소해야 하는지 명시한다
-- **Warrant "Implicit"은 경고** — 거부까지는 아니지만 약한 논증임을 표시한다
+- **CQ 응답 미충족이 scheme별 허용 상한 이하이면 경고만, 초과이면 settle 차단한다**
 - **Regression은 경고한다** — 기존 settled 섹션과 충돌하면 인간이 판단

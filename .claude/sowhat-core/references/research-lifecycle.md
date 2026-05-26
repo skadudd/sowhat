@@ -14,7 +14,7 @@ stateDiagram-v2
     pre_thesis --> unreviewed: thesis 도출 후 미매핑
     unreviewed --> accepted: /sowhat:research accept N
     unreviewed --> rejected: /sowhat:research reject N
-    accepted --> applied: Grounds/Backing에 반영됨
+    accepted --> applied: Grounds에 반영됨
     accepted --> stale: 6개월 경과 또는 소스 변경
     rejected --> [*]: 파일 보존 (기록용)
     stale --> accepted: /sowhat:research review → 재확인
@@ -30,7 +30,7 @@ stateDiagram-v2
 | `unreviewed` | 생성됨, 인간 미검토 | `status: unreviewed` |
 | `accepted` | 인간이 유효하다고 판단 | `status: accepted` |
 | `rejected` | 인간이 무관하거나 신뢰 불가로 판단 | `status: rejected` |
-| `applied` | 해당 섹션의 Grounds/Backing에 반영 완료 | `status: applied` |
+| `applied` | 해당 섹션의 Grounds에 반영 완료 | `status: applied` |
 | `stale` | 시간 경과 또는 소스 변경으로 재검토 필요 | `status: stale` |
 
 ---
@@ -150,7 +150,7 @@ FUNCTION auto_diff_on_accept(finding, sections):
 ### 반영 (Application)
 
 accepted 파인딩이 실제로 섹션에 반영되면:
-- expand/revise 중 Grounds 또는 Backing에 데이터 추가
+- expand/revise 중 Grounds에 데이터 추가
 - 파인딩 파일의 `status: applied`, `applied_to: "{section_id}"`로 변경
 - 원본 파인딩 파일은 보존 (출처 추적용)
 

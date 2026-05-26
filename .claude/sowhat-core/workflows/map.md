@@ -46,7 +46,7 @@ Mermaid나 외부 도구 없이, 인덴트 기반 텍스트로 논리 구조를 
 - Answer, Key Arguments 목록
 
 각 섹션 파일에서:
-- `status`, Claim, Grounds 핵심, Warrant 핵심, Rebuttal 핵심, Qualifier
+- `status`, Claim, Grounds 핵심, scheme, CQ 미충족 수, Confidence
 
 ### 출력 형식
 
@@ -61,8 +61,8 @@ Thesis: "{Answer}"
   01 {section-name} [{status}]
      Claim: {Claim 한 줄}
      Grounds: {Grounds 핵심 — 50자}
-     Warrant: {Warrant 핵심 — 50자}
-     Rebuttal: {Rebuttal 핵심 — 50자} → {대응 요약}
+     CQ 미충족: {미충족 CQ 수}개
+     Confidence: {Tetlock band}
 
   02 {section-name} [{status}]
      Claim: {Claim 한 줄}
@@ -82,7 +82,7 @@ Thesis: "{Answer}"
 - **필드값**: 50자 초과 시 `...` 으로 자름
 - **미전개 섹션** (`draft` + 필드 없음): `(미전개)` 한 줄로 축약
 - **status 표기**: `[settled]` `[discussing]` `[draft]` `[needs-revision]` `[invalidated]`
-- **Rebuttal**: 반박 + 대응이 모두 있으면 `→`로 연결. 대응 없으면 반박만 표시
+- **미충족 CQ**: confidence ≤ 1인 CQ 수 표시. 0이면 생략
 
 ### 출력 예시
 
@@ -97,13 +97,13 @@ Thesis: "{thesis answer 40자}"
   01 {section-a} [settled]
      Claim: {섹션 a 주장 요약}
      Grounds: {근거 요약}
-     Warrant: {논리 연결 요약}
-     Rebuttal: {반론 요약} → {대응 요약}
+     CQ 미충족: {수}개
+     Confidence: {Tetlock band}
 
   02 {section-b} [settled]
      Claim: {섹션 b 주장 요약}
      Grounds: {근거 요약}
-     Warrant: {논리 연결 요약}
+     scheme: {scheme명}
 
   03 {section-c} [discussing]
      Claim: {섹션 c 주장 요약}
@@ -131,7 +131,7 @@ Thesis: "{thesis answer 40자}"
 ```
 ----------------------------------------
 {N}-{section-name} [{status}]
-Scheme: {scheme} | Qualifier: {qualifier}
+Scheme: {scheme} | Confidence: {confidence}
 ----------------------------------------
 
 Thesis: "{Answer}"
@@ -145,18 +145,10 @@ Grounds:
   2. {Ground 2}
   3. {Ground 3}
 
-Warrant:
-  {Warrant 전문}
+CQ Responses:
+  {CQ Responses 테이블 요약 — 미충족 CQ 강조}
 
-Backing:
-  {Backing 전문 — 없으면 이 블록 생략}
-
-Qualifier: {qualifier 값}
-  {qualifier 설명 — 있으면}
-
-Rebuttal:
-  {Rebuttal 전문}
-  → 대응: {Response — 있으면}
+Confidence: {Tetlock anchor}
 
 Open Questions:
   - {미해결 질문 1}
@@ -171,14 +163,14 @@ Open Questions:
 - 값이 비어있는 필드 블록은 통째로 생략
 - Grounds는 번호 매기기 (복수일 때)
 - Open Questions가 없으면 블록 생략
-- Claim/Warrant/Rebuttal은 전문 출력 (잘라내지 않음)
+- Claim/CQ Responses/Confidence는 전문 출력 (잘라내지 않음)
 
 ### 출력 예시
 
 ```
 ----------------------------------------
 {N}-{섹션} [settled]
-Scheme: {scheme} | Qualifier: {qualifier}
+Scheme: {scheme} | Confidence: {confidence}
 ----------------------------------------
 
 Thesis: "{thesis answer 40자}"
@@ -192,18 +184,10 @@ Grounds:
   2. {Ground 2 — 출처/수치/사례}
   3. {Ground 3 — 출처/수치/사례}
 
-Warrant:
-  {Grounds → Claim 연결 논리}
+CQ Responses:
+  {CQ 테이블 요약}
 
-Backing:
-  {Warrant 강화 근거}
-
-Qualifier: {qualifier 값}
-  {qualifier 설명}
-
-Rebuttal:
-  {반론}
-  → 대응: {대응}
+Confidence: {Tetlock anchor}
 
 ----------------------------------------
 ```
@@ -230,11 +214,11 @@ debate 변화 — {섹션} 라운드 {N}
 
 Before:
   Claim: {이전 Claim}
-  Rebuttal: {이전 Rebuttal}
+  미충족 CQ: {이전 미충족 CQ 수}
 
 After:
   Claim: {현재 Claim}
-  Rebuttal: {현재 Rebuttal}
+  미충족 CQ: {현재 미충족 CQ 수}
 
 변경점:
   - {변경된 필드}: {변경 요약}
@@ -266,7 +250,7 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 
 **Answer**: {00-thesis.md Answer}
 
-**Qualifier**: {00-thesis.md qualifier 또는 섹션별 qualifier 종합}
+**Confidence**: {섹션별 Confidence 중 최저값}
 
 **SCQ**:
 - Situation: {Situation}
@@ -280,12 +264,11 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 ### {N}-{section-name} [{status}]
 
 - **Scheme**: {scheme}
-- **Qualifier**: {qualifier}
+- **Confidence**: {confidence}
 - **Claim**: {Claim 내용}
 - **Grounds**: {Grounds 핵심 요약 — 1-2문장}
-- **Warrant**: {Warrant 내용}
-- **Backing**: {Backing 있을 경우}
-- **Rebuttal addressed**: {Rebuttal 내용이 있으면 "예 — {요약}", 없으면 "아니오"}
+- **scheme**: {scheme명} — CQ 응답 {N}개, 미충족 {M}개
+- **미충족 CQ**: {confidence ≤ 1인 CQ 수}개
 - **GitHub Issue**: {github_issue 있으면 #N, 없으면 —}
 
 ---

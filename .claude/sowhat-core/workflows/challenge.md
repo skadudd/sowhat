@@ -238,7 +238,7 @@ Stage 0 research-agent가 응답하지 않는 경우의 방어 로직:
 
 ### [0단계] Grounds 사실 검증 (Factual Verification)
 
-Grounds/Backing에 포함된 **사용자 입력 citation**(`[source:user]`) 또는 **retrieval 결과**(`[source:#NNN]` / `[source:sub-research]` / `[source:file:*]`)가 실제와 일치하는지 검증한다.
+Grounds에 포함된 **사용자 입력 citation**(`[source:user]`) 또는 **retrieval 결과**(`[source:#NNN]` / `[source:sub-research]` / `[source:file:*]`)가 실제와 일치하는지 검증한다.
 
 **cycle 7 역할 축소** (`references/ai-content-boundary.md` §"Challenge Stage 0의 축소된 역할"): AI가 구체값을 자동 생성할 경로가 제거되었으므로 "AI fabrication 탐지"는 불필요. Stage 0은 사용자가 직접 입력한 citation의 실존·값 정확성 확인에 집중한다.
 
@@ -678,7 +678,7 @@ challenge 공격 리포트에서 관련 Decision ID를 명시하여 "어떤 결�
 - **인간의 반박을 무조건 수용하지 않는다** — 논리적 타당성 재검증
 - **CQ 응답 충분성 최우선** — 미충족 CQ는 scheme 오용의 신호이자 가장 큰 취약점
 - **scheme 기반 공격** — 일반적 논리 오류보다 scheme 특정 취약점이 더 날카롭다
-- **Steelman은 독립 생성** — 섹션의 Rebuttal을 먼저 보지 말고 반론 먼저 생성
+- **Steelman은 독립 생성** — 섹션의 미충족 CQ를 먼저 보지 말고 반론 먼저 생성
 - **품질 우선** — 타협하지 않는다
 - **역전파는 즉시 실행** — 수용 시 하위 전체에 영향
 - **Decision ID 추적** — 공격이 어떤 결정에서 비롯되었는지 명시하여 근본 원인 식별

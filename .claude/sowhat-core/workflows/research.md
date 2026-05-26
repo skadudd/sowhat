@@ -263,7 +263,7 @@ WebFetch 실패 시: `❌ URL 접근 실패: {URL}. 접근 가능한 URL인지 �
 - **Open Questions**: 미해결 질문에 답하는가?
 - **MECE 갭**: 누락된 논거를 시사하는가?
 - **새 섹션 필요성**: 기존 섹션으로 커버되지 않는 중요 발견인가?
-- **Tier 적합성**: 이 Tier의 출처가 대상 섹션의 Qualifier에 적합한가?
+- **Tier 적합성**: 이 Tier의 출처가 대상 섹션의 Confidence에 적합한가?
 
 ### 4. 파인딩 파일 생성
 
@@ -329,7 +329,7 @@ citations: []
 리서치 완료: {N}건 발견 ({URL})
 
 [1] {발견} — {source}
-    📊 신뢰도: {Tier} ({tier_reason}) — {Grounds 사용 가능|Backing 전용|교차검증 필요}
+    📊 신뢰도: {Tier} ({tier_reason}) — {Grounds 사용 가능|보조 인용 전용|교차검증 필요}
     관련: {섹션} — {대상 영역}
 
 [2] {발견} — {source}
@@ -555,12 +555,12 @@ URL 모드와 동일 (Tier 표시 포함).
     [2] reject
   ```
   [1] 선택 시: `applied_to` 필드에 `(backing-only)` 태그 추가
-- **T3 출처 + 대상 섹션 Qualifier ≤ 2인 경우**:
+- **T3 출처 + 대상 섹션 Confidence가 uncertain 이하인 경우**:
   ```
   ℹ️ 이 파인딩은 T3 (준전문 출처)입니다.
-  이 Qualifier에서 Grounds로 사용하려면 교차검증(독립 출처 2개)이 필요합니다.
+  이 Confidence 수준에서 Grounds로 사용하려면 교차검증(독립 출처 2개)이 필요합니다.
     [1] accept (교차검증 예정)
-    [2] Backing으로 accept
+    [2] CQ 응답 보조 인용으로 accept
     [3] reject
   ```
 
@@ -890,7 +890,7 @@ research-agent는 API 호출 없이 **분석과 검증만** 수행한다. 영수
    파인딩: {N}건 생성
 
 [1] {발견} — {source}
-    📊 신뢰도: {Tier} ({tier_reason}) — {Grounds 사용 가능|Backing 전용|교차검증 필요}
+    📊 신뢰도: {Tier} ({tier_reason}) — {Grounds 사용 가능|보조 인용 전용|교차검증 필요}
     관련: {섹션} — {대상 영역}
 
 [2] {발견} — {source}

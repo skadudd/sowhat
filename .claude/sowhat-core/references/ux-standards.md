@@ -96,7 +96,7 @@ AskUserQuestion은 자체 번호 체계를 만들어 텍스트에 표시한 번�
 > 자동 검증 결과:
 > ✅ Claim ↔ Thesis 정합성
 > ✅ Grounds 존재
-> ⚠️ Warrant: 암묵적
+> ⚠️ CQ 응답: 미충족 있음
 
 [1] 승인 — settle 진행
 [2] 수정 필요 — 어떤 부분?
@@ -269,7 +269,7 @@ spec 05-func-req > 기능 3/8
 ```
 ✓ Grounds 기록됨: {사용자 입력 또는 Sub-Research 결과 요약}
 
-> [expand {N}-{섹션} > 스텝 5/9 Warrant]
+> [expand {N}-{섹션} > 스텝 5/7 CQ 응답]
 > Claim: "{섹션 주장 40자}"
 > Grounds: {근거 요약 40자}
 

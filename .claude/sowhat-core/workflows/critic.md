@@ -49,7 +49,7 @@ status_transitions: ["settled → needs-revision (inject 시)"]
 - research-agent 스폰 → 영수증 검증 통과한 결과만 `[source:sub-research]` 로 인용
 - `research/` 매핑 finding → `[source:#NNN]`
 
-논리 유형 기술은 항상 허용: `"T4 수준 출처에 의존 [source:inference]"`, `"Qualifier가 근거 강도에 비해 강함 [source:inference]"`.
+논리 유형 기술은 항상 허용: `"T4 수준 출처에 의존 [source:inference]"`, `"Confidence가 근거 강도에 비해 강함 [source:inference]"`.
 
 상세: `references/ai-content-boundary.md`.
 
@@ -183,10 +183,10 @@ minor: {N}
 ## Step 5: 주입 매핑 제안
 
 약점을 사용자의 섹션에 매핑한다. 매핑 규칙:
-- Warrant 약점 → 사용자 섹션의 **Grounds** (대상 논리 결함을 자신의 근거로 활용)
+- scheme CQ 약점 → 사용자 섹션의 **Grounds** (대상 논리 결함을 자신의 근거로 활용)
 - 근거 품질 약점 → 사용자 섹션의 **Grounds** (대상 근거의 취약함을 지적)
-- Rebuttal blind spot → 사용자 섹션의 **Rebuttal** (대상이 놓친 반론을 자신의 방어에 활용)
-- Qualifier 과대주장 → 사용자 섹션의 **Warrant** (대상의 과대주장을 논거 연결에 활용)
+- CQ 사각지대 → 사용자 섹션의 **미충족 CQ** (대상이 놓친 반론을 자신의 방어에 활용)
+- Confidence 과잉주장 → 사용자 섹션의 **scheme CQ** (대상의 과잉주장을 논거 연결에 활용)
 
 ```
 ----------------------------------------
@@ -210,7 +210,7 @@ minor: {N}
 
 선택된 약점에 대해:
 1. 대상 섹션 파일을 읽는다
-2. 해당 필드(Grounds/Rebuttal/Warrant)에 약점 내용을 추가한다
+2. 해당 필드(Grounds/미충족 CQ/scheme)에 약점 내용을 추가한다
    - 추가 형식: `### [Critic] {약점 제목}` + 내용
 3. `updated` 타임스탬프를 갱신한다
 4. 섹션이 `settled` 상태였으면 `needs-revision`으로 변경한다

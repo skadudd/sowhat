@@ -22,8 +22,8 @@ Level 3: Data/Examples (Specific evidence items)
 **sowhat 매핑**:
 - Level 0 = `00-thesis.md`의 Answer
 - Level 1 = 각 섹션의 Claim (Key Arguments)
-- Level 2 = 각 섹션의 Grounds + Warrant
-- Level 3 = Research findings, Backing
+- Level 2 = 각 섹션의 Grounds + scheme CQ 응답
+- Level 3 = Research findings, CQ 보조 인용
 
 ### 2. SCQA Framework (도입부 구조)
 
@@ -91,8 +91,8 @@ I.  도입부 (Introduction)
 
 II. 전개부 (Body)
     - Key Arguments를 그룹화 원칙에 따라 배열
-    - 각 KA 아래에 Grounds + Warrant + Backing
-    - 반론 대응 (Rebuttal) 포함
+    - 각 KA 아래에 Grounds + scheme CQ 응답
+    - 반론 대응 (미충족 CQ) 포함
 
 III. 결론부 (Conclusion)
     - Answer 재강조
@@ -105,9 +105,9 @@ III. 결론부 (Conclusion)
 ```
 I.   도입부
 II.  배경/맥락 (Situation + Complication 상세)
-III. 핵심 주장 1 (KA1 + Grounds + Rebuttal)
-IV.  핵심 주장 2 (KA2 + Grounds + Rebuttal)
-V.   핵심 주장 3 (KA3 + Grounds + Rebuttal)
+III. 핵심 주장 1 (KA1 + Grounds + 반론 대응)
+IV.  핵심 주장 2 (KA2 + Grounds + 반론 대응)
+V.   핵심 주장 3 (KA3 + Grounds + 반론 대응)
 VI.  종합 분석 (Cross-cutting insights)
 VII. 결론 및 제언
 VIII.부록 (Open Questions, 참고자료)

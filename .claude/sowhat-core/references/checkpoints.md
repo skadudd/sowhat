@@ -24,8 +24,8 @@ Claude가 먼저 자동 검증을 수행하고, 결과를 인간에게 보여준
 
 > 자동 검증 결과:
 > ✅ Claim-Grounds 연결: 통과
-> ⚠️ Qualifier: 근거 대비 과도 (major)
-> ✅ Warrant: 논리적 연결 확인
+> ⚠️ Confidence: 근거 대비 과도 (major)
+> ✅ CQ 응답: scheme CQ 충분성 확인
 
 [1] 승인 — settle 진행
 [2] 수정 필요 — 어떤 부분?
@@ -114,8 +114,7 @@ Claude가 접근할 수 없는 내부 데이터, 전문 지식, 경험적 판단
 | Step 2 (Scheme) | scheme 선택 | decision |
 | Step 3 (Claim) | claim 후보 중 선택 | decision |
 | Step 4 (Grounds) | 내부 데이터 요청 가능 | human-input |
-| Step 6 (Qualifier) | 자동 추정과 다르면 | decision |
-| Step 8 (Rebuttal) | rebuttal 후보 중 선택 | decision |
+| Step 6 (Confidence) | 자동 추정과 다르면 | decision |
 
 ### debate
 
@@ -149,7 +148,7 @@ Claude가 접근할 수 없는 내부 데이터, 전문 지식, 경험적 판단
 
 | 시점 | Checkpoint | 유형 |
 |------|-----------|------|
-| 필드 매핑 선택 | Grounds/Backing/Rebuttal/Warrant 중 선택 | decision |
+| 필드 매핑 선택 | Grounds/CQ Responses 중 선택 | decision |
 | settled 섹션 강등 확인 | 주입 시 needs-revision 전환 | decision |
 
 ### autonomous

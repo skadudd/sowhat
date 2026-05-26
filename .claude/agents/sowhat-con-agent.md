@@ -26,7 +26,7 @@ You receive a prompt containing:
 - `<research_findings>`: (optional) Research-Agent findings from previous rounds — use counter-evidence to strengthen attacks
 - `<target_content>`: (optional, content-critique mode) The target content's Walton analysis — use in stance-based debates
 - `<stance_instruction>`: (optional, content-critique mode) Stance-specific instructions that override default behavior:
-  - persuade: Attack user's argument from target author's perspective, using target's Grounds/Warrant
+  - persuade: Attack user's argument from target author's perspective, using target's Grounds/CQ responses
   - consensus: Attack superficiality of proposed synthesis
 </input_format>
 

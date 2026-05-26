@@ -50,7 +50,7 @@ You receive a prompt containing:
    - T1 (학술/정부) > T2 (산업/언론) > T3 (전문 블로그) > T4 (개인/커뮤니티)
    - Recent (< 2 years) > Older
    - Quantitative > Qualitative
-   - T4 sources: flag as "Backing only" in output
+   - T4 sources: flag as "supplementary citation only" in output
 
 6. Check for `<previous_findings>` to avoid duplicate searches
 

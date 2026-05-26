@@ -12,7 +12,7 @@
 | **T1** | 1차 출처 | 학술 논문(peer-reviewed), 정부/공공기관 통계, 국제기구 보고서(UN/OECD/WHO), 공식 기업 IR/SEC filing, 법률/판례 | **20** | ✅ |
 | **T2** | 전문 출처 | 주요 산업 리포트(Gartner/McKinsey/IDC), 공신력 있는 언론(Reuters/Bloomberg/NYT/조선일보/한겨레), 공식 기술 문서, 전문 저널(HBR/MIT Tech Review) | **15** | ✅ |
 | **T3** | 준전문 출처 | 전문가 개인 블로그(도메인 전문성 입증), Medium 검증된 저자, Stack Overflow 고평판 답변, 산업 컨퍼런스 발표 자료, 위키피디아(출처 체인 확인 시) | **8** | ⚠️ 2개 이상 교차검증 시만 |
-| **T4** | 비검증 출처 | 개인 블로그(네이버 블로그, Tistory, Velog 등), 커뮤니티 게시글(Reddit, Quora, 디시인사이드, 클리앙), SNS(Twitter/X, Facebook), 익명 출처, 출처 불명 기사 | **3** | ❌ Backing 전용 |
+| **T4** | 비검증 출처 | 개인 블로그(네이버 블로그, Tistory, Velog 등), 커뮤니티 게시글(Reddit, Quora, 디시인사이드, 클리앙), SNS(Twitter/X, Facebook), 익명 출처, 출처 불명 기사 | **3** | ❌ 보조 인용 전용 |
 
 ---
 
@@ -56,7 +56,7 @@ FUNCTION classify_source_layer(source_url, source_content):
 | T2 | Primary | ✅ (기업 IR 등) | ✅ |
 | T2 | Secondary | ⚠️ 1차 출처 교차검증 필요 (정량 데이터) | ✅ |
 | T3 | Secondary | ❌ 교차검증 없이 단독 사용 불가 | ⚠️ 조건부 |
-| T4 | Secondary | ❌ | ❌ Backing 전용 |
+| T4 | Secondary | ❌ | ❌ 보조 인용 전용 |
 
 > **핵심 원칙**: 정량 데이터를 2차 출처에서 인용할 때는, 해당 수치의 1차 출처를 확인하는 것이 기본이다. 뉴스 헤드라인의 수치를 그대로 Grounds에 넣지 않는다.
 
@@ -285,7 +285,7 @@ stale_reason: null
     📊 신뢰도: T2 (산업 리포트) — Grounds 사용 가능
 
 [2] {발견} — {source}
-    📊 신뢰도: T4 (개인 블로그) — ⚠️ Backing 전용
+    📊 신뢰도: T4 (개인 블로그) — ⚠️ 보조 인용 전용
 ```
 
 ### accept 시 Tier 경고
@@ -320,6 +320,6 @@ T4 출처를 accept할 때:
 
 - **출처 없는 근거는 근거가 아니다** — 출처 미명시 Grounds는 challenge에서 자동 플래그
 - **Tier는 도메인 + 콘텐츠 복합 판정** — 도메인만으로 자동 분류하지 않음
-- **T4도 가치가 있다** — Backing, 일화, 사용자 목소리 등으로 활용
+- **T4도 가치가 있다** — CQ 보조 인용, 일화, 사용자 목소리 등으로 활용
 - **인간이 최종 판단** — Tier는 자동 판정하되, 사용자가 override 가능
 - **교차검증은 독립성이 핵심** — 같은 원본 인용은 교차검증이 아님

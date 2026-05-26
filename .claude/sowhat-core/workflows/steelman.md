@@ -34,7 +34,7 @@ status_transitions: []
 
 ## AI Content Boundary (cycle 7)
 
-Anti-Thesis, Counter-Claim, Counter-Warrant는 AI가 **논리 구조 기반**으로만 생성한다. Counter-Grounds의 구체값(수치·기관명·연도·인물명·URL)은 AI가 자동 생성하지 않는다. 상세: `references/ai-content-boundary.md`.
+Anti-Thesis, Counter-Claim, Counter-CQ는 AI가 **논리 구조 기반**으로만 생성한다. Counter-Grounds의 구체값(수치·기관명·연도·인물명·URL)은 AI가 자동 생성하지 않는다. 상세: `references/ai-content-boundary.md`.
 
 Counter-Grounds 구체값 유입 경로:
 
@@ -46,7 +46,7 @@ Counter-Grounds 구체값 유입 경로:
 - 허용: `"원본 Grounds의 표본이 특정 세그먼트에 편향됐을 가능성 [source:placeholder]"`
 - 금지: `"McKinsey 2024 보고서 기준 실제 이탈률은 12% [source:...]"` ← retrieval 없이 생성 불가
 
-Anti-Warrant, Counter-Warrant는 논리 취약점(Warrant non-sequitur, Qualifier overclaiming, Scheme CQ 미충족)으로 구성. `[source:inference]` 태그.
+Counter-CQ는 논리 취약점(scheme CQ 미충족, Confidence 과잉주장)으로 구성. `[source:inference]` 태그.
 
 retrieval 없이 생성된 steelman은 **논리 기반 stress test**로서 유효하며, 구체적 반증 데이터를 원하면 사용자에게 다음을 안내:
 
@@ -70,7 +70,7 @@ retrieval 없이 생성된 steelman은 **논리 기반 stress test**로서 유�
 thesis Answer에 대한 **가장 강력한 반대 입장**을 논리 구조로 생성한다:
 
 1. Anti-Claim: Answer의 대안적 입장 — AI 자동 생성 가능 (`[source:inference]`)
-2. Anti-Warrant: Anti-Claim을 정당화하는 논리 원칙 — AI 자동 생성 가능 (`[source:inference]`)
+2. Counter-CQ: Anti-Claim을 정당화하는 scheme CQ 반박 — AI 자동 생성 가능 (`[source:inference]`)
 3. Anti-Grounds:
    - `research/`에 매핑된 반증 finding 존재 → 원문 인용 (`[source:#NNN]`)
    - inject 자료 존재 → 인용 (`[source:file:path]`)
@@ -89,7 +89,7 @@ thesis Answer에 대한 **가장 강력한 반대 입장**을 논리 구조로 �
    ## Anti-Grounds
    {anti_grounds_with_source_tags}
 
-   ## Anti-Warrant
+   ## Counter-CQ
    {anti_warrant} [source:inference]
 
    ## 생성 근거
@@ -115,10 +115,10 @@ FOR EACH section:
        예: "원본 grounds의 시계열이 경기 확장기에 치우쳤을 가능성 [source:placeholder]"
      - 구체 수치·기관명·연도 자동 생성 금지
 
-  3. Counter-Warrant 생성 — AI 자동 (`[source:inference]`):
-     - 원본 Warrant의 non-sequitur / missing link / circular 중 어디가 취약한지
+  3. Counter-CQ 생성 — AI 자동 (`[source:inference]`):
+     - 원본 scheme CQ의 non-sequitur / missing link / circular 중 어디가 취약한지
      - Scheme Critical Questions 중 원본이 답하지 못한 것
-     - Qualifier overclaiming 지점
+     - Confidence 과잉주장 지점
 
   4. counter/counter-{section}.md에 저장:
      # Counter: {section_name}
@@ -132,11 +132,11 @@ FOR EACH section:
      ## Counter-Grounds
      {counter_grounds_with_source_tags}
 
-     ## Counter-Warrant
+     ## Counter-CQ
      {counter_warrant} [source:inference]
 
-     ## 원본 Warrant 약점
-     {원본 Warrant의 논리 취약점 — non-sequitur / missing link / circular 중 어떤 것인가}
+     ## 원본 scheme CQ 약점
+     {원본 scheme CQ의 논리 취약점 — non-sequitur / missing link / circular 중 어떤 것인가}
 ```
 
 ---
@@ -158,7 +158,7 @@ FOR EACH section:
   3. 취약점 판정:
      - 🔴 반론이 더 강함: counter가 Grounds + CQ 응답 모두에서 우위
      - ⚠️ 대등: 양측 비슷한 수준, 추가 근거 필요
-     - ✅ 원본이 더 강함: 원본이 Grounds 또는 Warrant에서 명확히 우위
+     - ✅ 원본이 더 강함: 원본이 Grounds 또는 CQ 응답에서 명확히 우위
 ```
 
 ---
@@ -184,8 +184,8 @@ FOR EACH section:
 - 판정: {🔴|⚠️|✅}
 - 원본 Grounds 강도: {점수}
 - Counter Grounds 강도: {점수}
-- 원본 Warrant 견고성: {high|medium|low}
-- Counter Warrant 견고성: {high|medium|low}
+- 원본 scheme CQ 견고성: {high|medium|low}
+- Counter-CQ 견고성: {high|medium|low}
 - 상세: {구체적 분석}
 
 {모든 섹션에 대해 반복}
@@ -250,7 +250,7 @@ git commit -m "steelman({project}): generate counter-narrative"
 
 ## 핵심 원칙
 
-- **Counter는 논리 구조 중심** — Counter-Claim/Counter-Warrant는 AI가 자동 생성 가능 (`[source:inference]`). Counter-Grounds의 구체값은 retrieval만 인용 (`references/ai-content-boundary.md`)
+- **Counter는 논리 구조 중심** — Counter-Claim/Counter-CQ는 AI가 자동 생성 가능 (`[source:inference]`). Counter-Grounds의 구체값은 retrieval만 인용 (`references/ai-content-boundary.md`)
 - **Source tag 강제** — 모든 counter 항목에 `[source:...]`. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop
 - **reretrieval 부재 시 placeholder 허용** — `[source:placeholder]` 로 유형 기술만 하여도 유효한 논리 기반 steelman. 사용자에게 research/inject 안내
 - **진정한 steelman** — 허수아비(strawman)가 아닌, 실제로 설득력 있는 반대 논증을 생성해야 한다

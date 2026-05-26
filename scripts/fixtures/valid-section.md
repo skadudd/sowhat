@@ -1,6 +1,8 @@
 ---
 section: "test-valid"
 status: "settled"
+scheme: "Sample to Population"
+confidence: "likely (60-80%)"
 ---
 
 # Test valid section
@@ -16,14 +18,13 @@ Market growth is accelerating in 2026.
 - Industry benchmark overview [source:inference]
 - See raw data [source:file:dummy-data.csv]
 
-## Warrant
+## CQ Responses
 
-- Grounds support claim because benchmarks are comparable [source:inference]
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| CQ1 | Is the sample representative? | Survey covers all segments | 3 |
+| CQ2 | Is the population well-defined? | SaaS B2B market 2026 | 4 |
 
-## Backing
+## Confidence
 
-- Market trend data [source:sub-research]
-
-## Rebuttal
-
-- Counter argument about measurement error [source:inference]
+likely (60-80%)

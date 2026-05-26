@@ -69,7 +69,7 @@ Evaluate the target content across all 5 dimensions defined there.
 - **AI Content Boundary**: finding의 근거는 **타겟 콘텐츠 자체의 직접 인용**만 허용 (`[source:target]`). 외부 비교 수치·기관명·연도 자동 생성 금지.
 - **허용되는 finding 표현**:
   - 타겟 인용: `[source:target]` — 대상 콘텐츠의 구체적 문장·수치 인용
-  - 논리 유형 기술: `[source:inference]` — `"T4 수준 출처에 의존"`, `"Warrant non-sequitur"`, `"Qualifier가 근거 강도 대비 강함"` 등
+  - 논리 유형 기술: `[source:inference]` — `"T4 수준 출처에 의존"`, `"scheme CQ 미충족"`, `"Confidence가 근거 강도 대비 강함"` 등
   - 외부 비교 필요 시: research-agent 스폰 권고 → 영수증 검증 후 `[source:sub-research]`
 - **Source tag 강제**: 각 finding 항목 끝에 `[source:target]` / `[source:inference]` / `[source:#NNN]` / `[source:sub-research]` 중 하나. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop.
 - 심각도는 실제 논증 영향에 비례해야 한다

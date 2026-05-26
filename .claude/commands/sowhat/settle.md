@@ -50,9 +50,9 @@ compatibility: "Claude Code >=2.1.3"
 > 자동 검증 결과:
 > ✅ Claim ↔ Thesis 정합성
 > ✅ Grounds: {N}개
-> ✅ Warrant: 명시적
-> ✅ Qualifier: {level}
-> ✅ Rebuttal 처리됨
+> ✅ CQ 응답: 충분
+> ✅ Confidence: {level}
+> ✅ 미충족 CQ: {N}개 (허용 상한 이하)
 
 [1] 승인 — settle 진행
 [2] 수정 필요 — 어떤 부분?

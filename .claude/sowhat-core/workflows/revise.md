@@ -32,7 +32,7 @@ settled 또는 discussing 섹션의 논증을 수정하고, 영향받는 논증�
 | `{section}` | 섹션 번호 또는 이름 (필수) |
 | `{field}` | 수정할 필드명 (생략하면 요약 출력 후 선택) |
 
-Field 값: `claim` / `grounds` / `warrant` / `qualifier` / `rebuttal` / `backing` / `open-questions`
+Field 값: `claim` / `grounds` / `cq-responses` / `confidence` / `unmet-cq` / `open-questions`
 
 섹션 없이 실행하면 → `❌ 섹션을 지정하세요. 예: /sowhat:revise 02`
 
@@ -90,14 +90,11 @@ Field 값: `claim` / `grounds` / `warrant` / `qualifier` / `rebuttal` / `backing
 🔍 Grounds
   {Grounds 전문}
 
-🔗 Warrant
-  {Warrant 전문 | ⚠️ Implicit}
+📋 CQ Responses
+  {CQ Responses 요약 | 미충족 CQ 목록}
 
-📚 Backing
-  {Backing | 없음}
-
-⚡ Rebuttal
-  {Rebuttal | 없음}
+⚡ 미충족 CQ
+  {confidence ≤ 1 CQ 목록 | 없음}
 
 ❓ Open Questions
   {Open Questions | 없음}
@@ -110,11 +107,10 @@ field 인자가 없으면 선택지를 출력한다:
 어떤 부분을 수정하시겠습니까?
   [1] Claim
   [2] Grounds
-  [3] Warrant
-  [4] Qualifier (현재: {qualifier})
-  [5] Rebuttal
-  [6] Backing
-  [7] Open Questions
+  [3] CQ Responses
+  [4] Confidence (현재: {confidence})
+  [5] 미충족 CQ 대응 추가
+  [6] Open Questions
   [0] 취소
 ```
 
@@ -130,7 +126,7 @@ field 인자가 없으면 선택지를 출력한다:
 {현재 내용}
 ----------------------------------------
 새 내용을 입력해주세요.
-(Qualifier 수정 시: definitely / usually / in most cases / presumably / possibly 중 선택)
+(Confidence 수정 시: virtually certain / very likely / likely / uncertain / unlikely 중 선택)
 ```
 
 사용자가 수정 내용을 제시하면 Claude가 즉시 파일에 반영한다.
@@ -147,8 +143,8 @@ field 인자가 없으면 선택지를 출력한다:
 | 유형 | 의미 | 상태 변경 | 전파 |
 |------|------|----------|------|
 | `cosmetic` | 오타, 포맷팅, 인용 형식 수정 | 없음 (settled 유지) | 없음 |
-| `reinforcing` | Backing 추가, Claim 불변인 Grounds 보강, Warrant 보강 증거 추가 | 없음 (settled 유지) | 없음 |
-| `substantive` | Claim 재표현 (의미 동일), Qualifier 축소, Rebuttal 추가 | settled → needs-revision | 스코프 검증만 (자동 invalidation 없음) |
+| `reinforcing` | CQ 응답 보강, Claim 불변인 Grounds 보강, CQ 보조 인용 추가 | 없음 (settled 유지) | 없음 |
+| `substantive` | Claim 재표현 (의미 동일), Confidence 하향, 미충족 CQ 대응 추가 | settled → needs-revision | 스코프 검증만 (자동 invalidation 없음) |
 | `structural` | Claim 의미 변경, thesis_argument 변경, Scheme 변경 | settled → needs-revision | 전체 전파 (기존 동작) |
 
 ### 자동 감지 알고리즘
@@ -163,7 +159,7 @@ FUNCTION classify_revision(field, old_content, new_content, claim_changed):
   # 2. 필드별 분류
   SWITCH field:
     CASE "backing":
-      RETURN "reinforcing"  # Backing 추가/수정은 항상 보강
+      RETURN "reinforcing"  # CQ 보조 인용 추가는 항상 보강
 
     CASE "open-questions":
       RETURN "cosmetic"  # Open Questions 변경은 논증 구조에 영향 없음
@@ -182,12 +178,12 @@ FUNCTION classify_revision(field, old_content, new_content, claim_changed):
 
     CASE "warrant":
       IF NOT claim_changed:
-        RETURN "substantive"  # Claim 불변 + Warrant 변경 = 실질적
+        RETURN "substantive"  # Claim 불변 + CQ 응답 변경 = 실질적
       ELSE:
         RETURN "structural"
 
     CASE "qualifier":
-      RETURN "substantive"  # Qualifier 변경은 항상 재검증 필요
+      RETURN "substantive"  # Confidence 변경은 항상 재검증 필요
 
     CASE "rebuttal":
       RETURN "substantive"  # 새로운 방어 각도
@@ -278,7 +274,7 @@ git commit -m "revise({section}): {수정된 field} 변경 [{classification}]"
 | 범위 | 조건 |
 |------|------|
 | **직접 오염** | 동일 `thesis_argument`를 가진 섹션 (같은 Key Argument 소속) |
-| **간접 오염** | 다른 섹션의 Grounds 또는 Warrant에 이 섹션의 Claim을 인용하는 섹션 |
+| **간접 오염** | 다른 섹션의 Grounds 또는 CQ 응답에 이 섹션의 Claim을 인용하는 섹션 |
 | **thesis 오염** | 수정된 Claim이 Key Argument → Answer 연결을 약화시킬 가능성 |
 
 탐지 방법:

@@ -99,7 +99,7 @@ git status --porcelain 2>/dev/null
   - Open Questions 미해결 건수
   - challenge에서 YELLOW/RED 판정 후 미수정 건수 (`logs/challenge-*.md` 스캔)
   - Grounds 중 출처 미확인(T3/T4만 있거나, Stage 0 팩트체크 미실행) 건수
-  - Stub 의심 필드 건수 (구체적 출처/수치 없는 Grounds, 동어반복 Warrant 등)
+  - Stub 의심 필드 건수 (구체적 출처/수치 없는 Grounds, CQ 회피 응답 등)
   - debate에서 `weakened` 판정 후 미보강 건수 (`logs/debate/` 스캔)
 - 집계 방법:
   - `logs/challenge-*.md` 에서 severity가 `major`/`critical`이고 `status: open`인 항목 카운트

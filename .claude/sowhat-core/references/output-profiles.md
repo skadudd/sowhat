@@ -163,7 +163,7 @@ Hook (관심 포착)
 → 배경 (Situation)
 → 갈등/문제 (Complication)
 → 전개 (Key Arguments as story beats)
-→ 전환점 (Rebuttal + 대응)
+→ 전환점 (반론 + 대응)
 → 해결 (Answer + CTA)
 ```
 
@@ -245,14 +245,14 @@ Abstract (요약)
    Part 2~N-1 (본편):
      - 이전 편 1문장 요약
      - 이 파트의 미니 SCQA
-     - Key Argument 전개 (Grounds + Warrant)
-     - Rebuttal 대응
+     - Key Argument 전개 (Grounds + scheme 논리)
+     - 반론 대응
      - 다음 편 예고 (cliffhanger=true일 때)
 
    Part N (결론편):
      - 시리즈 전체 요약
      - Answer 재강조
-     - 통합 Rebuttal 대응
+     - 통합 반론 대응
      - CTA
    ```
 
@@ -330,8 +330,8 @@ export/
 
 - Claim만 서술
 - Grounds: 가장 강한 1개만 수치/사실로 인라인
-- Warrant, Backing: 생략
-- Rebuttal: 생략 또는 1문장
+- CQ Responses 상세: 생략
+- 반론: 생략 또는 1문장
 
 ### Level 2: 균형형 (Balanced)
 
@@ -349,14 +349,14 @@ export/
 > 예시의 `{중괄호}` 값은 실제 섹션 데이터에서 치환된다. AI가 자체로 구체 수치·출처를 생성하면 fabrication이다. `references/ai-content-boundary.md` 참조.
 
 - Claim + 핵심 Grounds 1-2개
-- Warrant: 자연스러운 연결 문장으로
-- Rebuttal: 1-2문장 반론 대응
+- scheme 논리: 자연스러운 연결 문장으로
+- 반론: 1-2문장 반론 대응
 
 ### Level 3: 근거 상세 (Evidence-rich)
 
-- Claim + 전체 Grounds + Warrant 명시
-- Backing 포함
-- Rebuttal 상세 분석
+- Claim + 전체 Grounds + scheme/CQ 응답 명시
+- CQ 보조 근거 포함
+- 미충족 CQ 상세 분석
 - 출처 인라인 또는 각주
 
 ### Level 4: 학술형 (Academic)
@@ -365,4 +365,4 @@ export/
 - 모든 출처 정식 인용 (APA/MLA)
 - 방법론 설명
 - 한계점 별도 섹션
-- Qualifier 명시적 표기
+- Confidence 명시적 표기

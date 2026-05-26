@@ -701,7 +701,7 @@ Answer: {00-thesis.md의 Answer 전문}
 ## 열린 실마리 (Open Threads)
 (다음 에피소드 후보 주제)
 - {01 섹션의 Open Question}
-- {인정했지만 완전히 대응하지 못한 Rebuttal}
+- {인정했지만 완전히 대응하지 못한 미충족 CQ}
 - {debate/challenge 과정에서 발견된 Gap}
 
 ## 사용된 용어 (Terms Defined)

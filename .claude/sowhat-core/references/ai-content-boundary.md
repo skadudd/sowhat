@@ -48,16 +48,16 @@ cycle 7 외부 감사에서 지적된 경계 사례에 대한 판정 규칙. par
 > 예: "대규모 데이터셋은 통계적 유의성을 가진다" (Sample to Population scheme의 CQ 답변)
 
 - 구체 수치 없음 → `[source:inference]` 허용
-- "표본 N ≥ 1000이면" 같은 **구체 임계치 포함** → `[source:inference]` 부족. 해당 임계치의 출처(통계 교과서, 업계 기준)를 Backing으로 분리 + `[source:#NNN]` 또는 `[source:user]` 부착
+- "표본 N ≥ 1000이면" 같은 **구체 임계치 포함** → `[source:inference]` 부족. 해당 임계치의 출처(통계 교과서, 업계 기준)를 CQ 응답 근거로 추가 + `[source:#NNN]` 또는 `[source:user]` 부착
 
 **C2. cause-effect 메커니즘 기술**
 
-> 예: "X는 Y를 야기한다 (메커니즘 Z 때문에)" 형식의 Warrant
+> 예: "X는 Y를 야기한다 (메커니즘 Z 때문에)" 형식의 scheme 논리 연결
 
 - Z가 **논리 관계 기술** → `[source:inference]` 허용 (예: "비용 상승이 수요 감소로 이어진다")
 - Z가 **도메인 지식·연구 결과** → retrieval 필요 (예: "도파민 수용체 D2의 탈감작으로 인해")
 
-판정 기준: Z를 제거했을 때 Warrant가 여전히 논리적으로 성립하는가? 성립하면 Z는 보조 설명 → 내용 태그 필요. 성립 안 하면 Z는 논리 구조의 일부 → inference 허용.
+판정 기준: Z를 제거했을 때 scheme 논리 연결이 여전히 성립하는가? 성립하면 Z는 보조 설명 → 내용 태그 필요. 성립 안 하면 Z는 논리 구조의 일부 → inference 허용.
 
 **C3. target 태그의 retrieval 위상**
 
@@ -104,7 +104,7 @@ Parser의 `CONCRETE_PATTERNS`는 경계 3을 잡는다. 1·2의 구별은 LLM이
 
 ## 워크플로우별 적용
 
-### expand (Grounds/Backing 입력)
+### expand (Grounds 입력)
 
 **이전 (cycle 1-6)**:
 ```
@@ -247,11 +247,11 @@ challenge Stage 0 (사실 검증)은 완전 폐기하지 않는다. 단 **역할
 3. LLM이 retrieval 태그를 허위 부착한 경우 challenge Stage 0에서 의미 수준 검증으로 탐지
 4. 사용자가 `--force`를 사용하지 않음 (sandbox escape 상태 밖)
 
-4개 조건이 모두 충족될 때만 "구별"이 실재한다. **Qualifier**: in most cases (cycle 1-6의 "definitely" 과대주장을 수정). 아래 Rebuttal 섹션의 5가지 실패 조건이 이 Qualifier를 정당화한다.
+4개 조건이 모두 충족될 때만 "구별"이 실재한다. **Confidence**: likely (60-80%) (cycle 1-6의 "virtually certain" 과대주장을 수정). 아래 미충족 CQ 섹션의 5가지 실패 조건이 이 Confidence를 정당화한다.
 
 ---
 
-## Rebuttal — 이 설계가 실패할 수 있는 조건
+## 미충족 CQ — 이 설계가 실패할 수 있는 조건
 
 cycle 1-6 실패 패턴(각 cycle이 자기 scope 내에서 "완벽" 선언)을 방지하기 위해 cycle 7 설계의 **5가지 실패 조건**과 현 대응을 명시한다.
 
@@ -285,7 +285,7 @@ cycle 1-6 실패 패턴(각 cycle이 자기 scope 내에서 "완벽" 선언)을 
 - Challenge Stage 0이 사용자 citation 실존·값 정확성 확인
 - 발견 시 revise 트리거
 
-**잔여 위험**: Stage 0 접근 불가 소스(사내 데이터, 구독 매체)의 경우 검증 불가. Qualifier 하향 권고가 유일한 방어.
+**잔여 위험**: Stage 0 접근 불가 소스(사내 데이터, 구독 매체)의 경우 검증 불가. Confidence 하향 권고가 유일한 방어.
 
 ### R4. `--force` escape hatch 남발
 
@@ -311,9 +311,9 @@ cycle 1-6 실패 패턴(각 cycle이 자기 scope 내에서 "완벽" 선언)을 
 
 **잔여 위험**: 대량 섹션 마이그레이션의 수동 부담. Cycle 8 후보 주제.
 
-### Qualifier 정당화
+### Confidence 정당화
 
-위 5개 실패 조건 중 **R1·R3는 Stage 0 의미 검증에 의존**, **R2·R4·R5는 정책·운영 영역**. 설계 차원의 "구조적 구별"은 R1~R5 밖에서 성립하므로 **"in most cases"**가 정확한 Qualifier다. cycle 1-6의 "이번에는 완벽"(definitely) 과대주장 패턴을 의식적으로 회피.
+위 5개 실패 조건 중 **R1·R3는 Stage 0 의미 검증에 의존**, **R2·R4·R5는 정책·운영 영역**. 설계 차원의 "구조적 구별"은 R1~R5 밖에서 성립하므로 **"likely (60-80%)"**가 정확한 Confidence다. cycle 1-6의 "이번에는 완벽"(virtually certain) 과대주장 패턴을 의식적으로 회피.
 
 ---
 
@@ -323,7 +323,7 @@ cycle 1-6 실패 패턴(각 cycle이 자기 scope 내에서 "완벽" 선언)을 
 
 - `unverified_items` frontmatter 필드: 무시 (noop). Workflow가 더 이상 참조하지 않으므로 유지해도 안전.
 - `last_challenged_at` 필드: 동일 — 무시
-- 기존 Grounds/Backing의 구체값: source 태그 없이 저장됨. 재settle 또는 draft 진입 시 parser가 error 보고 → 사용자가 수동으로 `/sowhat:revise`로 태그 부착
+- 기존 Grounds의 구체값: source 태그 없이 저장됨. 재settle 또는 draft 진입 시 parser가 error 보고 → 사용자가 수동으로 `/sowhat:revise`로 태그 부착
 
 ### `/sowhat:migrate-sources` — **Deferred** (cycle 8 후보)
 

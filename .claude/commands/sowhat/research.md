@@ -19,7 +19,7 @@ URL 분석, 로컬 파일/폴더 분석, 토픽 검색, 자율 리서치 모드�
 
 ## When to Apply
 
-- 섹션의 Grounds/Backing을 강화할 외부 자료가 필요할 때
+- 섹션의 Grounds를 강화할 외부 자료가 필요할 때
 - URL/토픽/키워드로 특정 정보를 검색할 때
 - expand 중 Sub-Research가 필요할 때
 

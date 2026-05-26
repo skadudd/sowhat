@@ -127,7 +127,7 @@ planning_interfaces[] ← Grounds에서 언급된 API/인터페이스/프로토�
    - "구체적으로 어떻게 동작해야 합니까?" (← {section}의 Grounds에서 힌트 제시)
    - "입력과 출력은?" (← Grounds의 데이터 포인트 기반)
    - "정상 흐름(happy path)은?"
-   - "비정상 흐름은?" (← {section}의 Rebuttal 조건에서 파생)
+   - "비정상 흐름은?" (← {section}의 미충족 CQ 조건에서 파생)
 3. 우선순위: "기획에서의 논거 강도(strength score)를 참고하면 {FR-1}이 가장 핵심입니다. 동의하십니까?"
 
 **턴 상한: FR당 3턴, 전체 최대 12턴**
@@ -176,14 +176,14 @@ planning_interfaces[] ← Grounds에서 언급된 API/인터페이스/프로토�
 
 ### 08-edge-cases
 
-**기획에서 추출**: `planning_edge[]` + 각 섹션의 Rebuttal 조건
+**기획에서 추출**: `planning_edge[]` + 각 섹션의 미충족 CQ 조건
 
 질문 파생 순서:
 
 1. 기획에서 수집된 edge case 제시:
    ```
    기획에서 식별된 경계 조건:
-   - {edge_1} (← {section} Rebuttal: "{조건}")
+   - {edge_1} (← {section} 미충족 CQ: "{조건}")
    - {edge_2} (← {section} Scope.Out: "{비목표}")
    - {edge_3} (← {section} Edge Cases 필드)
 

@@ -12,9 +12,9 @@ checkpoints:
   - type: human-input
     when: "내부 데이터 요청 가능 (Step 4 Grounds)"
   - type: decision
-    when: "qualifier 자동 추정과 다를 때 (Step 6)"
+    when: "confidence 자동 추정과 다를 때 (Step 6)"
   - type: decision
-    when: "rebuttal 후보 중 선택 (Step 8)"
+    when: "미충족 CQ 처리 선택 (Step 5)"
 config_reads: [layer, sections, features]
 config_writes: [sections]
 continuation:
@@ -29,7 +29,7 @@ status_transitions: ["draft → discussing", "needs-revision → discussing"]
 
 AI는 **구조만 제안**한다. **내용은 제안하지 않는다**.
 
-- **구조**: Claim 형식, Warrant 논리 연결, Scheme 선택, Qualifier 추정, Stasis 유형 — **AI 자유**
+- **구조**: Claim 형식, scheme 논리 연결, Scheme 선택, Confidence 추정, Stasis 유형 — **AI 자유**
 - **내용**: 구체 수치, 기관명, 인물명, 보고서명, URL — **AI 금지**
 
 내용은 오직 4가지 경로로만 들어온다:
@@ -64,7 +64,7 @@ AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
    - `$ARGUMENTS`가 숫자면 → `{N}-*.md` 패턴으로 검색
    - `$ARGUMENTS`가 이름이면 → `*-{name}.md` 패턴으로 검색
    - 없으면 → 새 섹션 파일 생성 (다음 번호 자동 부여)
-   - 섹션 파일 전체를 로드하고 **모든 필드를 변수로 추출**: `thesis_argument`, `stasis`, `scheme`, `claim`, `grounds`, `warrant`, `backing`, `qualifier`, `rebuttal`
+   - 섹션 파일 전체를 로드하고 **모든 필드를 변수로 추출**: `thesis_argument`, `stasis`, `scheme`, `claim`, `grounds`, `cq_responses`, `confidence`
 4. 섹션 status 확인:
    - `settled` → `❌ 이미 settled된 섹션입니다. /sowhat:challenge로 재검토하세요.`
    - `invalidated` → `❌ invalidated 상태입니다. 상위 논거가 먼저 revision되어야 합니다.`
@@ -111,13 +111,13 @@ AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
 - Stasis/Scheme/논거 등 이미 확정된 정보는 표시하지 않음
 
 ```
-> [expand {N}-{섹션} > 스텝 4/9 Grounds]
+> [expand {N}-{섹션} > 스텝 4/7 Grounds]
 > Claim: "{섹션 주장 40자}"
 ```
 
 스텝 진행에 따라 직전 확정 필드를 1줄 추가할 수 있음:
 ```
-> [expand {N}-{섹션} > 스텝 5/9 Warrant]
+> [expand {N}-{섹션} > 스텝 5/7 CQ 응답]
 > Claim: "{섹션 주장 40자}"
 > Grounds: {근거 요약 40자}
 ```
@@ -125,7 +125,7 @@ AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
 ### 질문 출력 패턴
 
 ```
-> [expand {N}-{섹션} > 스텝 4/9 Grounds]
+> [expand {N}-{섹션} > 스텝 4/7 Grounds]
 > Claim: "{섹션 주장 40자}"
 
 ❓ 이 주장을 지지하는 근거의 유형은?
@@ -145,11 +145,11 @@ AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
 ```
 ✓ Grounds 기록됨: {사용자 입력 또는 Sub-Research 결과 요약}
 
-> [expand {N}-{섹션} > 스텝 5/9 Warrant]
+> [expand {N}-{섹션} > 스텝 5/7 CQ 응답]
 > Claim: "{섹션 주장 40자}"
 > Grounds: {근거 요약 40자}
 
-❓ Grounds가 Claim을 왜 지지하는지?
+❓ scheme CQs에 답하세요.
   ...
 ```
 
@@ -174,10 +174,8 @@ AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
 - `wip({section}): add stasis+scheme`
 - `wip({section}): add claim`
 - `wip({section}): add grounds`
-- `wip({section}): add warrant`
-- `wip({section}): add backing`
-- `wip({section}): add qualifier`
-- `wip({section}): add rebuttal`
+- `wip({section}): add cq-responses`
+- `wip({section}): add confidence`
 
 ---
 
@@ -224,7 +222,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 `00-thesis.md`에서 Key Arguments 목록을 로드하여 다음을 출력:
 
 ```
-> [expand {section} > 스텝 1/9 IBIS 프레이밍]
+> [expand {section} > 스텝 1/7 IBIS 프레이밍]
 > Thesis: "{Answer 40자}"
 
 ❓ 이 섹션은 thesis의 어떤 Key Argument를 지지합니까?
@@ -245,7 +243,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 논쟁의 유형을 먼저 확정한다. **이 섹션에서 무엇을 증명하려 하는가**에 따라 필요한 근거 유형이 달라진다.
 
 ```
-> [expand {section} > 스텝 1.5/9 Stasis 유형]
+> [expand {section} > 스텝 1.5/7 Stasis 유형]
 > Thesis: "{Answer 40자}"
 > 이 섹션 논거: "{thesis_argument}"
 
@@ -354,7 +352,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 섹션 제목, thesis Answer, thesis_argument, stasis, scheme을 함께 고려하여 Claim에 대한 구체적 제안 3개를 생성한다. **제안은 인간의 실제 맥락에서 파생한다** — generic 예시 사용 금지.
 
 ```
-> [expand {section} > 스텝 3/9 Claim]
+> [expand {section} > 스텝 3/7 Claim]
 > Thesis: "{Answer 40자}"
 > 이 섹션 논거: "{thesis_argument}"
 > Stasis: {stasis} | Scheme: {scheme}
@@ -386,7 +384,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 스텝 4 시작 시 매핑된 파인딩을 먼저 제시한다:
 
 ```
-> [expand {section} > 스텝 4/9 Grounds — Research 모드]
+> [expand {section} > 스텝 4/7 Grounds — Research 모드]
 > Claim: "{Claim 40자}"
 
 ℹ️ 이 섹션에 매핑된 리서치 파인딩 {N}건:
@@ -404,7 +402,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 ```
 
 - [1] 선택: 모든 파인딩을 Grounds 항목으로 구성. 출처/Tier를 함께 기록.
-- [2] 선택: 선택된 파인딩만 Grounds에 포함, 나머지는 Backing 또는 버림.
+- [2] 선택: 선택된 파인딩만 Grounds에 포함, 나머지는 CQ 응답 보완 참고 또는 버림.
 - [3] 선택: 파인딩 무시, 아래 일반 Grounds 핑퐁으로 진행.
 - [4] 선택: 파인딩 + 직접 작성을 결합. 파인딩 먼저 Grounds에 배치 후 추가 근거 요청.
 
@@ -415,7 +413,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 #### 4-1. 근거 출처 선택 (cycle 7 — Plan A 3-choice)
 
 ```
-> [expand {section} > 스텝 4/9 Grounds]
+> [expand {section} > 스텝 4/7 Grounds]
 > Thesis: "{Answer 40자}"
 > 이 섹션 논거: "{thesis_argument}"
 > Stasis: {stasis} | Scheme: {scheme}
@@ -538,7 +536,7 @@ AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 → 다음 선택지를 제시:
 
 ```
-> [expand {section} > 스텝 4/9 Grounds > Sub-Research]
+> [expand {section} > 스텝 4/7 Grounds > Sub-Research]
 > Claim: "{Claim 40자}"
 
 🔍 리서치 방식을 선택하세요:
@@ -554,7 +552,7 @@ AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 → 다음 안내를 제시:
 
 ```
-> [expand {section} > 스텝 4/9 Grounds > Sub-Research]
+> [expand {section} > 스텝 4/7 Grounds > Sub-Research]
 > Claim: "{Claim 40자}"
 
 🔍 기본 웹 검색으로 진행합니다.
@@ -569,26 +567,26 @@ AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 **[2] Deep Research 선택 시**: `/sowhat:research --deep` 워크플로우의 Deep Research 실행 섹션을 따른다. 단, 다음 차이점이 있다:
 - 검색 쿼리를 현재 Claim + Stasis + Scheme 기반으로 자동 구성 (인간 입력 불필요)
 - 결과는 아래 "Sub-Research 결과 제시" 형식으로 표시하되, `🔬 Deep Research` 표시를 추가
-- Semi-Async 전환은 동일하게 적용 (Qualifier → Scope → AC 먼저 진행)
+- Semi-Async 전환은 동일하게 적용 (Confidence → Scope → AC 먼저 진행)
 - Finding 파일 생성은 `/sowhat:research` 워크플로우와 동일한 형식
 
 #### Semi-Async 실행 원칙
 
-Warrant는 Grounds에 의존한다. Grounds가 확정되지 않은 채 Warrant를 작성하면 Grounds 변경 시 Warrant도 다시 써야 한다. 따라서:
+CQ 응답은 Grounds에 의존한다. Grounds가 확정되지 않은 채 CQ에 답변하면 Grounds 변경 시 답변도 다시 써야 한다. 따라서:
 
-- **Grounds 의존 스텝 (Warrant)**: Grounds 완료 후에만 진행
-- **Grounds 무관 스텝 (Qualifier, Scope, AC)**: Sub-Research 실행 중 먼저 진행
+- **Grounds 의존 스텝 (CQ 응답)**: Grounds 완료 후에만 진행
+- **Grounds 무관 스텝 (Confidence, Scope, AC)**: Sub-Research 실행 중 먼저 진행
 
 ```
 🔍 Sub-Research 시작 ({기본 웹 검색|🔬 Deep Research})
    {agent-browser|Perplexity}가 백그라운드에서 검색 중입니다.
    Grounds와 무관한 스텝을 먼저 진행합니다.
 
-   진행 순서: Qualifier → Scope → AC → [Grounds 완료 대기] → Warrant
+   진행 순서: Confidence → Scope → AC → [Grounds 완료 대기] → CQ 응답
 ```
 
-Qualifier (스텝 6) → Scope (스텝 9 일부) → AC (스텝 9 일부) 순서로 먼저 진행한다.
-Warrant 진입 직전에 Sub-Research 결과를 대기하고 확인한다.
+Confidence (스텝 6) → Scope (스텝 7 일부) → AC (스텝 7 일부) 순서로 먼저 진행한다.
+CQ 응답 진입 직전에 Sub-Research 결과를 대기하고 확인한다.
 
 #### Sub-Research Agent 프롬프트 (자동 생성)
 
@@ -624,7 +622,7 @@ Scheme: {scheme}
 
 **기본 웹 검색 결과:**
 ```
-> [expand {section} > 스텝 4/9 Grounds > Sub-Research 완료]
+> [expand {section} > 스텝 4/7 Grounds > Sub-Research 완료]
 > Claim: "{Claim 40자}"
 > 검색: {검색어} (한국어 + 영어)
 
@@ -647,7 +645,7 @@ Grounds에 추가할 항목을 선택하세요:
 
 **🔬 Deep Research 결과:**
 ```
-> [expand {section} > 스텝 4/9 Grounds > 🔬 Deep Research 완료]
+> [expand {section} > 스텝 4/7 Grounds > 🔬 Deep Research 완료]
 > Claim: "{Claim 40자}"
 
 🔬 Deep Research 완료 ({N}건 발견, Perplexity {preset명})
@@ -668,7 +666,7 @@ Grounds에 추가할 항목을 선택하세요:
   [0] 결과 기각 — 직접 작성으로 돌아가기
 ```
 
-Deep Research 결과의 신뢰도는 `references/source-credibility.md` Tier 시스템(T1-T4)을 사용한다. T4 출처는 자동으로 `Backing 전용` 태그가 붙는다.
+Deep Research 결과의 신뢰도는 `references/source-credibility.md` Tier 시스템(T1-T4)을 사용한다. T4 출처는 자동으로 보조 인용 전용 경고가 붙는다.
 
 #### Sub-Research 실패 처리
 
@@ -678,10 +676,10 @@ Deep Research 결과의 신뢰도는 `references/source-credibility.md` Tier 시
 
   [1] 검색어 수정 후 재시도 → 직접 검색어 입력
   [2] Open Question으로 등록 후 나중에 직접 리서치
-  [3] 근거 없이 진행 → Qualifier를 "presumably" 이하로 자동 제안
+  [3] 근거 없이 진행 → Confidence를 "uncertain" 이하로 자동 제안
 ```
 
-[3] 선택 시: `⚠️ Grounds 없이 진행합니다. Qualifier는 "presumably" 이하를 강력 권장합니다.`
+[3] 선택 시: `⚠️ Grounds 없이 진행합니다. Confidence는 "uncertain" 이하를 강력 권장합니다.`
 
 ---
 
@@ -877,7 +875,7 @@ updated: {current_datetime}
 ---
 command: expand
 section: {section}
-step: {현재 스텝 이름: stasis|scheme|claim|grounds|warrant|backing|qualifier|rebuttal|scope}
+step: {현재 스텝 이름: stasis|scheme|claim|grounds|cq-responses|confidence|scope}
 sub_research_pending: {true|false}
 status: in_progress
 saved: {current_datetime}
@@ -903,7 +901,7 @@ saved: {current_datetime}
   Added: {완료된 필드 목록}
   Stasis: {stasis}
   Scheme: {scheme}
-  Qualifier: {qualifier}
+  Confidence: {confidence}
   Grounds Structure: {linked|convergent|mixed}
   Sub-Research: {used|not-used}
   Status: draft → discussing
@@ -998,7 +996,7 @@ expand 핑퐁에서 사용자가 내린 모든 결정에 고유 ID를 부여한�
 
 2. 결과를 Claim 선택지에 인라인으로 표시:
    ```
-   > [expand {section} > 스텝 3/9 Claim]
+   > [expand {section} > 스텝 3/7 Claim]
    > Thesis: "{Answer 40자}"
 
    ❓ 이 섹션의 핵심 주장(Claim)은 무엇입니까?
@@ -1068,13 +1066,13 @@ git commit -m "expand({section}): complete walton structure"
 - **컨텍스트 배너는 생략 불가** — 모든 핑퐁 질문 앞에 항상 표시
 - **Stasis 먼저** — 논쟁 유형을 확정하지 않으면 근거 유형을 알 수 없다
 - **서브질문으로 의사결정 나무** — 개방형 질문 대신 유형 선택 → 세부 확인 순서
-- **Sub-Research는 Semi-Async** — Grounds 의존 스텝(Warrant)은 대기, 무관 스텝은 먼저
+- **Sub-Research는 Semi-Async** — Grounds 의존 스텝(CQ 응답)은 대기, 무관 스텝은 먼저
 - **Grounds 결합 방식 명시** — Linked/Convergent에 따라 challenge 공격 전략이 달라짐
 - **예시는 맥락 기반** — generic 예시 금지, 인간의 실제 Claim/Grounds에서 파생
 - **즉시 기록 확인** — 각 답변 후 기록된 내용을 바로 보여주고 추가/계속 선택
 - **Claude는 질문만 한다** — 내용을 대신 채우지 않는다. 특히 **구체 수치·기관명·연도·인물명은 절대 AI가 생성하지 않는다** (`references/ai-content-boundary.md` 참조)
 - **항상 thesis와의 연결을 확인한다** — 모든 필드는 thesis Answer로 거슬러 올라간다
-- **Warrant는 생략 불가** — Implicit Warrant는 경고 후 계속 가능하나 위험함을 고지
+- **CQ 응답은 생략 불가** — 미충족 CQ(confidence 0)는 경고 후 계속 가능하나 settle 차단 가능함을 고지
 - **각 스텝 완료마다 커밋** — 작업 손실 방지
 - **Discussion audit trail 필수** — 모든 핑퐁 라운드를 `logs/discussion/`에 기록
 - **Decision ID 부여** — 사용자 결정마다 D-{section}-{seq} ID를 부여하여 settle/challenge에서 추적 가능

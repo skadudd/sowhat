@@ -89,7 +89,7 @@ status_transitions: []
 5. 사용자가 새 브랜치 이름을 제공하면:
    - `branches/{section}/{new-name}/` 디렉터리 생성
    - 현재 섹션 파일을 `branches/{section}/{new-name}/{section}.md`로 복사
-   - 새 브랜치 파일의 Claim, Grounds, Warrant, Backing, Qualifier, Rebuttal을 초기화 (비움)
+   - 새 브랜치 파일의 Claim, Grounds, CQ Responses, Confidence를 초기화 (비움)
    - `thesis_argument`와 `stasis`, `scheme`은 유지
    - status를 `draft`로 변경
 
@@ -172,9 +172,9 @@ status_transitions: []
 
 3. 각 브랜치의 강도 점수 계산 (`strength-scoring.md` 참조):
    - 근거 강도 (Evidence): Grounds 수 × Tier 가중치 × 유형 가중치
-   - 논리 연결 (Logic): Warrant 명확도 + Scheme CQ 대응
-   - 반박 커버리지 (Defense): Rebuttal 수 + Steelman 대응
-   - Qualifier 정합성 (Calibration): 주장 수준과 근거 수준 일치도
+   - 논리 연결 (Logic): scheme CQ 응답 충분성
+   - 반박 커버리지 (Defense): 미충족 CQ 수 + Steelman 대응
+   - Confidence 정합성 (Calibration): 주장 수준과 근거 수준 일치도
 
 4. `branches.json`에 계산된 `qualifier`와 `strength` 값을 갱신
 
@@ -185,10 +185,10 @@ status_transitions: []
 
                     {branch-1}      {branch-2}      ...
    Claim:          "{요약}"         "{요약}"
-   Qualifier:      {값} ({등급})    {값} ({등급})
+   Confidence:     {값}              {값}
    Strength:       {점수}/100      {점수}/100
    Grounds:        {N}개 ({Tier})   {N}개 ({Tier})
-   Rebuttal:       {N}개            {N}개
+   미충족 CQ:      {N}개            {N}개
 
    ✅ 추천: {최고 점수 브랜치} (강도 우위 +{차이})
    ----------------------------------------
@@ -228,7 +228,7 @@ status_transitions: []
    > 승인 브랜치: {branch-name} ({strength}/100)
    > 보관 브랜치: {나머지 목록}
    >
-   > 보관 브랜치의 Rebuttal이 승인 브랜치에
+   > 보관 브랜치의 미충족 CQ가 승인 브랜치에
    > 추가 반론으로 제안됩니다.
    >
    > 진행하시겠습니까? (y/n)
@@ -237,17 +237,17 @@ status_transitions: []
 4. 승인 시:
    a. 선택된 브랜치 파일로 메인 섹션 파일을 교체:
       - `branches/{section}/{branch-name}/{section}.md` → `planning/{section}.md`
-   b. 패배 브랜치들의 Rebuttal 수집:
-      - 각 패배 브랜치의 Rebuttal 내용을 추출
-      - 승인 브랜치의 Rebuttal 필드에 이미 없는 항목만 추가 제안:
+   b. 패배 브랜치들의 CQ 응답 수집:
+      - 각 패배 브랜치의 CQ 응답 내용 중 유용한 부분 추출
+      - 승인 브랜치의 CQ Responses에 아직 반영 안 된 항목만 추가 제안:
         ```
         패배 브랜치에서 수집한 추가 반론:
         - [{패배 브랜치명}] {rebuttal 내용 1}
         - [{패배 브랜치명}] {rebuttal 내용 2}
 
-        이 반론들을 승인 브랜치의 Rebuttal에 추가하시겠습니까? (y/n/선택)
+        이 CQ 응답 보강 내용을 승인 브랜치의 CQ Responses에 추가하시겠습니까? (y/n/선택)
         ```
-   c. 사용자 선택에 따라 Rebuttal 추가
+   c. 사용자 선택에 따라 CQ 응답 보강 추가
    d. 패배 브랜치를 아카이브:
       - `branches/{section}/{branch-name}/` → 유지 (참조용)
       - branches.json에서 해당 브랜치의 status를 `"archived"`로 변경

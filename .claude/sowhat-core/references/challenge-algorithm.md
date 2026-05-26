@@ -318,7 +318,7 @@ FOR EACH section:
      - 부분적 → 💡 minor: 간접 지지 (직접 연결 보강 필요)
 
   3. 전체 Grounds → Claim 흐름:
-     "모든 Grounds를 합치면, Warrant를 경유하여 Claim이 자연스럽게 따라오는가?"
+     "모든 Grounds를 합치면, scheme 논리를 경유하여 Claim이 자연스럽게 따라오는가?"
      - 흐름이 끊김 → 🔴 critical: 논증 체인 단절
      - 흐름은 있으나 비약 → ⚠️ major
 
@@ -350,7 +350,7 @@ FOR EACH section:
          - 없음 → ⚠️ major: 출처 미명시 (strength × 0.5)
        - 출처의 Tier 판정:
          - T4가 Grounds에 단독 사용됨 → 🔴 critical: T4 출처 Grounds 위반
-         - T3가 단독 사용 + Qualifier ≤ 2 (in most cases) → ⚠️ major: 교차검증 필요
+         - T3가 단독 사용 + Confidence uncertain 이하 → ⚠️ major: 교차검증 필요
 
   1. 충분성 테스트:
      Confidence별 최소 근거 기준:
@@ -383,7 +383,7 @@ FOR EACH section:
 ```
 
 ### Pass 기준
-- Qualifier 대비 근거 수/유형 충족
+- Confidence 대비 근거 수/유형 충족
 - critical 없음
 
 ---
@@ -471,16 +471,16 @@ MECE 검증:
 Steelman 검증:
 
   3. FOR EACH section:
-     a. 섹션의 Rebuttal 필드를 읽지 않고,
+     a. 섹션의 미충족 CQ를 먼저 보지 않고,
         scheme CQ + 일반 논리를 기반으로 최강 반론을 독립 생성
-     b. 생성된 반론과 섹션의 Rebuttal 필드를 대조:
-        - Rebuttal이 최강 반론을 커버 → 통과
-        - Rebuttal이 더 약한 반론만 다룸 → ⚠️ major: Steelman 미대응
-        - Rebuttal 비어있음 → 🔴 critical: 반론 부재
+     b. 생성된 반론과 섹션의 CQ Responses를 대조:
+        - CQ 응답이 최강 반론을 커버 → 통과
+        - CQ 응답이 더 약한 반론만 다룸 → ⚠️ major: Steelman 미대응
+        - 미충족 CQ만 있음 → 🔴 critical: 반론 부재
 
   4. 전체 논증 Steelman:
      thesis.Answer 자체에 대한 최강 반론 생성
-     - 어떤 섹션의 Rebuttal도 이를 다루지 않음 → ⚠️ major: 전체 논증 취약점
+     - 어떤 섹션의 CQ 응답도 이를 다루지 않음 → ⚠️ major: 전체 논증 취약점
 ```
 
 ### Pass 기준
@@ -496,8 +496,8 @@ Steelman 검증:
 
 1. **severity 우선**: critical > major > minor
 2. **동일 severity면 스테이지 순서 우선**: Stage 1 문제가 Stage 7보다 근본적
-3. **수정 순서 권고**: Warrant(Stage 3) → Grounds(Stage 5) → Qualifier(Stage 6) → Rebuttal(Stage 7) → Scheme(Stage 2) → Thesis정합성(Stage 1)
-   - 이유: Warrant 수정이 다른 문제를 연쇄적으로 해결할 가능성이 높음
+3. **수정 순서 권고**: CQ 응답(Stage 3) → Grounds(Stage 5) → Confidence(Stage 6) → Scheme(Stage 2) → Thesis정합성(Stage 1)
+   - 이유: CQ 응답 수정이 다른 문제를 연쇄적으로 해결할 가능성이 높음
 
 ---
 

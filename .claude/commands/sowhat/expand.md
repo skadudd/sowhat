@@ -38,8 +38,8 @@ compatibility: "Claude Code >=2.1.3"
 4. Claim Tier 설정 (Step 2.5)
 5. Claim 핑퐁 (Step 3)
 6. Grounds 수집 (Step 4)
-7. Warrant 작성 (Step 5)
-8. Backing/Qualifier/Rebuttal 완성 (Step 6-8)
+7. CQ 응답 작성 (Step 5)
+8. Confidence Band 확정 (Step 6)
 9. 섹션 status → discussing 전환
 
 ## Output Format
@@ -51,7 +51,7 @@ compatibility: "Claude Code >=2.1.3"
 ✅ {N}-{section} 전개 완료
 
   Claim: "{주장 40자}"
-  Grounds: {N}개 | Warrant: ✅ | Qualifier: {level}
+  Grounds: {N}개 | CQ 응답: ✅ | Confidence: {level}
 
 ----------------------------------------
 다음 액션:

@@ -1,6 +1,8 @@
 ---
 section: "test-invalid"
 status: "draft"
+scheme: "Expert Opinion"
+confidence: "likely (60-80%)"
 ---
 
 # Test invalid section
@@ -15,6 +17,8 @@ status: "draft"
 - See file [source:file:nonexistent.md]
 - Sandbox escape [source:file:../../../etc/passwd]
 
-## Warrant
+## CQ Responses
 
-- Something [source:bogus]
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| CQ1 | Is the expert credible? | Referenced expert | 3 |

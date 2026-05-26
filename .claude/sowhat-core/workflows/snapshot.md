@@ -113,7 +113,7 @@ status_transitions: ["(restore) → needs-revision"]
       "status": "{status}",
       "claim": "{full Claim text}",
       "grounds_summary": "{N} grounds: {brief list}",
-      "warrant": "{full Warrant text}",
+      "cq_responses": "{CQ Responses 요약}",
       "qualifier": "{qualifier value}",
       "scheme": "{scheme value}",
       "rebuttal_count": 0,
@@ -234,9 +234,9 @@ SECTION 변경:
       {v1}: "{old claim}"
       {v2}: "{new claim}"
       변화: {semantic description of change}
-    Qualifier: {old} → {new} ({강화|약화|동일})
+    Confidence: {old} → {new} ({강화|약화|동일})
     Grounds: {+N 추가, -M 제거}
-    Rebuttal: {+N 추가}
+    미충족 CQ: {+N 추가}
 
   {next section...}
 
@@ -262,12 +262,12 @@ Claim이 변경된 경우, Claude가 자연어로 의미적 차이를 설명한�
 - "조건부 표현 추가" (added conditional)
 - "인과 관계 명시화" (made causal relationship explicit)
 
-### Qualifier 변화 판정
+### Confidence 변화 판정
 
 | 변화 방향 | 판정 |
 |-----------|------|
-| `definitely` → `usually` | 약화 |
-| `possibly` → `usually` | 강화 |
+| `virtually certain` → `very likely` | 약화 |
+| `unlikely` → `likely` | 강화 |
 | 동일 | 동일 |
 
 ---
@@ -383,7 +383,7 @@ git commit -m "snapshot: restore from v{N} — {label}"
 
 ## 핵심 원칙
 
-- **의미적 캡처** — git diff가 아닌 논증의 의미(Claim, Warrant, Qualifier 등)를 저장
+- **의미적 캡처** — git diff가 아닌 논증의 의미(Claim, scheme, CQ 응답, Confidence 등)를 저장
 - **안전한 복원** — restore 전 자동 백업 + 사용자 확인 필수
 - **needs-revision 강제** — 복원된 섹션은 반드시 재검증 필요
 - **research 보존** — 복원 시에도 리서치 결과는 유지 (시간 투자 보호)

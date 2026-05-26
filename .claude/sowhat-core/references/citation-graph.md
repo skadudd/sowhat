@@ -16,7 +16,7 @@
 id: 003
 citations:
   - "01-problem.Grounds[2]"
-  - "03-mechanism.Backing[0]"
+  - "03-mechanism.CQ[0]"
 ---
 ```
 
@@ -34,7 +34,7 @@ Grounds:
   - "국내 AI 스타트업의 72%가 Series A 이전에 실패한다 (📊 T2, research #003)"
   - "2024년 VC 투자 총액 중 AI 분야가 38% 차지 (📊 T1, research #007)"
 
-Backing:
+CQ Responses:
   - "Y Combinator 2023 배치에서 AI 비율 40% 돌파 (📊 T2, research #012)"
 ```
 
@@ -57,9 +57,9 @@ Backing:
 파인딩 → 인용된 섹션 필드 목록:
 
 ```
-finding_003 → [01-problem.Grounds[2], 03-mechanism.Backing[0]]
+finding_003 → [01-problem.Grounds[2], 03-mechanism.CQ[0]]
 finding_007 → [01-problem.Grounds[3]]
-finding_012 → [02-solution.Backing[1], 04-impact.Grounds[0]]
+finding_012 → [02-solution.CQ[1], 04-impact.Grounds[0]]
 ```
 
 **소스**: 각 파인딩 파일의 `citations` 필드에서 구축.
@@ -71,8 +71,8 @@ finding_012 → [02-solution.Backing[1], 04-impact.Grounds[0]]
 ```
 01-problem.Grounds[2] → [finding_003]
 01-problem.Grounds[3] → [finding_007]
-03-mechanism.Backing[0] → [finding_003]
-02-solution.Backing[1] → [finding_012]
+03-mechanism.CQ[0] → [finding_003]
+02-solution.CQ[1] → [finding_012]
 04-impact.Grounds[0] → [finding_012]
 ```
 
@@ -106,7 +106,7 @@ FUNCTION build_citation_graph():
 
     FOR EACH match OF pattern `📊 T\d, research #(\d{3})` IN file.content:
       finding_id = match.group(1)
-      field = determine_field_from_context(match)  # Grounds/Backing 등
+      field = determine_field_from_context(match)  # Grounds/CQ 등
       ref = "{section_id}.{field}"
 
       # 순방향 맵과 교차검증
@@ -168,11 +168,11 @@ FUNCTION cascade_finding_status(finding_id, new_status):
         suggestion: "대체 출처를 확보하거나 해당 Grounds를 수정하세요."
       })
 
-    IF field == "Backing":
-      # Backing은 보조 자료이므로 severity 낮음
+    IF field == "CQ":
+      # CQ 응답 보조 자료이므로 severity 낮음
       flag_for_review(section, {
         severity: "minor",
-        message: "Backing[{index}]의 출처 (research #{finding_id})가 {new_status} 상태입니다.",
+        message: "CQ[{index}]의 출처 (research #{finding_id})가 {new_status} 상태입니다.",
         suggestion: "보조 자료 업데이트를 권장합니다."
       })
 
@@ -254,7 +254,7 @@ FUNCTION check_uncited_grounds():
 ```
 finding_003:
   └─ 01-problem.Grounds[2]
-  └─ 03-mechanism.Backing[0]
+  └─ 03-mechanism.CQ[0]
   └─ 05-conclusion.Grounds[1]
 
 → 3개 섹션에서 인용됨 (핵심 파인딩)
@@ -282,9 +282,9 @@ graph LR
   end
 
   F003 -->|Grounds| S01
-  F003 -->|Backing| S03
+  F003 -->|CQ| S03
   F007 -->|Grounds| S01
-  F012 -->|Backing| S02
+  F012 -->|CQ| S02
   F012 -->|Grounds| S04
 
   style F003 fill:#4da6ff,stroke:#333

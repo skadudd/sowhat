@@ -4,7 +4,7 @@
 @metadata
 checkpoints:
   - type: decision
-    when: "필드 매핑 선택 (Grounds/Backing/Rebuttal/Warrant)"
+    when: "필드 매핑 선택 (Grounds/CQ Responses)"
   - type: decision
     when: "settled 섹션 강등 확인"
 config_reads: [layer, sections, research, credibility]
@@ -213,7 +213,7 @@ citations:
 {폴더 모드인 경우 개별 파일 목록과 각 파일에서 추출한 핵심 요약 기재. 단일 파일/URL/텍스트 모드면 생략}
 
 ## 주입 위치
-{section_id} — {Grounds|Backing|Rebuttal|Warrant}
+{section_id} — {Grounds|CQ Responses}
 ```
 
 ---
@@ -233,7 +233,7 @@ citations:
 📊 논증 강도 변화: {before}/100 → {after}/100 ({delta})
   근거 강도: {before} → {after}
   {강도가 올랐으면: 💪 근거 강화됨}
-  {Qualifier 상향 가능하면: ℹ️ Qualifier 상향 가능: {현재} → {제안}}
+  {Confidence 상향 가능하면: ℹ️ Confidence 상향 가능: {현재} → {제안}}
 
 파인딩: research/{NNN}-inject-{slug}.md
 ----------------------------------------
@@ -266,7 +266,7 @@ git commit -m "inject({section}): add {field} from {source_type} ({Tier})"
 ### argument-log.md
 ```markdown
 ## [{datetime}] inject({section})
-  Field: {Grounds|Backing|Rebuttal|Warrant}
+  Field: {Grounds|CQ Responses}
   Source: {URL/파일/직접입력}
   Tier: {T1|T2|T3|T4}
   Strength: {before} → {after}
@@ -305,7 +305,7 @@ saved: {current_datetime}
 ## 핵심 원칙
 
 - **주입은 즉시 반영** — research와 달리 accept/reject 없이 바로 적용
-- **Tier 제한은 동일** — inject라도 T4는 Backing 전용
+- **Tier 제한은 동일** — inject라도 T4는 보조 인용 전용
 - **파인딩 파일 생성 필수** — 출처 추적을 위해 항상 기록
 - **settled 섹션 주입은 강등 유발** — 의도적 선택임을 확인
 - **정합성 즉시 검증** — 주입이 논증을 약화시키면 경고

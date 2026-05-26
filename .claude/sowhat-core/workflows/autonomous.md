@@ -197,12 +197,12 @@ Task(sowhat-debate-agent,
   <instructions>
     1. Con-Agent: 가장 약한 점 1개를 식별하고 공격
        - Scheme의 Critical Questions 기반
-       - Warrant 연결 논리 공격 우선
+       - scheme CQ 미충족 공격 우선
     2. Pro-Agent: 방어
-       - 새로운 Grounds 추가 또는 Warrant 보강
+       - 새로운 Grounds 추가 또는 CQ 응답 보강
     3. 결과 반영:
-       - 방어 성공 → Grounds 또는 Warrant에 보강 내용 추가
-       - 방어 실패 → Qualifier 1단계 하향 조정
+       - 방어 성공 → Grounds 또는 CQ 응답에 보강 내용 추가
+       - 방어 실패 → Confidence 1단계 하향 조정
        - Claim 위협 → rebuttal에 기록
 
     섹션 파일 업데이트 후 종료.
@@ -226,15 +226,15 @@ settle_result = Task(sowhat-settle-agent,
     1. thesis_argument 필드 존재
     2. Claim ↔ thesis Answer 정합성
     3. Grounds 최소 1개 존재
-    4. Warrant 존재 및 품질
-    5. Qualifier 설정 여부
-    6. Rebuttal 처리 여부
+    4. CQ 응답 충분성
+    5. Confidence 설정 여부
+    6. 미충족 CQ 수 확인
     7. Open Questions 없음
     8. scheme 필드 설정
     + scheme별 추가 검증
     9. **Stub detection + 할루시네이션 탐지** —
-       a) Stub: Grounds에 구체적 출처/수치 없이 일반론만 있는지, Warrant가 Claim 동어반복인지, Rebuttal이 generic한지.
-       b) 할루시네이션: Grounds/Backing의 수치·출처가 research/ findings에 존재하는지 대조. research/에 없는 수치·출처가 발견되면 검증 실패.
+       a) Stub: Grounds에 구체적 출처/수치 없이 일반론만 있는지, CQ 응답이 Claim 동어반복인지, 미충족 CQ가 scheme 허용 상한 초과인지.
+       b) 할루시네이션: Grounds의 수치·출처가 research/ findings에 존재하는지 대조. research/에 없는 수치·출처가 발견되면 검증 실패.
        autonomous 모드에서 AI가 자동 전개하면 stub과 할루시네이션이 생기기 쉬움.
        발견 시 검증 실패로 처리.
     10. **Cross-section regression** — 이 섹션 settle이 기존 settled 섹션과
@@ -424,7 +424,7 @@ challenge 결과 확인 후 /sowhat:finalize-planning 또는 /sowhat:revise {섹
 ## 핵심 원칙
 
 - **retrieval 없는 섹션은 자동 전개하지 않는다** — Step 1-a gate가 차단. 사용자 개입(`/sowhat:research`/`/sowhat:inject`/`/sowhat:expand`) 없이는 draft 유지. AI 기억으로 내용을 만들지 않는다 (`references/ai-content-boundary.md`).
-- **AI는 구조만, 내용은 retrieval만** — Stasis/Scheme/Claim 형식/Warrant 논리/Qualifier는 AI 자동. 수치·기관명·연도 등 구체값은 `<research_findings>` 인용만 허용.
+- **AI는 구조만, 내용은 retrieval만** — Stasis/Scheme/Claim 형식/CQ 논리는 AI 자동. 수치·기관명·연도 등 구체값은 `<research_findings>` 인용만 허용.
 - **Source tag 강제** — 모든 항목 끝에 `[source:...]` 태그. 태그 없거나 AI가 임의 부착한 retrieval 태그는 parser가 drop.
 - **섹션 파일 1회 로드** — 사전 준비에서 한 번만 로드, 각 섹션 처리 완료 시에만 재로드 허용
 - **리포트는 파일에, 대시보드만 응답에** — 상세 로그는 `logs/` 디렉터리에 저장
