@@ -11,10 +11,51 @@ allowed-tools:
   - WebSearch
   - WebFetch
   - Task
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
 sowhat 프로젝트를 초기화한다. 세 가지 모드: idea 모드(기본)는 아이디어에서 top-down으로, content-critique 모드(--from)는 외부 콘텐츠 분석으로, research 모드(--research)는 자료를 먼저 수집·분석하여 bottom-up으로 thesis를 도출한다.
 </objective>
+
+## When to Apply
+
+- 새 논증 프로젝트를 처음 시작할 때
+- 기존 프로젝트 디렉터리에 sowhat 구조가 없을 때
+- 외부 URL/문서를 논증의 출발점으로 삼을 때
+
+## Anti-triggers
+
+공통 패턴: `@.claude/sowhat-core/references/anti-triggers.md`
+
+- 이미 `planning/config.json`이 존재하는 디렉터리 (재초기화 의도가 아닌 한)
+- 단순 정보 요약 목적 (논증 작성 의도 없음)
+
+## Methodology
+
+1. 소스 유형 결정 (URL / 문서 / 빈 시작)
+2. SCQA 핑퐁으로 thesis 초안 작성
+3. Key Arguments 도출
+4. config.json + 디렉터리 구조 초기화
+5. 00-thesis.md 생성 및 draft 상태로 저장
+
+## Output Format
+
+```
+✅ 프로젝트 초기화 완료
+
+  프로젝트: {project_name}
+  Thesis: "{Answer 40자}"
+  Key Arguments: {N}개
+
+----------------------------------------
+다음 액션:
+
+[1] Thesis 확정 (/sowhat:settle thesis)
+[2] 첫 섹션 전개 (/sowhat:expand 01)
+[3] 전체 현황 확인 (/sowhat:progress)
+----------------------------------------
+```
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md

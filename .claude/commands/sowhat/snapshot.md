@@ -9,10 +9,39 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
 논증의 의미적 상태를 스냅샷으로 캡처하고, 버전 간 논증 진화를 비교하며, 필요 시 이전 상태로 복원한다.
 </objective>
+
+## When to Apply
+
+- 현재 논증 상태를 스냅샷으로 저장할 때
+- 실험적 변경 전 복구 지점 확보
+
+## Anti-triggers
+
+공통 패턴: `@.claude/sowhat-core/references/anti-triggers.md`
+
+- 변경사항 없는 상태 (git clean)
+
+## Methodology
+
+1. 현재 상태 git tag/stash
+2. 스냅샷 메타데이터 기록
+3. 복구 방법 안내
+
+## Output Format
+
+```
+✅ 스냅샷 저장됨
+
+  이름: {snapshot-name}
+  SHA: {git-sha}
+  복구: /sowhat:snapshot restore {name}
+```
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md

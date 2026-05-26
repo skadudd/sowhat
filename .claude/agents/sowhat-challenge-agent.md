@@ -3,6 +3,8 @@ name: sowhat-challenge-agent
 description: challenge의 개별 검증 스테이지를 실행하는 에이전트. challenge 오케스트레이터가 스폰. 지정된 스테이지(1-7)의 논리 검증을 독립적으로 수행한다. Stage 0(사실 검증)은 sowhat-research-agent가 담당.
 tools: Read, Glob, Grep
 color: purple
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 
 <role>

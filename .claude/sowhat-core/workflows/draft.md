@@ -53,7 +53,7 @@ draft는 외부 공유용 산출물을 생성한다. AI는 산출물에서 **기
      ----------------------------------------
      linkedin-series     링크드인 시리즈      2024-01-15
      investor-deck       투자 제안서          (미생성)
-     gsd-prd             GSD PRD             2024-01-10
+     team-prd            팀 공유용 PRD        2024-01-10
 
      **사용:**
        /sowhat:draft --profile linkedin-series
@@ -74,11 +74,11 @@ draft는 외부 공유용 산출물을 생성한다. AI는 산출물에서 **기
      명세 레이어가 아직 완성되지 않았습니다.
      기획 논거만으로 초안을 생성하면 기술 명세 섹션이 누락됩니다.
 
-       [1] 기획 레이어만으로 초안 생성 (PRD/GSD export 불가)
+       [1] 기획 레이어만으로 초안 생성 (PRD 불가)
        [2] 취소 (/sowhat:finalize-planning 먼저 실행)
      ```
      - [2] 선택 시 종료
-     - [1] 선택 시: `prd`, `gsd-export` deliverable 불가 안내
+     - [1] 선택 시: `prd` deliverable 불가 안내
 
    - `"spec"` 또는 `"finalized"` → 명세 섹션(04~09) 상태 확인:
      - unsettled 섹션이 하나라도 있으면:
@@ -184,6 +184,33 @@ draft 시작 — 사전 검증 완료. 산출물 브리프 작성 대기 중.
 
 ---
 
+## 미리보기 게이트 (Preview Gate)
+
+`--force` 또는 `--no-preview` 플래그가 있으면 이 단계 건너뜀.
+`--profile {id}` 재생성 모드일 때는 이미 사용자 승인된 프로파일이므로 건너뜀.
+
+사전 검증이 완료된 직후, 실제 파일 생성 전에 예상 작업을 미리 보여준다:
+
+```
+> [draft > 미리보기 게이트]
+
+📋 예상 생성 파일:
+  export/{profile-id}/*.md  (settled 섹션 {N}개 기준 — 정확한 파일 수는 브리프 완료 후 결정)
+
+📊 예상 작업:
+  settled 섹션 {N}개 → 산출물 생성
+  status 전이 없음
+
+[1] 계속 진행 (브리프 작성)
+[2] 취소
+```
+
+- `[1]` → Step 1으로 진행
+- `[2]` → 종료
+- 그 외 텍스트 입력 → 수정 요청으로 처리, 재확인 후 진행
+
+---
+
 ## Step 1: 산출물 브리프 (Brief Intake)
 
 이전의 단순한 "형식 선택 + 독자 선택" 대신, **구체적인 산출물 정의**를 수집한다.
@@ -218,8 +245,8 @@ draft 시작 — 사전 검증 완료. 산출물 브리프 작성 대기 중.
   [16] 논문 초안             — 학술 형식
   [17] 문헌 검토             — 선행 연구 정리
 
-**파이프라인 연동:**
-  [18] GSD PRD              — /gsd:new-project 입력용
+**구조화 산출물:**
+  [18] PRD                  — PM 도구 (Jira/Linear) 입력용
   [19] 사용자 스토리          — Jira/Linear/GitHub Issues
   [20] API 명세서            — OpenAPI/Swagger 형식
 
@@ -979,7 +1006,7 @@ git commit -m "draft({profile-id}): generate slide deck + speaker script"
 [화면] {구독/좋아요/다음 영상 예고}
 ```
 
-### GSD/파이프라인 연동 산출물
+### 구조화 산출물
 
 #### PRD (`prd`)
 
@@ -1061,11 +1088,6 @@ git commit -m "draft({profile-id}): generate slide deck + speaker script"
 |------|------|---------|
 | {질문} | {섹션} | High/Medium/Low |
 ```
-
-#### GSD Export (`gsd-export`)
-
-`export/generated/{profile-id}/PROJECT.md` + `export/generated/{profile-id}/REQUIREMENTS.md` 생성.
-구조는 기존 `finalize.md` 워크플로우의 산출물과 동일.
 
 ### ARGUMENT-MAP.md
 
@@ -1220,10 +1242,6 @@ git commit -m "draft({profile-id}): generate {DELIVERABLE} series ({N} parts)"
 # PRD (생성된 경우)
 git add export/generated/{profile-id}/PRD.md
 git commit -m "draft({profile-id}): generate PRD"
-
-# GSD export (생성된 경우)
-git add export/generated/{profile-id}/PROJECT.md export/generated/{profile-id}/REQUIREMENTS.md
-git commit -m "draft({profile-id}): generate GSD export"
 
 # ARGUMENT-MAP은 /sowhat:map --export 로 별도 생성
 
@@ -1659,7 +1677,7 @@ draft --review 완료 — {profile} 분석. 논리 충돌 {n}건, 캐릭터 학�
 [3] 전체 프로파일 목록 (draft --list)
 [4] 논증 구조 맵 생성 (map --export)
 [5] 논증 추가 강화 (debate {section})
-[6] GSD export + 최종 완료 (finalize)
+[6] 최종 종결 (/sowhat:finalize)
 ----------------------------------------
 ```
 
@@ -1730,9 +1748,9 @@ draft --review 완료 — {profile} 분석. 논리 충돌 {n}건, 캐릭터 학�
     [1] 계속 진행
     [2] 취소 (리서치 먼저 검토)
   ```
-- planning 레이어에서 prd/gsd-export 선택 시:
+- planning 레이어에서 prd 선택 시:
   ```
-  ⚠️  현재 planning 레이어입니다. PRD/GSD export는 명세 레이어 완료 후 생성 가능합니다.
+  ⚠️  현재 planning 레이어입니다. PRD는 명세 레이어 완료 후 생성 가능합니다.
   /sowhat:finalize-planning 을 먼저 실행하세요.
   다른 산출물 유형을 선택하시겠습니까?
   ```

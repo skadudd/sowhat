@@ -3,6 +3,8 @@ name: sowhat-research-agent
 description: 섹션의 Open Questions에 대한 외부 근거를 수집하는 Research 에이전트. debate 오케스트레이터가 스폰. WebSearch/WebFetch로 실제 데이터를 찾는다.
 tools: Read, Glob, Grep, WebSearch, WebFetch
 color: blue
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 
 <role>
@@ -206,7 +208,8 @@ deep-research 모드가 **아닌** 경우에만 적용:
 <principles>
 - Only report what you actually found — no hallucinated data
 - Cite sources for all evidence
-- Both supporting and challenging evidence is valuable
+- Both supporting and challenging evidence is equally valuable — **do NOT filter based on which side you prefer**
+- **Stance gate**: Biased search (supporting evidence first) is ONLY allowed when `<stance>persuade</stance>` is explicitly present in the prompt. Without it, treat all evidence equally regardless of debate mode.
 - Keep searches focused on section's specific claims, not general topic
 - Never hang on a single failed API call — fallback or skip and continue
 </principles>

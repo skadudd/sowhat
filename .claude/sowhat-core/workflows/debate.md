@@ -61,7 +61,8 @@ Con/Pro 에이전트는 **논리적 공격·방어**만 자동 생성한다. 구
 | `--stance consensus` | 합의 모드 — Pro가 양측 통합 제안, Con이 피상성 공격 |
 
 **Stance 기본값:**
-- `config.mode === "content-critique"` && `--stance` 없음 → `persuade`
+- `config.mode === "content-critique"` && `--stance` 없음 → `critique` (양측 동등 비평 — 추가 역할 변경 없음)
+- `config.mode === "content-critique"` && `--stance persuade` → ⚠️ 경고 출력 후 persuade 활성화
 - `config.mode === "idea"` (또는 mode 없음) && `--stance` 있음 → `❌ --stance는 content-critique 모드에서만 사용 가능합니다.`
 - `config.mode === "idea"` && `--stance` 없음 → 기존 동작 (stance 없음)
 
@@ -71,7 +72,12 @@ Con/Pro 에이전트는 **논리적 공격·방어**만 자동 생성한다. 구
 
 1. `planning/config.json` 로드 → sowhat 프로젝트 확인
    - `--stance` 지정 시: `mode` 필드 확인. `mode !== "content-critique"` → `❌ --stance는 content-critique 모드에서만 사용 가능합니다.`
-   - `mode === "content-critique"` && `--stance` 없음 → 기본값 `persuade` 적용
+   - `mode === "content-critique"` && `--stance` 없음 → 기본값 `critique` 적용 (역할 변경 없음)
+   - `mode === "content-critique"` && `--stance persuade` → 다음 경고를 출력한 뒤 진행:
+     ```
+     ⚠️ 설득 모드 활성화 — Research-Agent가 사용자 입장 지지 근거를 우선 탐색합니다.
+        객관적 검증이 목적이라면 --stance 없이 실행하세요 (critique 기본값).
+     ```
 2. `00-thesis.md` 로드 → `thesis_answer`, `key_arguments` 추출
    - stance 모드 시: `## Source Content` 섹션에서 `target_toulmin` 추출 (에이전트 프롬프트에 전달용)
 3. **작업 트리 확인**:
@@ -213,13 +219,18 @@ Research-Agent 결과는 다음 라운드의 Con/Pro 양쪽에 동시 전달한�
 
 stance가 지정되면 에이전트 프롬프트에 `<target_content>`와 `<stance_instruction>`을 추가한다. stance 없으면 이 섹션 전체를 건너뛴다.
 
-### persuade (설득) — 기본값
+### critique (비평) — 기본값
+
+`--stance` 미지정 시 활성화. 추가 역할 변경 없음 — 기본 Pro/Con/Research 동작 그대로.
+Research-Agent는 지지·반박 근거를 동등하게 탐색한다.
+
+### persuade (설득) — opt-in (`--stance persuade` 명시 필요)
 
 | Agent | 역할 변경 |
 |-------|----------|
 | Con-Agent | 대상 콘텐츠 저자의 입장을 대변하여 사용자 논증을 공격. 대상의 Grounds와 Warrant를 활용하여 반론 |
 | Pro-Agent | 사용자의 Thesis를 적극 옹호. 대상 콘텐츠의 약점을 방어에 활용 |
-| Research-Agent | 사용자 입장을 지지하는 근거 우선 탐색 |
+| Research-Agent | 사용자 입장을 지지하는 근거 우선 탐색 (persuade 전용 — critique 기본값에서는 비활성) |
 
 Con-Agent 추가 프롬프트:
 ```

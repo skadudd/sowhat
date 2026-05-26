@@ -9,6 +9,8 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
 시리즈 콘텐츠를 생성·관리한다. 에피소드 간 맥락 연결, 공유 리서치, 용어 일관성, 서사 흐름을 추적한다.
@@ -24,6 +26,33 @@ allowed-tools:
 - `/sowhat:series check [series-name]` — 크로스 에피소드 일관성 검사
 - `/sowhat:series status [series-name]` — 시리즈 현황 대시보드
 </objective>
+
+## When to Apply
+
+- 여러 편으로 구성된 시리즈 콘텐츠를 관리할 때
+- 에피소드 간 연결과 일관성이 필요할 때
+
+## Anti-triggers
+
+공통 패턴: `@.claude/sowhat-core/references/anti-triggers.md`
+
+- 단일 문서 프로젝트 (시리즈 불필요)
+
+## Methodology
+
+1. 시리즈 구조 설정 (이름/에피소드 수)
+2. 에피소드별 thesis 연결
+3. 시리즈 파일 저장
+
+## Output Format
+
+```
+✅ 시리즈 설정 완료
+
+  이름: {series_name}
+  에피소드: {N}편
+  현재 편: {episode_number}
+```
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md

@@ -27,7 +27,7 @@ flowchart TD
     SETTLE_S --> |"모든 명세 settled?"| CHECK_S{전체 settled?}
     CHECK_S --> |"아니오"| SPEC
     CHECK_S --> |"예"| CHALLENGE_S["/sowhat:challenge<br/>기획+명세 전체 공격"]
-    CHALLENGE_S --> |"통과"| FINAL["/sowhat:finalize<br/>GSD export 생성"]
+    CHALLENGE_S --> |"통과"| FINAL["/sowhat:finalize<br/>명세 레이어 종결"]
     CHALLENGE_S --> |"이슈 발견"| FIX_SPEC["수정 필요"]
     FIX_SPEC --> SPEC
 

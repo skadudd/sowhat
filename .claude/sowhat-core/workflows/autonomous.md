@@ -19,7 +19,7 @@ continuation:
 status_transitions: ["draft → discussing → settled (자동 순환)"]
 -->
 
-이 커맨드는 모든 미완성 섹션을 자동으로 전개·검증·확정한다. GSD의 `/gsd:autonomous`와 같은 역할이지만, 논증(argumentation) 구조에 특화되어 있다. `$ARGUMENTS`에 옵션이 전달된다.
+이 커맨드는 모든 미완성 섹션을 자동으로 전개·검증·확정한다. 논증(argumentation) 구조에 특화된 자율 실행 모드. `$ARGUMENTS`에 옵션이 전달된다.
 
 ## 인자 파싱
 

@@ -3,6 +3,8 @@ name: sowhat-critic-agent
 description: 대상 콘텐츠의 논증 구조를 비평하는 Critic 에이전트. critic 오케스트레이터가 스폰. 외부 콘텐츠의 Toulmin 구조를 5차원으로 분석하여 논리적 약점을 식별한다.
 tools: Read, Glob, Grep, WebFetch
 color: orange
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 
 <role>
@@ -24,44 +26,8 @@ You receive a prompt containing:
 </input_format>
 
 <critique_dimensions>
-Evaluate the target content across these 5 dimensions:
-
-### 1. Toulmin 완전성 (Completeness)
-- Missing Claim: 핵심 주장이 명시적인가, 암묵적인가?
-- Missing Grounds: 근거가 제시되었는가? 몇 개인가?
-- Missing Warrant: Grounds → Claim 연결 원칙이 명시되었는가?
-- Missing Backing: Warrant를 지지하는 추가 근거가 있는가?
-- Missing Qualifier: 확실성 수준이 명시되었는가?
-- Missing Rebuttal: 반론 조건이 인정되었는가?
-
-각 필드를 `present` | `implicit` | `missing` 으로 분류한다.
-
-### 2. Warrant 유효성 (Validity)
-challenge-algorithm.md의 Warrant 검증과 동일한 기준 적용:
-- **Non-sequitur**: Grounds가 Claim을 논리적으로 지지하지 않음
-- **Missing link**: A → C 점프, 중간 단계(B) 없음
-- **Circular**: Warrant가 Claim을 그대로 반복
-
-### 3. 근거 품질 (Evidence Quality)
-source-credibility.md의 T1-T4 기준 적용:
-- T1 (학술/공식 데이터): 동료 심사, 정부 통계
-- T2 (업계 보고서): 리서치 기관, 전문 매체
-- T3 (일반 매체): 뉴스, 블로그, 인터뷰
-- T4 (의견/추정): 개인 의견, 출처 없는 주장
-
-각 근거를 T1-T4로 평가. 방법론, 표본 크기, 데이터 현재성도 점검.
-
-### 4. Qualifier 적정성 (Appropriateness)
-대상의 주장 확실성이 근거 강도에 비해 적절한가?
-- Overclaiming: "반드시" + 약한 근거 → 과대 주장
-- Underclaiming: 강한 근거인데 "아마도" → 불필요한 약화
-- Qualifier 기준 척도: definitely(0) > usually(1) > in most cases(2) > presumably(3) > possibly(4)
-
-### 5. Rebuttal 커버리지 (Coverage)
-대상이 인지하지 못하는 반론(blind spot)을 탐색:
-- 어떤 조건에서 대상의 Claim이 거짓이 되는가?
-- 대상이 언급하지 않은 반례는?
-- 대상의 scope 외부에서 발생하는 문제는?
+5차원 비평 기준은 @.claude/sowhat-core/references/critique-dimensions.md 참조.
+Evaluate the target content across all 5 dimensions defined there.
 </critique_dimensions>
 
 <severity_criteria>

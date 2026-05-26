@@ -46,7 +46,13 @@ FOR EACH section:
 
     ── A. 출처 존재 여부 ──
     IF claim에 출처(URL/인용) 없음:
-      → ⚠️ major: 출처 미명시 (검증 불가)
+      claim_tier = section.claim_tier OR "A"  # 미설정 시 보수적으로 A 처리
+      IF claim_tier == "A":
+        → ⚠️ major: 출처 미명시 (핵심 주장 근거 — 검증 불가)
+      ELSE IF claim_tier == "B" AND section.qualifier IN ["presumably", "possibly"]:
+        → 💡 minor: 출처 미명시 (보조 주장 + qualifier 약화로 허용)
+      ELSE:  # Tier-B but qualifier is strong
+        → ⚠️ major: 출처 미명시 (보조 주장이나 qualifier가 강함 — qualifier 완화 또는 출처 추가 필요)
       CONTINUE
 
     ── B. 1차 출처 역추적 ──

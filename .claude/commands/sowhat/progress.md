@@ -7,10 +7,40 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
 config.json과 모든 섹션 파일을 읽어 전체 진행 상황 대시보드를 출력하고, 현재 상태에 맞는 다음 액션을 안내한다.
 </objective>
+
+## When to Apply
+
+- 현재 프로젝트 진행 상황을 확인할 때
+- 어디까지 했는지 파악할 때
+
+## Anti-triggers
+
+(없음 — 언제든 실행 가능)
+
+## Methodology
+
+1. config.json + 모든 섹션 로드
+2. 상태별 섹션 집계
+3. 완료율 + 다음 액션 표시
+
+## Output Format
+
+```
+📈 진행 현황
+
+  완료: {N}개 settled | {M}개 discussing | {K}개 draft
+
+  Layer: {layer}
+  완료율: ██████░░░░ {N}%
+
+다음 권장: /sowhat:expand {next_section}
+```
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md

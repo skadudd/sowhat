@@ -1,6 +1,6 @@
 {
   "name": "sowhat-cc",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "Structured argumentation system for Claude Code. Build logic-driven PRDs with Toulmin, Walton, and Minto Pyramid frameworks.",
   "bin": {
     "sowhat-cc": "bin/install.js"
@@ -11,6 +11,7 @@
     "agents",
     "sowhat-core"
   ],
+  "os": ["darwin", "linux", "win32"],
   "keywords": [
     "claude",
     "claude-code",
@@ -31,12 +32,26 @@
   "bugs": {
     "url": "https://github.com/ynamroot/sowhat/issues"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/ynamroot"
+  },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "claude-code": ">=2.1.3"
+  },
+  "peerDependenciesMeta": {
+    "claude-code": {
+      "optional": true
+    }
   },
   "scripts": {
     "build": "node scripts/build.js",
     "test": "node scripts/test-source-tags.js && node scripts/test-draft-hallucination-guard.js",
-    "prepublishOnly": "npm run test && npm run build"
+    "lint": "node scripts/build.js --dry-run",
+    "audit:skills": "npx skillgrade .claude/commands/sowhat",
+    "prepublishOnly": "npm run test && npm run build && npm run audit:skills"
   }
 }

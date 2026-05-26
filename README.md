@@ -58,9 +58,8 @@ Toulmin 모델은 1958년부터 학계에서 검증된 논증 분석 프레임�
 | `PRD.md` | 구조화된 제품 요구사항 문서 |
 | `ARGUMENT-MAP.md` | 텍스트 기반 논증 트리 (감사용) |
 | `CRITIQUE-REPORT.md` | 외부 콘텐츠 5차원 비평 리포트 |
-| `PROJECT.md` + `REQUIREMENTS.md` | GSD 구현용 export (선택) |
 
-하나의 논증 구조에서 **목적에 맞는 다양한 산출물**을 생성한다. Character System으로 작가 톤까지 일관되게 적용할 수 있다. 제품 스펙으로 export하는 것은 여러 활용 중 하나일 뿐이다.
+하나의 논증 구조에서 **목적에 맞는 다양한 산출물**을 생성한다. Character System으로 작가 톤까지 일관되게 적용할 수 있다.
 
 ---
 
@@ -254,7 +253,7 @@ research 커맨드도 로컬 자료를 지원한다:
 |--------|------|
 | `/sowhat:finalize-planning` | 기획 레이어 완료 → 명세 레이어 자동 생성 |
 | `/sowhat:spec [섹션]` | 명세 섹션 전개 (actors, requirements, data model 등) |
-| `/sowhat:finalize` | 명세 완료 → export 생성 (PROJECT.md, REQUIREMENTS.md) |
+| `/sowhat:finalize` | 명세 완료 → layer finalized 종결 (파일 생성 없음, 산출물은 `/sowhat:draft`로) |
 
 ### 세션 & 설정
 
@@ -453,8 +452,7 @@ Con Agent (공격)
     ├── DOCUMENT.md            ← 서술형 문서
     ├── PRD.md                 ← 제품 요구사항
     ├── ARGUMENT-MAP.md        ← 논증 트리
-    ├── PROJECT.md             ← GSD export (선택)
-    └── REQUIREMENTS.md        ← GSD export (선택)
+    └── ARGUMENT-MAP.md        ← 논증 트리
 ```
 
 ---
@@ -471,6 +469,78 @@ Con Agent (공격)
 
 ---
 
+## Security & Permissions
+
+sowhat은 `.claude/settings.json`에 보안 게이트를 포함한다:
+
+- **PreToolUse hook**: 루트 `commands/`, `sowhat-core/`, `agents/` 직접 편집 차단 (빌드 산출물 보호)
+- **permissions.deny**: `rm -rf *`, `git push --force`, `sudo *` 등 파괴적 명령 차단
+- **Secret patterns**: `.env`, `.key`, `.pem`, `.p12` 파일 접근 차단
+
+**API 키 관리**: Perplexity/Gemini API 키는 `.claude/settings.local.json`(gitignore됨)에 저장한다. 절대 `.claude/settings.json`(팀 공유)에 넣지 않는다.
+
+```bash
+/sowhat:config  # API 키 설정
+```
+
+---
+
+## Hooks (optional)
+
+hooks은 `.claude/settings.json`의 `hooks` 필드로 등록되어 **Claude Code 하네스가 자동 실행**한다 (Claude가 아님). 기본 제공 hook 2개:
+
+| Hook | 이벤트 | 동작 |
+|------|--------|------|
+| `pre-tool-security.js` | PreToolUse (Write/Edit) | 빌드 산출물 보호, secret 파일 차단 |
+| `post-tool-validate.js` | PostToolUse (Write/Edit) | source-tag-parser 자동 실행 |
+
+hooks를 비활성화하려면 `.claude/settings.json`의 `hooks` 블록을 제거한다.
+
+---
+
+## Privacy & Data Flow
+
+- **Anthropic**: sowhat을 통해 Claude Code에 전달된 내용은 Anthropic의 [사용 정책](https://www.anthropic.com/legal/usage-policy)에 따라 처리된다. Anthropic은 API 응답을 최대 30일 보존할 수 있다.
+- **Perplexity/Gemini**: `--deep` 리서치 옵션 사용 시 검색 쿼리가 해당 서비스로 전송된다.
+- **로컬 데이터**: 논증 섹션, thesis, research finding은 프로젝트 디렉터리에만 저장된다. sowhat 자체는 외부 서버로 데이터를 전송하지 않는다.
+
+---
+
+## Contributing & Skill Audit
+
+```bash
+# 빌드 (.claude/ → 루트 동기화)
+npm run build
+
+# 소스 태그 검증
+npm test
+
+# Command 품질 감사 (9-gate 기준)
+npm run audit:skills
+```
+
+PR 전 `npm run audit:skills` 통과를 권장한다. 게이트 기준: `references/eval-protocol.md` 참조.
+
+은퇴한 command는 `commands/archive/`로 이동하고 CLAUDE.md에 은퇴 사유를 기록한다.
+
+---
+
+## Troubleshooting
+
+**설치 후 `/sowhat:init`이 작동하지 않는다**
+→ Claude Code를 재시작하거나 새 세션을 시작한다. `~/.claude/commands/sowhat/init.md`가 존재하는지 확인.
+
+**Deep Research가 작동하지 않는다**
+→ `/sowhat:config`에서 API 키를 설정했는지 확인. `.claude/settings.local.json`에 `PERPLEXITY_API_KEY` 또는 `GEMINI_API_KEY`가 있어야 한다.
+
+**빌드 후 변경사항이 사라진다**
+→ 루트 `commands/`, `sowhat-core/`, `agents/`는 빌드 산출물이다. 항상 `.claude/` 하위에서 편집하고 `npm run build`로 동기화한다.
+
+**Hook이 작동하지 않는다**
+→ `.claude/settings.json`의 `hooks` 블록이 올바른지 확인. `node .claude/hooks/pre-tool-security.js '{}'`로 직접 테스트.
+
+---
+
 ## 라이선스
 
 MIT License. See [LICENSE](LICENSE) for details.
@@ -483,6 +553,6 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 **sowhat은 Claude Code에서 논증을 구축하고, 공격하고, 증명하는 시스템이다.**
 
-*Architecture inspired by [GSD (Get Shit Done)](https://github.com/gsd-build/get-shit-done)*
+*Argumentation frameworks: Toulmin (1958), Walton (1996), Minto Pyramid (1987), Pragma-Dialectics (van Eemeren & Grootendorst)*
 
 </div>

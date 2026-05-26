@@ -29,6 +29,31 @@ status_transitions: ["layer: planning → spec"]
 
 모든 섹션이 `settled`여야만 진행한다.
 
+## 미리보기 게이트 (Preview Gate)
+
+`--force` 또는 `--no-preview` 플래그가 있으면 이 단계 건너뜀.
+
+```
+> [finalize-planning > 미리보기 게이트]
+
+📋 예상 작업:
+  1. /sowhat:challenge 자동 실행 (기획 트리 전체 검증)
+  2. 명세 레이어 초안 생성: 04~09 섹션 파일 6개
+  3. planning/config.json → layer: "spec" 업데이트
+  4. git commit: "finalize-planning: transition to spec layer"
+
+📊 영향:
+  settled 기획 섹션 {N}개 확정
+  신규 파일 6개 생성 (초안 상태)
+  status 전이: layer planning → spec
+
+[1] 계속 진행
+[2] 취소
+```
+
+- `[1]` → Challenge 자동 실행 진행
+- `[2]` → 종료
+
 ## Challenge 자동 실행 (생략 불가)
 
 `/sowhat:challenge`를 자동 실행한다.

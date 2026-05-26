@@ -12,6 +12,7 @@ All sowhat sections use the Toulmin Model with 6 mandatory fields.
 | **Backing** | 보강 | Evidence supporting the Warrant itself. Meta-justification. | "{기관}: 성장기 시장 진입이 성숙기보다 {N}x 생존율" |
 | **Qualifier** | 한정어 | Confidence level. How certain is the Claim. | "usually" (1등급) |
 | **Rebuttal** | 반박 조건 | Conditions under which the Claim would be false. | "단, 규제 환경이 급변하지 않는 한" |
+| **claim_tier** | 주장 등급 | `A` = thesis Key Argument에 직결. `B` = 보조/배경 주장. default: thesis KA에 직결이면 A, 아니면 B. | `A` |
 
 > 예시의 `{중괄호}` 플레이스홀더는 실제 값이 retrieval(사용자 입력, Sub-Research, `research/` finding)을 통해서만 채워져야 함을 의미한다. AI가 이 자리를 구체 고유값으로 자체 생성하면 **fabrication**이다. 상세: `references/ai-content-boundary.md`.
 
@@ -52,6 +53,16 @@ A section is eligible for `/sowhat:settle` when ALL of the following are true:
 - Rebuttal: at least 1 condition identified
 - Scheme: set to a valid argument scheme
 - Backing: optional but recommended
+
+### Claim Tier gating (settle 전 적용)
+
+| claim_tier | Backing 요구 수준 | Qualifier 요건 | settle 허용 조건 |
+|-----------|:---:|:---:|---|
+| **A** (핵심) | T1-T2 Grounds 최소 1개 | 모든 Qualifier 허용 | Grounds에 T1/T2 출처 없으면 settle 거부 |
+| **B** (보조) | T3-T4 + qualifier 약화 허용 | `presumably`/`possibly` 시 출처 미명시도 허용 | qualifier가 강한데 출처 약하면 경고 |
+
+- `claim_tier`가 미설정이면 thesis KA 직결 여부로 자동 추론한다 (확신 없으면 A로 처리).
+- Tier-A 섹션에 T1/T2 Grounds가 없으면 settle 시 `❌ Tier-A 섹션은 T1/T2 수준 출처가 필요합니다` 오류를 출력하고 거부한다.
 
 ## Field Naming Convention
 

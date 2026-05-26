@@ -3,6 +3,8 @@ name: sowhat-con-agent
 description: 섹션 논증을 공격하는 Con 에이전트. debate 오케스트레이터가 스폰. 섹션 내용을 받아 Toulmin 구조 기반 반론을 생성한다.
 tools: Read, Glob, Grep
 color: red
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 
 <role>

@@ -14,7 +14,7 @@ sowhat 프로젝트는 **완벽한 논증**을 구성하는 것이 목적이다.
 sowhat 논증 (Toulmin + Minto)
     ├─→ Profile A: 투자 유치 IR 자료 (PDF 제안서)
     ├─→ Profile B: 링크드인 시리즈 (5편)
-    ├─→ Profile C: GSD 구현용 PRD
+    ├─→ Profile C: 팀/PM 공유용 PRD
     ├─→ Profile D: 팀 보고서 (주간 리포트)
     └─→ Profile E: 학술 논문 초안
 ```
@@ -124,11 +124,10 @@ generation_count: 0             # 이 프로파일로 생성한 횟수
 | `paper-draft` | 논문 초안 | 5000-10000 words | 4 (학술) |
 | `literature-review` | 문헌 검토 | 3000-6000 words | 4 (학술) |
 
-### 파이프라인 연동
+### 구조화 산출물
 | 유형 | 설명 | 대상 시스템 |
 |------|------|-----------|
-| `prd` | Product Requirements Document | GSD, Jira, Linear |
-| `gsd-export` | GSD PROJECT.md + REQUIREMENTS.md | /gsd:new-project |
+| `prd` | Product Requirements Document | Jira, Linear, PM 도구 일반 |
 | `user-story` | 사용자 스토리 모음 | Jira, Linear, GitHub Issues |
 | `api-spec` | API 명세서 | Swagger/OpenAPI |
 
@@ -273,7 +272,7 @@ export/
 ├── profiles/                    # 프로파일 정의
 │   ├── linkedin-series.yml
 │   ├── investor-deck.yml
-│   └── gsd-prd.yml
+│   └── team-prd.yml
 ├── generated/                   # 생성된 산출물
 │   ├── linkedin-series/
 │   │   ├── part-1.md
@@ -281,9 +280,8 @@ export/
 │   │   └── ...
 │   ├── investor-deck/
 │   │   └── DOCUMENT.md
-│   └── gsd-prd/
-│       ├── PROJECT.md
-│       └── REQUIREMENTS.md
+│   └── team-prd/
+│       └── PRD.md
 ├── ARGUMENT-MAP.md              # 논증 맵 (/sowhat:map --export 로 생성)
 └── PRD.md                       # 레거시 호환 (기본 PRD)
 ```

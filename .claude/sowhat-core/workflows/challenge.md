@@ -634,7 +634,7 @@ challenge 완료 — 7단계 검증 종료. 역전파: {있음/없음}. 상세 �
 
 [1] 기획 확정 (/sowhat:finalize-planning)
 [2] 추가 논증 강화 (/sowhat:debate {section})
-
+[3] 구조적 약점 진단 (/sowhat:self-critic {section}) — 논리 공격 통과 후 Toulmin 구조 자체의 약점을 추가 점검하려면
 
 ----------------------------------------
 ```

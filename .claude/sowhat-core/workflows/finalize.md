@@ -1,4 +1,4 @@
-# /sowhat:finalize — GSD Export 생성
+# /sowhat:finalize — 명세 레이어 검증·종결
 
 <!--
 @metadata
@@ -6,16 +6,16 @@ checkpoints:
   - type: verify-argument
     when: "challenge 통과 확인 후 진행 승인"
   - type: decision
-    when: "force export 시 알려진 문제 인지"
+    when: "force 시 알려진 문제 인지"
 config_reads: [layer, sections]
 config_writes: [layer]
 continuation:
-  primary: "(프로젝트 완료)"
-  alternatives: ["/sowhat:draft --output all"]
+  primary: "/sowhat:draft (산출물 생성)"
+  alternatives: ["/sowhat:draft --list", "/sowhat:map"]
 status_transitions: ["layer: spec → finalized"]
 -->
 
-이 커맨드는 명세 레이어를 완료하고 GSD가 소비할 export 파일을 생성한다.
+이 커맨드는 명세 레이어를 최종 검증하고 layer를 finalized로 종결한다. **파일을 생성하지 않는다.** 외부 공유용 산출물은 `/sowhat:draft`에서 생성한다.
 
 ## 사전 검증
 
@@ -50,6 +50,29 @@ saved: {current_datetime}
 finalize 시작 — challenge 자동 실행 중
 ```
 
+## 미리보기 게이트 (Preview Gate)
+
+`--force` 또는 `--no-preview` 플래그가 있으면 이 단계 건너뜀.
+
+```
+> [finalize > 미리보기 게이트]
+
+📋 예상 작업:
+  1. /sowhat:challenge 자동 실행 (전체 트리 검증)
+  2. planning/config.json → layer: "finalized" 업데이트
+  3. git commit: "finalize: complete spec layer"
+
+📊 영향:
+  settled 명세 섹션 {N}개 최종 확정
+  status 전이: layer spec → finalized
+
+[1] 계속 진행
+[2] 취소
+```
+
+- `[1]` → Challenge 자동 실행 진행
+- `[2]` → 종료
+
 ## Challenge 자동 실행
 
 `$ARGUMENTS`에 `--force`가 있으면 challenge를 건너뛴다.
@@ -58,10 +81,10 @@ finalize 시작 — challenge 자동 실행 중
 
 - 문제가 발견되면:
   ```
-  🔴 Challenge에서 {N}건 발견 — export를 중단합니다.
+  🔴 Challenge에서 {N}건 발견 — 종결을 중단합니다.
 
   [1] 문제를 먼저 해결하고 재실행
-  [2] --force로 강제 export (문제 있음을 인지한 상태로 진행)
+  [2] --force로 강제 진행 (문제 있음을 인지한 상태로)
   ```
   인간의 선택을 기다린다.
 - 문제가 없으면 → 다음 단계 진행
@@ -70,127 +93,14 @@ finalize 시작 — challenge 자동 실행 중
 >
 > **`--force` 주의**: `--force` 사용 시 challenge를 건너뛴다. 통과하지 못한 논리·사실 이슈가 최종 산출물에 남을 수 있다. 인지된 문제가 경미할 때만 사용.
 
-## Export 생성
-
-```bash
-mkdir -p export
-date -u +"%Y-%m-%dT%H:%M:%SZ"
-```
-
-### export/PROJECT.md
-
-GSD `/gsd:new-project`가 소비하는 프로젝트 컨텍스트 파일.
-
-```markdown
-# {Project Name}
-
-## Vision
-> {thesis Answer — 그대로 복사}
-
-## Core Objectives
-{thesis Key Arguments를 목표로 변환}
-
-1. {Key Argument 1 — 한 줄 요약}
-2. {Key Argument 2 — 한 줄 요약}
-3. {Key Argument 3 — 한 줄 요약}
-
-## Background
-### Situation
-> {thesis Situation}
-
-### Problem
-> {thesis Complication}
-
-## Scope
-
-### In Scope
-{모든 기획 섹션의 Scope In 합산}
--
-
-### Out of Scope
-{모든 기획 섹션의 Scope Out 합산}
--
-
-## Actors
-{04-actors.md의 내용 요약}
--
-
-## Generated
-- Source: sowhat
-- Date: {current_datetime}
-```
-
-### export/REQUIREMENTS.md
-
-GSD `/gsd:new-project`가 소비하는 요구사항 파일.
-
-```markdown
-# Requirements — {Project Name}
-
-## Functional Requirements
-{05-functional-requirements.md의 각 Claim/Grounds를 requirement로 변환}
-
-### FR-1: {requirement title}
-- Description: {Claim}
-- Details: {Grounds 요약}
-- Priority: {있으면}
-
-### FR-2: {requirement title}
-...
-
-## Data Model
-{06-data-model.md 요약}
-
-## API Contract
-{07-api-contract.md 요약}
-
-## Edge Cases & Constraints
-{08-edge-cases.md의 각 항목}
-
-- EC-1: {edge case}
-  - Handling: {처리 방안}
-- EC-2: {edge case}
-  ...
-
-## Acceptance Criteria
-{09-acceptance-criteria.md의 각 항목}
-
-- [ ] AC-1: {criteria}
-- [ ] AC-2: {criteria}
-...
-
-## Generated
-- Source: sowhat
-- Date: {current_datetime}
-```
-
-## 문서 생성 여부 확인
-
-PROJECT.md와 REQUIREMENTS.md 생성 후, 인간이 읽는 문서 생성 여부를 묻는다:
-
-```
-----------------------------------------
-❓ 인간이 읽는 문서도 생성하시겠습니까?
-   (DOCUMENT.md, PRD.md)
-
-  [1] 문서 생성 (draft 실행 — DOCUMENT.md + PRD.md)
-  [2] 논증 맵도 함께 (draft + map --export)
-  [3] 나중에 생성
-----------------------------------------
-```
-
-- `[1]` 선택 시: `/sowhat:draft`를 호출한다. draft가 완료되면 finalize로 복귀.
-- `[2]` 선택 시: 이 단계를 건너뛴다. 나중에 `/sowhat:draft`를 별도로 실행 가능.
-
 ## Argument Log 추가
 
 `logs/argument-log.md`에 최종 요약을 append한다:
 
 ```markdown
 ## [{current_datetime}] finalize
-  Action: export 생성 + layer → finalized
+  Action: layer → finalized
   Sections: {settled된 모든 섹션 목록}
-  Export: PROJECT.md, REQUIREMENTS.md{, DOCUMENT.md, PRD.md (if drafted)}{, ARGUMENT-MAP.md (if map --export)}
 ```
 
 ## config.json 업데이트
@@ -205,7 +115,7 @@ PROJECT.md와 REQUIREMENTS.md 생성 후, 인간이 읽는 문서 생성 여부�
 
 ```bash
 git add -A
-git commit -m "finalize: export GSD artifacts"
+git commit -m "finalize: complete spec layer"
 ```
 
 ## GitHub
@@ -226,41 +136,32 @@ saved: {current_datetime}
 ---
 
 ## 마지막 컨텍스트
-finalize 완료 — GSD export 생성됨. export/PROJECT.md + export/REQUIREMENTS.md.
+finalize 완료 — 명세 레이어 종결됨. layer: finalized.
 
 ## 재개 시 첫 질문
-/gsd:new-project → export/PROJECT.md와 export/REQUIREMENTS.md로 GSD 프로젝트 시작
+/sowhat:draft 로 원하는 형식의 산출물을 생성하세요.
 ```
 
 ## 완료 안내
 
 ```
-✅ sowhat 완료 — export 생성됨
+✅ 명세 레이어 종결 완료
 
-  GSD용:
-  - export/PROJECT.md
-  - export/REQUIREMENTS.md
-
-  {draft를 실행한 경우:}
-  인간용:
-  - export/DOCUMENT.md
-  - export/PRD.md
-  - export/ARGUMENT-MAP.md  (/sowhat:map --export 로 별도 생성)
+  논증이 확정되었습니다. 이제 원하는 형식으로 산출물을 만드세요.
 
 ----------------------------------------
 다음 액션:
 
-[1] GSD 프로젝트 시작 (/gsd:new-project)
-[2] 최종 문서 재생성 (/sowhat:draft --output all)
-[3] 최종 검증 재실행 (/sowhat:challenge)
+[1] 산출물 생성 (/sowhat:draft)
+[2] 저장된 프로파일 목록 (/sowhat:draft --list)
+[3] 논증 맵 보기 (/sowhat:map)
+[4] 최종 검증 재실행 (/sowhat:challenge)
 ----------------------------------------
-
-
 ```
 
 ## 핵심 원칙
 
-- **challenge 자동 실행은 생략 불가**
+- **challenge 자동 실행은 생략 불가** (`--force` 명시 시만 예외)
+- **finalize는 파일을 생성하지 않는다** — 상태 전이와 검증만 담당
+- **모든 산출물 생성은 /sowhat:draft에 위임**
 - **export는 기획+명세의 충실한 요약** — 새로운 내용을 추가하지 않는다
-- **GSD가 소비하는 형식**에 맞춘다
-- **문서 생성은 /sowhat:draft에 위임** — finalize는 GSD artifacts만 직접 생성한다

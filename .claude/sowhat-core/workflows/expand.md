@@ -304,6 +304,31 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 
 ---
 
+### 스텝 2.5: Claim Tier 설정
+
+`claim_tier` 필드가 이미 설정돼 있으면 이 스텝 건너뜀.
+
+이 섹션 주장의 등급을 결정한다. Tier에 따라 settle 시 요구되는 출처 수준이 달라진다 (`references/source-credibility.md`의 Claim Tier × Source Tier 매트릭스 참조).
+
+**자동 추론 시도**: `thesis_argument`가 thesis의 Key Arguments와 직결되면 → `A` (핵심). 보조 주장이면 → `B`.
+
+확신할 수 있으면 자동 설정하고 알린다. 확신할 수 없으면:
+
+```
+> [expand {section} > 스텝 2.5/9 Claim Tier]
+> Thesis KA: {Key Arguments 목록}
+
+이 섹션이 thesis 핵심 논거에 직결됩니까, 아니면 보조·배경 주장입니까?
+
+[1] Tier-A — 핵심 주장 (thesis KA에 직결 → T1/T2 출처 필요)
+[2] Tier-B — 보조 주장 (배경·보강·예시 → qualifier 약화로 출처 유연)
+[3] 자동 추론에 맡기기
+```
+
+인간 선택(또는 자동 추론) → `claim_tier` 필드에 `A` 또는 `B` 저장. 별도 커밋 없이 다음 스텝 진행.
+
+---
+
 ### 스텝 3: Claim 핑퐁
 
 섹션 제목, thesis Answer, thesis_argument, stasis, scheme을 함께 고려하여 Claim에 대한 구체적 제안 3개를 생성한다. **제안은 인간의 실제 맥락에서 파생한다** — generic 예시 사용 금지.

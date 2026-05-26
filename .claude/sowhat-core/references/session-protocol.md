@@ -50,6 +50,17 @@ Workflows may add extra frontmatter fields beyond the base schema:
 |-------|---------|---------|
 | `sub_research_pending` | expand | `true` if Sub-Research agent was triggered and results are pending |
 | `checkpoint_type` | settle, challenge | `verify-argument`, `decision`, or `human-input` when status is `awaiting_checkpoint` |
+| `preview_event` | draft, finalize, finalize-planning | `preview_approved` / `preview_canceled` / `preview_revised` — 미리보기 게이트 결과 |
+
+### Preview Gate event_type 정의
+
+| event_type | 발생 조건 | 의미 |
+|---|---|---|
+| `preview_approved` | 사용자가 `[1]`로 미리보기 게이트 통과 | 계획대로 실행 진행 |
+| `preview_canceled` | 사용자가 `[2]`로 취소 | 실행 중단 |
+| `preview_revised` | 사용자가 수정 요청 자유 입력 후 재생성 | 미리보기 갱신 후 진행 |
+
+draft/finalize/finalize-planning 실행 시 session.md의 `preview_event` 필드에 결과를 기록한다.
 
 ## Structured Handoff (세션 종료 시)
 

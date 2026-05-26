@@ -10,10 +10,57 @@ allowed-tools:
   - Glob
   - Grep
   - Task
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
 지정된 섹션을 Toulmin 9단계 구조(stasis→scheme→claim→grounds→warrant→backing→qualifier→rebuttal→scope)로 핑퐁 전개한다. Sub-Research Semi-Async 패턴으로 근거를 수집한다.
 </objective>
+
+## When to Apply
+
+- 기획/명세 섹션을 처음 전개하거나 needs-revision 상태에서 재작업할 때
+- Toulmin 구조(Claim/Grounds/Warrant/Qualifier/Rebuttal)를 구축할 때
+
+## Anti-triggers
+
+공통 패턴: `@.claude/sowhat-core/references/anti-triggers.md`
+
+- 이미 settled된 섹션 (challenge 또는 revise를 먼저 실행)
+- thesis(00-thesis.md)가 없는 상태
+- invalidated 상태의 섹션
+
+## Methodology
+
+1. 섹션 파일 로드 또는 신규 생성
+2. Stasis 유형 결정 (Step 1.5)
+3. Argument Scheme 선택 (Step 2)
+4. Claim Tier 설정 (Step 2.5)
+5. Claim 핑퐁 (Step 3)
+6. Grounds 수집 (Step 4)
+7. Warrant 작성 (Step 5)
+8. Backing/Qualifier/Rebuttal 완성 (Step 6-8)
+9. 섹션 status → discussing 전환
+
+## Output Format
+
+각 스텝마다 컨텍스트 배너 + 질문 + 선택지 3-블록 패턴.
+최종 완료:
+
+```
+✅ {N}-{section} 전개 완료
+
+  Claim: "{주장 40자}"
+  Grounds: {N}개 | Warrant: ✅ | Qualifier: {level}
+
+----------------------------------------
+다음 액션:
+
+[1] 섹션 확정 (/sowhat:settle {section})
+[2] 논리 검증 (/sowhat:challenge {section})
+[3] 다음 섹션 전개 (/sowhat:expand {next})
+----------------------------------------
+```
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md

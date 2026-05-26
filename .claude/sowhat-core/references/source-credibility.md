@@ -192,6 +192,26 @@ T3 출처를 Grounds에 단독 사용할 수 없을 때:
 
 ---
 
+## Claim Tier × Source Tier 정합성 매트릭스
+
+섹션의 `claim_tier`와 출처 Tier 조합이 정합하는지 확인한다. `challenge-algorithm.md` Stage 0, `settle.md`가 이 매트릭스를 참조한다.
+
+| claim_tier | 출처 Tier | 결과 | 비고 |
+|:---:|:---:|---|---|
+| **A** (핵심) | T1 | ✅ 완전 정합 | — |
+| **A** (핵심) | T2 | ✅ 허용 | — |
+| **A** (핵심) | T3 | ⚠️ major 경고 | 교차검증 2개 이상 시 조건부 허용 |
+| **A** (핵심) | T4 | ❌ settle 거부 | Grounds에 T4 단독 불가 |
+| **A** (핵심) | 출처 없음 | ⚠️ major | 출처 추가 또는 claim_tier 하향 검토 |
+| **B** (보조) | T1-T2 | ✅ 완전 정합 | — |
+| **B** (보조) | T3 | ✅ 허용 | 단독 사용 가능 (qualifier 약화 권장) |
+| **B** (보조) | T4 | ⚠️ minor 경고 | qualifier `possibly` 이상 강제 |
+| **B** (보조) | 출처 없음 | 💡 minor | qualifier `presumably`/`possibly`이면 허용. 강한 qualifier 시 major |
+
+> **핵심**: Tier-A 주장은 T1/T2 수준 출처가 필요하다. Tier-B 주장은 qualifier를 충분히 약화하면 T3/T4 또는 출처 없는 inference도 허용된다 (`[source:inference]` 태그 사용).
+
+---
+
 ## Challenge 연동
 
 ### Stage 5 (Why So) 강화

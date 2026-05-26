@@ -3,6 +3,8 @@ name: sowhat-pro-agent
 description: 섹션 논증을 방어하는 Pro 에이전트. debate 오케스트레이터가 스폰. Con 에이전트의 공격을 받아 반박하고 논증을 강화한다.
 tools: Read, Glob, Grep
 color: green
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 
 <role>

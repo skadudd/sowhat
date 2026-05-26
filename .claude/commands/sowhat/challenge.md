@@ -10,10 +10,49 @@ allowed-tools:
   - Glob
   - Grep
   - Task
+license: MIT
+compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
 전체 논증 트리를 8단계(Stage 0 사실검증 + Stage 1-7 논리검증)로 공격한다. Stage 0은 sowhat-research-agent(WebSearch/WebFetch)로, Stage 1-7은 sowhat-challenge-agent로 순차 실행한다.
 </objective>
+
+## When to Apply
+
+- settled/discussing 섹션의 논리 구조를 검증할 때
+- finalize/finalize-planning 전 최종 검증
+- 특정 섹션의 집중 공격이 필요할 때
+
+## Anti-triggers
+
+공통 패턴: `@.claude/sowhat-core/references/anti-triggers.md`
+
+- settled 섹션이 0개인 상태
+- draft 상태만 존재하는 논증 트리
+- 논증 구조 없이 단순 사실 확인 목적
+
+## Methodology
+
+1. 전체/부분 모드 결정
+2. 모든 섹션 파일 1회 로드
+3. Stage 0: Grounds 사실 검증 (research-agent 스폰)
+4. Stage 1-7: 논리 검증 (challenge-agent 스폰)
+5. 인간 반박/수용 결정
+6. 역전파 처리 (필요 시)
+7. 통과/실패 리포트 출력
+
+## Output Format
+
+```
+✅ Challenge 통과
+
+  [Factual]   {N}건 발견 / {M}건 철회 / {K}건 수용
+  [Scheme]    {N}건 발견 / {M}건 철회 / {K}건 수용
+  [Warrant]   {N}건 발견 / {M}건 철회 / {K}건 수용
+  [Qualifier] {N}건 발견 / {M}건 철회 / {K}건 수용
+
+  모든 섹션 검증 완료
+```
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md

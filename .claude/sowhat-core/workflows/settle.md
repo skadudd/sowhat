@@ -58,6 +58,10 @@ status_transitions: ["discussing → settled"]
 9. **Filler stub detection** — Toulmin 필드가 형식만 채워져 있고 실질 내용이 없는 "빈 껍데기"를 탐지. 거부.
 10. **Source tag 완전성** — `.claude/sowhat-core/bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
 11. **Cross-section regression** — 이 섹션을 settle함으로써 기존 settled 섹션과의 논증 일관성이 깨지는지 검증. 충돌 시 경고.
+12. **Claim Tier 게이트** — `claim_tier` 필드 기반 출처 수준 검증 (`references/toulmin-model.md` 참조):
+    - Tier-A: Grounds에 T1/T2 출처가 없으면 `❌ Tier-A 섹션은 T1/T2 수준 출처가 필요합니다` 출력 후 거부
+    - Tier-B: T3/T4 또는 출처 없음도 허용, 단 qualifier가 `definitely`/`usually`이면 ⚠️ 경고 (qualifier 완화 권고)
+    - `claim_tier` 미설정: thesis KA 직결 여부로 자동 추론, 확신 없으면 A로 처리
 
 ### Filler Stub Detection (빈 껍데기 탐지)
 
