@@ -34,7 +34,7 @@ Mermaid나 외부 도구 없이, 인덴트 기반 텍스트로 논리 구조를 
 
 1. `planning/config.json` 로드
 2. `00-thesis.md` 로드
-3. 각 섹션 파일 로드 (frontmatter + Toulmin 필드)
+3. 각 섹션 파일 로드 (frontmatter + Walton 필드)
 
 ---
 
@@ -78,7 +78,7 @@ Thesis: "{Answer}"
 
 - **Thesis**: Answer 전문. 80자 초과 시 줄바꿈
 - **섹션 헤더**: `  {번호} {이름} [{status}]` — 인덴트 2칸
-- **Toulmin 필드**: 인덴트 5칸. 값이 있는 필드만 출력
+- **섹션 필드**: 인덴트 5칸. 값이 있는 필드만 출력
 - **필드값**: 50자 초과 시 `...` 으로 자름
 - **미전개 섹션** (`draft` + 필드 없음): `(미전개)` 한 줄로 축약
 - **status 표기**: `[settled]` `[discussing]` `[draft]` `[needs-revision]` `[invalidated]`
@@ -118,7 +118,7 @@ Thesis: "{thesis answer 40자}"
 
 ## Local 모드 (섹션 지정)
 
-특정 섹션의 Toulmin 구조 전체를 상세히 출력한다.
+특정 섹션의 Walton 구조 전체를 상세히 출력한다.
 
 ### 섹션 파일 확인
 
@@ -250,7 +250,7 @@ After:
 ## `--export` 모드: ARGUMENT-MAP.md 생성
 
 `--export` 플래그가 있으면 터미널 출력에 더해 `export/ARGUMENT-MAP.md`를 생성한다.
-이 파일은 논증의 **Toulmin 구조 전체 스냅샷**으로, draft 산출물과 독립적으로 관리된다.
+이 파일은 논증의 **Walton 구조 전체 스냅샷**으로, draft 산출물과 독립적으로 관리된다.
 
 ```bash
 mkdir -p export

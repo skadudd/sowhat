@@ -131,19 +131,19 @@ git checkout -b "$BRANCH"
   이미 존재하면: git branch -D {BRANCH} 후 재실행
 ```
 
-## Qualifier 서열 척도 (공유 기준)
+## Confidence Band (공유 기준)
 
-모든 판정에서 아래 척도를 사용한다. 단계는 정수로 표현.
+모든 판정에서 아래 Tetlock 척도를 사용한다. 단계는 정수로 표현. (`references/calibration-guide.md` 참조)
 
-| 단계 | Qualifier | 의미 |
-|------|-----------|------|
-| 0 | `definitely` | 예외 없이 참 |
-| 1 | `usually` | 대부분의 경우 참 |
-| 2 | `in most cases` | 많은 경우 참 |
-| 3 | `presumably` | 가정적으로 참 |
-| 4 | `possibly` | 가능성 있음 |
+| 단계 | Confidence Band | 범위 |
+|------|-----------------|------|
+| 0 | `virtually certain` | 95%+ |
+| 1 | `very likely` | 80-95% |
+| 2 | `likely` | 60-80% |
+| 3 | `uncertain` | 40-60% |
+| 4 | `unlikely` | 20-40% |
 
-- **2단계 이상 하락** = 예: definitely(0) → presumably(3) = 3단계 하락 → `broken`
+- **2단계 이상 하락** = 예: virtually certain(0) → uncertain(3) = 3단계 하락 → `broken`
 - **1단계 하락** = `modified` 허용 범위
 
 ---
@@ -153,23 +153,25 @@ git checkout -b "$BRANCH"
 ### Con-Agent (claude-opus-4-6)
 - 역할: 섹션을 다층 분석 후 **가장 치명적인 약점 하나**만 골라 공격
 - 공격 전 분석 순서 (이 순서대로 점검, 첫 발견 시 우선 공격):
-  1. **Warrant 취약점 먼저**: Non-sequitur / Missing link / Circular 중 해당되는가?
-  2. **Qualifier Overclaiming**: `definitely` + 약한 근거 / `definitely` + 반론 없음?
-  3. **Scheme CQ**: 해당 scheme의 Critical Questions 중 가장 치명적 질문 하나
+  1. **CQ 미충족 먼저**: scheme의 Critical Questions 중 미응답(confidence ≤1)이 있는가?
+  2. **Confidence Overclaiming**: `virtually certain` / `very likely` + 약한 근거 또는 미충족 CQ?
+  3. **Scheme CQ**: 충족 CQ 중에서도 가장 취약한 답변이 있는 CQ 공격
   4. **Steelman**: 위 세 가지로 공격이 없으면, 섹션에 대한 최강 반론을 독립 생성
 
-- scheme별 Critical Questions:
+- scheme별 Critical Questions (`references/walton-schemes.md` 전문 참조):
 
-  | Scheme | Critical Questions |
-  |--------|-------------------|
-  | authority | 이 권위자가 이 도메인의 진짜 전문가인가? 이해충돌은 없는가? 반대 권위는? |
-  | analogy | 두 케이스가 논증의 핵심 측면에서 충분히 유사한가? 차이점이 결정적인가? |
-  | cause-effect | 인과 메커니즘이 타당한가? 역인과 가능성은? Confounding variable은? |
-  | statistics | 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 현재 시점에 유효한가? |
-  | example | 대표 사례인가? 체리피킹이 아닌가? 일반화가 가능한가? |
-  | sign | 이 신호가 신뢰할 수 있는 지표인가? 동일 신호에 대한 다른 해석은? |
-  | principle | 이 원칙이 이 상황에 적용되는가? 관련 예외 조건은? |
-  | consequence | 결과가 현실적인가? 의도치 않은 부작용은? 적용 시간대는? |
+  | Scheme | 핵심 Critical Questions |
+  |--------|------------------------|
+  | Expert Opinion | 전문가가 이 도메인의 전문가인가? 이해충돌은? 반대 전문가 의견은? |
+  | Analogy | 두 케이스가 논증의 핵심 측면에서 충분히 유사한가? 결정적 차이는? |
+  | Cause to Effect | 인과 메커니즘이 타당한가? 역인과 가능성은? Confounding variable은? |
+  | Sample to Population | 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 현재 시점에 유효한가? |
+  | Sign | 이 신호가 신뢰할 수 있는 지표인가? 동일 신호에 대한 다른 해석은? |
+  | Classification | 이 원칙/정의가 이 상황에 적용되는가? 관련 예외 조건은? |
+  | Practical Reasoning | 결과가 현실적인가? 의도치 않은 부작용은? 적용 시간대는? |
+  | Effect to Cause | 이 효과의 가장 그럴듯한 원인인가? 다른 원인은? |
+  | Position to Know | 이 목격자/내부자가 실제로 알 수 있는 위치인가? 편향은? |
+  | Popular Opinion | 합의가 실제로 존재하는가? 합의가 진리를 보장하는가? |
 
 - 에스컬레이션: Claim `broken` → Key Argument 도전 → Key Argument `broken` → Thesis 도전
 - **공격은 하나만**: 여러 약점을 나열하지 않는다. 가장 치명적인 것 하나에 집중.
@@ -177,17 +179,17 @@ git checkout -b "$BRANCH"
 ### Pro-Agent (claude-sonnet-4-6)
 - 역할: Con-Agent의 공격에 **공격의 논리적 약점을 직접 해소하는 방식**으로만 방어
 - 방어 성공 기준: 공격이 지적한 구체적 논리 취약점을 직접 해소했는가?
-- 방어 순서: Grounds 보강 → Warrant 명시화 → Qualifier 조정 → Scope 제한
+- 방어 순서: Grounds 보강 → CQ 답변 보강 → Confidence 조정 → Scope 제한
 - 금지: 단순 재주장 (Claim을 반복하는 것), 주제 전환, 감정적 호소
 - 양보 조건 (다음 중 하나라도 해당되면 즉시 양보):
-  1. Qualifier가 원래보다 2단계 이상 하락 (definitely → probably 이상) → `broken`
+  1. Confidence가 원래보다 2단계 이상 하락 (virtually certain → uncertain 이상) → `broken`
   2. Scope 제한이 원래 Claim의 적용 대상을 절반 이하로 축소 → `broken`
-  3. 위 조건 미해당 시에만 방어 순서(Grounds → Warrant → Qualifier → Scope) 진행, 전체 소진 시 양보
+  3. 위 조건 미해당 시에만 방어 순서(Grounds → CQ → Confidence → Scope) 진행, 전체 소진 시 양보
 
 ### Research-Agent (claude-sonnet-4-6)
 - 역할: 외부 근거 수집. **요청 시 + 자동 트리거 조건 충족 시** 활성화
 - 도구: WebSearch, WebFetch
-- 출력: Grounds 또는 Backing에 삽입 가능한 형식으로 정리
+- 출력: Grounds 또는 CQ 답변에 삽입 가능한 형식으로 정리
 - 한도: 라운드당 최대 3회 검색 (Deep Research 모드에서는 엔진 API 1회 호출로 대체)
 - Deep Research:
   - 활성 엔진의 API 키(`PERPLEXITY_API_KEY` 또는 `GEMINI_API_KEY`)가 존재하고 `features.deep_research`가 `"disabled"`가 아니면 활성화
@@ -203,8 +205,8 @@ git checkout -b "$BRANCH"
 |------|--------|------------|
 | Con이 "근거 불충분" 공격 | ✅ 자동 | Claim을 지지하는 추가 증거 탐색 |
 | Con이 "데이터 오래됨" 공격 | ✅ 자동 | 최신 데이터/통계 탐색 |
-| Pro가 Backing 없이 Warrant 방어 | ✅ 자동 | Warrant를 지지하는 외부 근거 탐색 |
-| Qualifier 분쟁 (Con: overclaiming) | ✅ 자동 | 정량적 데이터로 적정 수준 탐색 |
+| Pro가 CQ 근거 없이 방어 | ✅ 자동 | CQ 답변을 지지하는 외부 근거 탐색 |
+| Confidence 분쟁 (Con: overclaiming) | ✅ 자동 | 정량적 데이터로 적정 Confidence 탐색 |
 | Con이 Steelman 공격 (독립 반론) | ✅ 자동 | 반론을 지지/반박하는 양쪽 증거 탐색 |
 | 단순 논리 구조 공격 (Non-sequitur 등) | ❌ 불필요 | 리서치로 해결 불가 |
 
@@ -228,7 +230,7 @@ Research-Agent는 지지·반박 근거를 동등하게 탐색한다.
 
 | Agent | 역할 변경 |
 |-------|----------|
-| Con-Agent | 대상 콘텐츠 저자의 입장을 대변하여 사용자 논증을 공격. 대상의 Grounds와 Warrant를 활용하여 반론 |
+| Con-Agent | 대상 콘텐츠 저자의 입장을 대변하여 사용자 논증을 공격. 대상의 Grounds와 CQ 응답을 활용하여 반론 |
 | Pro-Agent | 사용자의 Thesis를 적극 옹호. 대상 콘텐츠의 약점을 방어에 활용 |
 | Research-Agent | 사용자 입장을 지지하는 근거 우선 탐색 (persuade 전용 — critique 기본값에서는 비활성) |
 
@@ -414,25 +416,25 @@ Research가 찾은 반박 근거가 Pro의 방어를 약화시키면 판정에 �
 Con-Agent의 공격에 응답한다. **공격이 지적한 논리적 약점을 직접 해소해야만 방어 성공**이다.
 
 **방어 성공 (defense)**:
-- 공격의 취약 지점을 Grounds 보강 / Warrant 명시화 / Backing 제시로 직접 해소
+- 공격의 취약 지점을 Grounds 보강 / CQ 답변 보강으로 직접 해소
 - 단순 재주장(Claim 반복) 불가
 ```
 🟢 Pro — 방어 성공
   해소 방식: {어떻게 취약점을 직접 해소했는가}
-  Rebuttal 업데이트: {섹션 파일 Rebuttal에 추가할 내용}
+  CQ 보강: {섹션 파일 CQ Responses에 반영할 내용}
 ```
 
 **수정 방어 (concession with modification)**:
-- 취약점을 완전히 해소할 수 없으나, Qualifier 축소 또는 Scope 제한으로 공격 범위를 무력화
+- 취약점을 완전히 해소할 수 없으나, Confidence 하향 또는 Scope 제한으로 공격 범위를 무력화
 - Claim이 약화되지만 유효성 유지
 ```
 🟡 Pro — 수정 방어
-  수정: {Qualifier/Scope 조정 내용}
+  수정: {Confidence/Scope 조정 내용}
   이유: {왜 이 조정으로 공격 범위가 벗어나는가}
 ```
 
 **완전 양보 (full concession)**:
-- Grounds 보강, Warrant 명시화, Qualifier 조정 모두 시도했으나 취약점 해소 불가
+- Grounds 보강, CQ 답변 보강, Confidence 조정 모두 시도했으나 취약점 해소 불가
 ```
 🔴 Pro — 완전 양보
   소진한 방어: {시도했으나 불충분한 방어들}

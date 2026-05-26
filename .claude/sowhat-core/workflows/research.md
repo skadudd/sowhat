@@ -550,8 +550,8 @@ URL 모드와 동일 (Tier 표시 포함).
 - **T4 출처인 경우**:
   ```
   ⚠️ 이 파인딩은 T4 (비검증 출처)입니다.
-  Grounds에 단독 사용할 수 없으며, Backing으로만 활용됩니다.
-    [1] Backing으로 accept
+  Grounds에 단독 사용할 수 없으며, CQ 보강으로만 활용됩니다.
+    [1] CQ 보강으로 accept
     [2] reject
   ```
   [1] 선택 시: `applied_to` 필드에 `(backing-only)` 태그 추가

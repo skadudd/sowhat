@@ -772,7 +772,7 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 
 ## 4. 주요 발견
 
-{각 KA = 하위 섹션, 전체 Toulmin 구조 기술}
+{각 KA = 하위 섹션, 전체 Walton 구조 기술}
 
 ### 4.1 {KA1}
 {Claim + Grounds + Warrant + Qualifier 명시}
@@ -1383,8 +1383,8 @@ FOR EACH change_block:
 
 각 substantive/additive 변경에 대해 논증 트리와 대조한다.
 
-1. 변경된 내용에 대응하는 섹션의 Toulmin 필드를 찾는다 (draft 생성 시의 source mapping 또는 내용 매칭)
-2. 수정된 주장이 원본 섹션의 Claim/Grounds/Warrant와 정합하는지 검사
+1. 변경된 내용에 대응하는 섹션의 Walton 필드를 찾는다 (draft 생성 시의 source mapping 또는 내용 매칭)
+2. 수정된 주장이 원본 섹션의 Claim/Grounds/CQ Responses와 정합하는지 검사
 
 #### 판정 기준
 

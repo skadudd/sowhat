@@ -29,7 +29,7 @@ status_transitions: ["settled → needs-revision", "discussing → needs-revisio
 3. 모든 섹션 파일을 **한 번에** 로드 (숫자 순서대로)
    - `settled` 또는 `discussing` 상태 섹션만 대상
    - `draft`, `invalidated` 섹션은 건너뜀
-   - 각 섹션에서 추출: `status`, `thesis_argument`, `scheme`, `claim`, `grounds`, `warrant`, `qualifier`, `rebuttal`
+   - 각 섹션에서 추출: `status`, `thesis_argument`, `scheme`, `claim`, `grounds`, `cq_responses`, `confidence`
 4. 현재 layer가 `"spec"`이면 기획 + 명세 전체를 대상으로 함
 5. 로그 디렉터리 확인:
    ```bash
@@ -73,10 +73,10 @@ status_transitions: ["settled → needs-revision", "discussing → needs-revisio
 | 0단계 사실 검증 | 대상 섹션만 | 사실 대조는 섹션 내부 완결 (단, cross-section은 연결 섹션까지) |
 | 1단계 Thesis 정합성 | 대상 + 연결 섹션 | thesis 충분성은 다른 섹션과의 관계에서 판정 |
 | 2단계 Scheme 유효성 | 대상 섹션만 | scheme CQ는 섹션 내부 완결 |
-| 3단계 Warrant 유효성 | 대상 섹션만 | warrant 검증은 섹션 내부 완결 |
+| 3단계 CQ 응답 충분성 | 대상 섹션만 | CQ 응답 검증은 섹션 내부 완결 |
 | 4단계 So What | 대상 + 연결 섹션 | claim→key argument 연결선은 상위 구조 참조 |
 | 5단계 Why So | 대상 섹션만 | grounds→claim 충분성은 섹션 내부 완결 |
-| 6단계 Qualifier 보정 | 대상 섹션만 | qualifier 균형은 섹션 내부 완결 |
+| 6단계 Confidence 보정 | 대상 섹션만 | Confidence 균형은 섹션 내부 완결 |
 | 7단계 MECE+Steelman | 대상 + 연결 섹션 | MECE 중복/누락은 다른 섹션과 비교 필요 |
 
 - **출력**: 리포트 형식은 동일하되, 헤더에 `(부분: {섹션명})` 표기
@@ -293,31 +293,32 @@ scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되
 
 ---
 
-### [3단계] Warrant 유효성 (NEW)
+### [3단계] CQ 응답 충분성 (NEW)
 
-각 섹션의 Warrant를 검증한다. **이 단계가 논증 구조의 핵심 검증이다.**
+각 섹션의 CQ Responses를 검증한다. **이 단계가 논증 구조의 핵심 검증이다.**
 
 검증 항목:
-1. **Warrant 명시성**: Warrant 필드가 비어있거나 "Implicit"이면 → 약점 플래그
-2. **연결 타당성**: Warrant가 Grounds → Claim을 실제로 연결하는가?
-   - Non-sequitur: Grounds가 Claim을 도출하지 않음
-   - Missing link: A에서 C로 점프, B 설명 없음
-   - Circular: Warrant가 Claim을 그대로 반복
-3. **Backing 지지**: Warrant가 Backing으로 강화되어 있는가? (없으면 취약으로 기록, 필수 아님)
+1. **CQ 응답 완전성**: scheme별 필수 CQs가 모두 답변되어 있는가? 미답변 CQ → 약점 플래그
+2. **CQ 답변 품질**: confidence ≤1 (추측 또는 답 불가) CQ 수 → scheme별 허용 상한과 비교
+   - Cause to Effect, Classification: 미충족 CQ 0개 허용 (엄격)
+   - Expert Opinion, Analogy 등: 1개 허용
+   - Sign, Position to Know, Popular Opinion: 2개 허용
+3. **복합 Scheme 완전성**: 2개 이상 scheme 지정 시, 각 scheme의 CQs가 모두 활성화되어 있는가?
+4. **depth cap**: CQ 답변이 새 주장을 생성하는 경우, 후속 CQ가 depth 2를 초과하지 않는가?
 
-일반적인 Warrant 실패 패턴:
-- "큰 시장 → 우리 성공" (논증 누락: 우리가 그 시장을 잡는다는 연결 없음)
-- "고통이 크다 → 우리 솔루션이 필요하다" (경쟁사도 같은 고통을 해결할 수 있음)
-- "데이터가 있다 → Claim이 맞다" (데이터 해석 논리 없음)
+일반적인 CQ 실패 패턴:
+- Expert Opinion: 전문가 이해충돌 미검토 (CQ3)
+- Cause to Effect: 대안 원인 미검토 (CQ2)
+- Sample to Population: 표본 대표성 미검토 (CQ1)
 
 ---
 
 ### [4단계] So What
 
-각 Grounds가 해당 Claim을 지지하는지 검증한다. Warrant를 경유하여 확인.
+각 Grounds가 해당 Claim을 지지하는지 검증한다. scheme의 CQ 응답을 경유하여 확인.
 
 검증 항목:
-- 이 Grounds + Warrant → Claim의 흐름이 자연스러운가?
+- 이 Grounds + CQ Responses → Claim의 흐름이 자연스러운가?
 - "So What?"에 답할 수 있는가? (Grounds가 있으면 Claim이 따라오는가)
 - Claim이 상위 Key Argument를 지지하는가? (thesis까지 연결선 확인)
 
@@ -335,29 +336,29 @@ scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되
 
 ---
 
-### [6단계] Qualifier 보정 (NEW)
+### [6단계] Confidence 보정 (NEW)
 
-각 섹션의 Qualifier와 근거 강도의 균형을 검증한다.
+각 섹션의 Confidence band와 근거 강도의 균형을 검증한다. (`references/calibration-guide.md` 참조)
 
-**Qualifier 서열 척도 (debate.md와 공유):**
+**Confidence band (Tetlock):**
 
-| 단계 | Qualifier |
-|------|-----------|
-| 0 | `definitely` |
-| 1 | `usually` |
-| 2 | `in most cases` |
-| 3 | `presumably` |
-| 4 | `possibly` |
+| band | 범위 |
+|------|------|
+| `virtually certain` | 95%+ |
+| `very likely` | 80-95% |
+| `likely` | 60-80% |
+| `uncertain` | 40-60% |
+| `unlikely` | 20-40% |
 
 검증 기준:
 
 | 상황 | 판정 |
 |------|------|
-| `definitely` + 근거 약함 (인터뷰 1-3건, 사례 1-2개) | Overclaiming — qualifier 하향 권장 |
-| `definitely` + 반론 없음 | Overclaiming — `usually` 또는 `in most cases` 권장 |
-| `possibly` + 강한 데이터 (대규모 연구, 강한 인과) | Underclaiming — 약한 포지션 |
-| `presumably` + Backing 없음 | qualifier 수준과 근거 불균형 |
-| `in most cases` + Backing 있음 | 균형 — 통과 |
+| `virtually certain` + 근거 약함 (인터뷰 1-3건, 사례 1-2개) | Overclaiming — Confidence 하향 권장 |
+| `virtually certain` + 미충족 CQ 있음 | Overclaiming — `very likely` 이하 권장 |
+| `unlikely` + 강한 데이터 (대규모 연구, 강한 인과) | Underclaiming — 약한 포지션 |
+| `likely` 이상 + 미충족 CQ 2개+ | Confidence 수준과 CQ 응답 불균형 |
+| `likely` + CQ 전체 충족 + T1/T2 근거 | 균형 — 통과 |
 
 ---
 
@@ -369,10 +370,10 @@ scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되
 - 섹션 간 Scope 충돌이 있는가? (같은 영역을 두 섹션이 In으로 주장하는가)
 
 **Steelman 검증 (NEW):**
-각 섹션에 대해 가장 강한 반론을 독립적으로 생성하고, 섹션의 Rebuttal이 이를 대응하는지 확인:
+각 섹션에 대해 가장 강한 반론을 독립적으로 생성하고, 섹션의 CQ Responses가 이를 대응하는지 확인:
 1. Claude가 scheme의 Critical Questions를 기반으로 해당 섹션에 대한 최강 반론을 직접 생성
-2. 섹션의 `## Rebuttal` 필드 확인
-3. Rebuttal이 비어있거나 생성된 반론을 대응하지 못하면 → 플래그
+2. 섹션의 `## CQ Responses` 테이블에서 관련 CQ 답변 확인
+3. 관련 CQ가 미응답이거나 confidence ≤1이면 → 플래그
 
 ---
 
@@ -427,9 +428,9 @@ date -u +"%Y%m%d-%H%M"
 
 > **이슈 ID 형식**: `{섹션번호}.{필드약어}.{severity}{순번}`
 > - 섹션번호: `02`, `03` 등
-> - 필드약어: `G`(Grounds), `W`(Warrant), `C`(Claim), `Q`(Qualifier), `R`(Rebuttal), `B`(Backing), `T`(Thesis정합성), `S`(Scheme), `M`(MECE)
+> - 필드약어: `G`(Grounds), `CQ`(CQ응답), `C`(Claim), `CF`(Confidence), `BS`(Blind Spot), `T`(Thesis정합성), `S`(Scheme), `M`(MECE)
 > - severity+순번: `c1`(critical 1번), `m1`(major 1번), `n1`(minor 1번)
-> - 예: `02.G.c1` = 02섹션 Grounds의 critical 1번, `03.W.m2` = 03섹션 Warrant의 major 2번
+> - 예: `02.G.c1` = 02섹션 Grounds의 critical 1번, `03.CQ.m2` = 03섹션 CQ응답의 major 2번
 
 ```markdown
 # Challenge Report — {datetime}
@@ -447,10 +448,10 @@ date -u +"%Y%m%d-%H%M"
   Critical Question: ...
   영향: ...
 
-## Warrant 문제 (Stage 3)
+## CQ 응답 문제 (Stage 3)
 ...
 
-## Qualifier 문제 (Stage 6)
+## Confidence 문제 (Stage 6)
 ...
 
 ## Steelman 미대응 (Stage 7)
@@ -478,8 +479,8 @@ date -u +"%Y%m%d-%H%M"
 
   [Factual]   {N}건 — {섹션 목록 한 줄}
   [Scheme]    {N}건 — {섹션 목록 한 줄}
-  [Warrant]   {N}건 — {섹션 목록 한 줄}
-  [Qualifier] {N}건 — {섹션 목록 한 줄}
+  [CQ응답]    {N}건 — {섹션 목록 한 줄}
+  [Confidence] {N}건 — {섹션 목록 한 줄}
   [Steelman]  {N}건 — {섹션 목록 한 줄}
   [So What]   {N}건 — {섹션 목록 한 줄}
   [Why So]    {N}건 — {섹션 목록 한 줄}
@@ -601,8 +602,8 @@ challenge 완료 — 7단계 검증 종료. 역전파: {있음/없음}. 상세 �
 
   [Factual]   {N}건 발견 / {M}건 철회 / {K}건 수용
   [Scheme]    {N}건 발견 / {M}건 철회 / {K}건 수용
-  [Warrant]   {N}건 발견 / {M}건 철회 / {K}건 수용
-  [Qualifier] {N}건 발견 / {M}건 철회 / {K}건 수용
+  [CQ응답]    {N}건 발견 / {M}건 철회 / {K}건 수용
+  [Confidence] {N}건 발견 / {M}건 철회 / {K}건 수용
   [Steelman]  {N}건 발견 / {M}건 철회 / {K}건 수용
 
   역전파: {영향받은 섹션 목록}
@@ -623,8 +624,8 @@ challenge 완료 — 7단계 검증 종료. 역전파: {있음/없음}. 상세 �
 
   [Factual]   {N}건 발견 / {M}건 철회 / {K}건 수용
   [Scheme]    {N}건 발견 / {M}건 철회 / {K}건 수용
-  [Warrant]   {N}건 발견 / {M}건 철회 / {K}건 수용
-  [Qualifier] {N}건 발견 / {M}건 철회 / {K}건 수용
+  [CQ응답]    {N}건 발견 / {M}건 철회 / {K}건 수용
+  [Confidence] {N}건 발견 / {M}건 철회 / {K}건 수용
   [Steelman]  {N}건 발견 / {M}건 철회 / {K}건 수용
 
   모든 섹션 검증 완료
@@ -634,7 +635,7 @@ challenge 완료 — 7단계 검증 종료. 역전파: {있음/없음}. 상세 �
 
 [1] 기획 확정 (/sowhat:finalize-planning)
 [2] 추가 논증 강화 (/sowhat:debate {section})
-[3] 구조적 약점 진단 (/sowhat:self-critic {section}) — 논리 공격 통과 후 Toulmin 구조 자체의 약점을 추가 점검하려면
+[3] 구조적 약점 진단 (/sowhat:self-critic {section}) — 논리 공격 통과 후 Walton 구조 자체의 약점을 추가 점검하려면
 
 ----------------------------------------
 ```
@@ -648,15 +649,15 @@ challenge 공격 리포트에서 관련 Decision ID를 명시하여 "어떤 결�
 ### 동작
 
 1. 공격 대상 섹션의 `## Decision Log`를 참조
-2. 해당 공격이 지적하는 필드(Warrant, Qualifier 등)와 관련된 Decision ID를 식별
+2. 해당 공격이 지적하는 필드(CQ응답, Confidence 등)와 관련된 Decision ID를 식별
 3. 공격 리포트에 Decision ID를 포함:
 
 ```markdown
-## Warrant 문제 (Stage 3)
-[02.W.c1] Non-sequitur — Grounds→Claim 연결 논리 부재 (Decision D-02-005)
-  문제: Grounds→Claim 연결 논리 부재
-  Decision context: "사용자가 Implicit Warrant 선택 (expand Step 5)"
-  권장: Warrant를 명시적으로 작성
+## CQ 응답 문제 (Stage 3)
+[02.CQ.c1] CQ 미충족 — Expert Opinion CQ3 (이해충돌) 미응답 (Decision D-02-005)
+  문제: CQ3 confidence ≤1, Expert Opinion scheme 허용 상한 초과
+  Decision context: "사용자가 CQ3 답변 생략 (expand Step 4)"
+  권장: CQ3에 T1/T2 출처로 답변하거나 Confidence를 하향 조정
 ```
 
 4. 인간이 반박/수용 결정 시에도 새 Decision ID를 부여:
@@ -671,11 +672,11 @@ challenge 공격 리포트에서 관련 Decision ID를 명시하여 "어떤 결�
 - **리포트는 파일에, 요약만 응답에** — 응답에 각 공격의 전문을 출력하지 않는다
 - **전체 모드 / 부분 모드** — 섹션 미지정 시 전체 트리 공격, 섹션 지정 시 해당 섹션 집중 공격 (finalize 전에는 반드시 전체 모드)
 - **Stage 0은 사용자 입력 citation 검증** — AI fabrication 탐지는 cycle 7에서 폐기. Stage 0은 `[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]` citation의 실존·값 정확성 확인 (`references/ai-content-boundary.md`)
-- **검증 순서 고정** — Factual → Thesis → Scheme → Warrant → So What → Why So → Qualifier → MECE+Steelman
+- **검증 순서 고정** — Factual → Thesis → Scheme → CQ 응답 충분성 → So What → Why So → Confidence → MECE+Steelman
 - **사실이 논리보다 선행** — Stage 0 사실 검증을 통과해야 Stage 1-7 논리 검증이 의미 있음
 - **사실 오류 시 revise 트리거** — `unverified_items` frontmatter 기록은 폐기. 오류는 즉시 `/sowhat:revise` 경로 안내로 해소
 - **인간의 반박을 무조건 수용하지 않는다** — 논리적 타당성 재검증
-- **Warrant 공격 최우선** — Implicit Warrant는 모든 논증의 가장 큰 취약점
+- **CQ 응답 충분성 최우선** — 미충족 CQ는 scheme 오용의 신호이자 가장 큰 취약점
 - **scheme 기반 공격** — 일반적 논리 오류보다 scheme 특정 취약점이 더 날카롭다
 - **Steelman은 독립 생성** — 섹션의 Rebuttal을 먼저 보지 말고 반론 먼저 생성
 - **품질 우선** — 타협하지 않는다

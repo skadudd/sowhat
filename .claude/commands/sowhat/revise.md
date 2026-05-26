@@ -20,8 +20,8 @@ settled/discussing 섹션의 특정 필드를 대화로 수정하고, 영향받�
 ## When to Apply
 
 - challenge/debate에서 needs-revision으로 플래그된 섹션 수정
-- 사실 오류, Warrant 문제, Qualifier 과대주장 수정 시
-- 섹션의 특정 Toulmin 필드만 업데이트할 때
+- 사실 오류, CQ 미충족 문제, Confidence 과대주장 수정 시
+- 섹션의 특정 필드만 업데이트할 때
 
 ## Anti-triggers
 

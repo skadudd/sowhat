@@ -14,9 +14,9 @@ progress, challenge, settle 워크플로우가 이 문서를 참조한다.
 | 차원 | 가중치 | 만점 | 측정 대상 |
 |------|:------:|:----:|-----------|
 | **근거 강도** (Evidence) | 35% | 35 | Grounds 수 × Tier 가중치 × 유형 가중치 |
-| **논리 연결** (Logic) | 30% | 30 | Warrant 명확도 + Scheme CQ 대응 |
-| **반박 커버리지** (Defense) | 20% | 20 | Rebuttal 수 + Steelman 대응 |
-| **Qualifier 정합성** (Calibration) | 15% | 15 | 주장 수준과 근거 수준 일치도 |
+| **논리 연결** (Logic) | 30% | 30 | CQ 충족률 + CQ 답변 quality |
+| **반박 커버리지** (Defense) | 20% | 20 | 미충족 CQ 수 + Steelman 대응 |
+| **Confidence 정합성** (Calibration) | 15% | 15 | Confidence band와 근거 강도 일치도 |
 
 ### 근거 강도 (0-35)
 
@@ -44,43 +44,43 @@ evidence_score = min(35, evidence_raw)  # 35점 상한
 ### 논리 연결 (0-30)
 
 ```
-warrant_score (0-15):
-  Warrant 비어있음 / "Implicit" → 0
-  Warrant 존재 + Circular (Claim 반복) → 3
-  Warrant 존재 + Missing-link (중간 단계 누락) → 8
-  Warrant 존재 + 완전한 연결 → 15
-
-scheme_score (0-15):
+cq_completeness_score (0-15):
   scheme 미설정 → 0
   scheme 설정 + CQ 미대응 (2개 이상 미답변) → 5
   scheme 설정 + CQ 일부 대응 (1개 미답변) → 10
   scheme 설정 + CQ 전체 대응 → 15
 
-logic_score = warrant_score + scheme_score
+cq_quality_score (0-15):
+  scheme 미설정 또는 CQ 전혀 없음 → 0
+  CQ confidence 평균 ≤1 (추측 수준) → 3
+  CQ confidence 평균 2-2.9 (약한 근거) → 8
+  CQ confidence 평균 ≥3 (충분한 근거) → 15
+
+logic_score = cq_completeness_score + cq_quality_score
 ```
 
 ### 반박 커버리지 (0-20)
 
 ```
-rebuttal_count_score:
-  Rebuttal 없음 → 0
-  Rebuttal 1개 → 5
-  Rebuttal 2개 → 10
-  Rebuttal 3개+ → 12
+unmet_cq_score:
+  미충족 CQ(confidence ≤1) 3개+ → 0
+  미충족 CQ 2개 → 4
+  미충족 CQ 1개 → 8
+  미충족 CQ 0개 → 12
 
 steelman_score:
   최강 반론 미대응 → 0
   최강 반론 부분 대응 → 4
   최강 반론 완전 대응 → 8
 
-defense_score = rebuttal_count_score + steelman_score
+defense_score = unmet_cq_score + steelman_score
 ```
 
-### Qualifier 정합성 (0-15)
+### Confidence 정합성 (0-15)
 
 ```
-# challenge-algorithm.md Stage 6의 적정 범위와 비교
-IF qualifier IN 적정 범위:
+# challenge-algorithm.md Stage 6의 적정 범위와 비교 (calibration-guide.md 참조)
+IF confidence IN 적정 범위:
   calibration_score = 15
 ELIF overclaiming (1단계 차이):
   calibration_score = 8
@@ -159,7 +159,7 @@ final_tree_score = tree_score × 0.7 + weakest_link × 0.3
   ...
 
   ⚠️ 최약 고리: {weakest section} ({weakest_score}/100)
-    → {약한 이유: 근거 부족|Warrant 미흡|Rebuttal 부재|...}
+    → {약한 이유: 근거 부족|CQ 미응답|Confidence 과대설정|...}
 ```
 
 emoji 규칙:

@@ -1,6 +1,6 @@
 ---
 name: sowhat:expand
-description: 특정 섹션을 Toulmin 구조로 bottom-up 전개한다. "섹션 전개", "논거 작성", "섹션 채우기", "claim 작성", "grounds 추가", "논증 구체화" 등 개별 섹션의 주장과 근거를 핑퐁으로 발전시킬 때 사용. draft 또는 needs-revision 상태 섹션에 반드시 사용하라.
+description: 특정 섹션을 Walton scheme 기반으로 bottom-up 전개한다. "섹션 전개", "논거 작성", "섹션 채우기", "claim 작성", "grounds 추가", "논증 구체화" 등 개별 섹션의 주장과 근거를 핑퐁으로 발전시킬 때 사용. draft 또는 needs-revision 상태 섹션에 반드시 사용하라.
 argument-hint: "<section> [--force] [--no-advisor]"
 allowed-tools:
   - Read
@@ -14,13 +14,13 @@ license: MIT
 compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
-지정된 섹션을 Toulmin 9단계 구조(stasis→scheme→claim→grounds→warrant→backing→qualifier→rebuttal→scope)로 핑퐁 전개한다. Sub-Research Semi-Async 패턴으로 근거를 수집한다.
+지정된 섹션을 Walton scheme 기반 구조(stasis→scheme 선택→claim→grounds→CQ 응답→confidence→scope)로 핑퐁 전개한다. Sub-Research Semi-Async 패턴으로 근거를 수집한다.
 </objective>
 
 ## When to Apply
 
 - 기획/명세 섹션을 처음 전개하거나 needs-revision 상태에서 재작업할 때
-- Toulmin 구조(Claim/Grounds/Warrant/Qualifier/Rebuttal)를 구축할 때
+- Walton 구조(Claim/Grounds/scheme/CQ Responses/Confidence)를 구축할 때
 
 ## Anti-triggers
 

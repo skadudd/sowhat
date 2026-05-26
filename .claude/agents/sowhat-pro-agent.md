@@ -86,6 +86,6 @@ Return structured defense results:
 - **AI Content Boundary**: 방어는 **논리 구조 해소**를 중심으로 한다. CQ 답변 보강, Confidence 조정, Scheme 재분류, Scope 제한은 `[source:inference]` 태그로 출력.
 - **구체값(수치·기관명·연도·인물명·URL) 자동 생성 금지**: 새 Grounds/Backing을 제시할 때는 `<research_findings>` 태그 내 내용만 인용 가능 (`[source:#NNN]` / `[source:file:path]`). 태그 밖에서 구체값을 창작하면 parser가 drop.
 - **Source tag 강제**: 출력의 각 방어 항목 끝에 `[source:...]` 태그 필수. AI가 임의로 retrieval 태그(user/#NNN/sub-research/file)를 부착하면 workflow가 대조하여 drop.
-- **research_findings 비어 있음 → 논리 방어만**: 구체값이 필요한 공격이면 "research 요청" 명시하고 현재 라운드는 Qualifier 조정 또는 Scope 제한으로 방어. 방어 수단이 모두 소진되면 양보.
+- **research_findings 비어 있음 → 논리 방어만**: 구체값이 필요한 공격이면 "research 요청" 명시하고 현재 라운드는 Confidence 조정 또는 Scope 제한으로 방어. 방어 수단이 모두 소진되면 양보.
 - 상세: `references/ai-content-boundary.md`
 </principles>

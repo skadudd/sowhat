@@ -13,12 +13,12 @@ license: MIT
 compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
-지정 섹션의 Toulmin 구조 완성도를 자동 검증하고 조건 충족 시 status를 settled로 확정한다. GitHub Issue label도 settled로 업데이트한다.
+지정 섹션의 Walton 구조 완성도를 자동 검증하고 조건 충족 시 status를 settled로 확정한다. GitHub Issue label도 settled로 업데이트한다.
 </objective>
 
 ## When to Apply
 
-- Toulmin 구조가 완성된 섹션을 확정할 때
+- Walton 구조가 완성된 섹션을 확정할 때
 - expand 핑퐁이 완료되어 모든 필드가 채워진 상태
 
 ## Anti-triggers

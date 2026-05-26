@@ -249,8 +249,8 @@ session.md가 유실되었을 때 파일 상태 + git log로 최대한 복구한
 
 4. 섹션 파일 필드 점검:
    - Claim 있고 Grounds 없음 → expand Step 3 완료, Step 4 대기
-   - Claim + Grounds + Warrant 없음 → expand Step 4 완료, Step 5 대기
-   - 모든 Toulmin 필드 있고 status=discussing → settle 대기
+   - Claim + Grounds 있고 CQ Responses 없음 → expand Step 4 완료, Step 5 대기
+   - 모든 Walton 필드 있고 status=discussing → settle 대기
 
 5. challenge partial 결과 확인:
    - logs/challenge-*-partial.md 존재 → challenge 중단, 부분 결과 있음

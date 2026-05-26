@@ -132,10 +132,10 @@ status_transitions: ["(restore) → needs-revision"]
 - `thesis.key_arguments`: `00-thesis.md`의 Key Arguments 목록
 - `sections.{id}.claim`: 각 섹션 파일의 `## Claim` 내용
 - `sections.{id}.grounds_summary`: Grounds 항목 수 + 한줄 요약
-- `sections.{id}.warrant`: `## Warrant` 전문
-- `sections.{id}.qualifier`: `## Qualifier` 값
+- `sections.{id}.cq_responses_summary`: `## CQ Responses` 테이블 — CQ 수 + 미충족(confidence ≤1) 수
+- `sections.{id}.confidence`: `## Confidence` band 값
 - `sections.{id}.scheme`: `## Scheme` 값
-- `sections.{id}.rebuttal_count`: `## Rebuttal` 항목 수
+- `sections.{id}.unmet_cq_count`: CQ confidence ≤1 항목 수
 - `sections.{id}.open_questions_count`: `## Open Questions` 항목 수
 - `sections.{id}.status`: `planning/config.json`의 해당 섹션 status
 - `research_state`: `planning/config.json`의 research 필드에서 추출

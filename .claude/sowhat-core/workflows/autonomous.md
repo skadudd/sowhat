@@ -431,7 +431,7 @@ challenge 결과 확인 후 /sowhat:finalize-planning 또는 /sowhat:revise {섹
 - **리포트는 파일에, 대시보드만 응답에** — 상세 로그는 `logs/` 디렉터리에 저장
 - **Human checkpoint는 최소화** — critical 이슈에서만 멈춤, 나머지는 AI가 자율 판단
 - **품질 우선** — 속도보다 논증 품질. settle 검증은 생략하지 않음
-- **Warrant 공격 최우선** — mini-debate에서 Warrant 연결 논리를 우선 공격
+- **CQ 응답 최우선** — mini-debate에서 미충족 CQ를 우선 공격
 - **강도 60 이상 목표** — 60 미만이면 추가 debate로 보강 시도
 - **Cross-section regression 검증** — settle 시 기존 섹션과의 일관성 자동 확인
 - **진행 상황 항상 저장** — 중단 시에도 `logs/session.md`에 재개 정보 보존

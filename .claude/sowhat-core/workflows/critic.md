@@ -68,27 +68,26 @@ status_transitions: ["settled → needs-revision (inject 시)"]
 
 `sowhat-critic-agent`를 Task로 스폰하거나, 오케스트레이터가 직접 분석한다.
 
-### 차원 1: Toulmin 완전성
+### 차원 1: Walton Scheme 완전성
 
-대상 논증의 각 Toulmin 필드 상태를 평가한다:
+대상 논증의 Walton 구조 상태를 평가한다:
 
 | 필드 | 상태 | 의미 |
 |------|------|------|
 | Claim | `present` \| `implicit` \| `missing` | 핵심 주장이 명시적인가 |
 | Grounds | `present` \| `implicit` \| `missing` | 근거가 제시되었는가 |
-| Warrant | `present` \| `implicit` \| `missing` | 논리적 연결이 명시적인가 |
-| Backing | `present` \| `implicit` \| `missing` | Warrant 지지 근거가 있는가 |
-| Qualifier | `present` \| `implicit` \| `missing` | 확실성 수준이 명시되었는가 |
-| Rebuttal | `present` \| `implicit` \| `missing` | 반론 조건이 인정되었는가 |
+| scheme | `identified` \| `ambiguous` \| `missing` | 논증 scheme이 식별 가능한가 |
+| CQ Responses | `complete` \| `partial` \| `missing` | scheme별 CQs에 답변되었는가 |
+| Confidence | `explicit` \| `implicit` \| `missing` | 확실성 수준이 명시되었는가 |
 
 `implicit`이나 `missing`인 필드는 finding으로 기록한다.
 
-### 차원 2: Warrant 유효성
+### 차원 2: CQ 응답 품질
 
-challenge-algorithm.md의 Warrant 검증과 동일한 기준:
-- **Non-sequitur**: Grounds → Claim 논리적 연결 없음
-- **Missing link**: 중간 단계 생략 (A → C, B 없음)
-- **Circular**: Warrant가 Claim을 반복
+challenge-algorithm.md의 CQ 응답 충분성 검증과 동일한 기준:
+- **미충족 CQ**: confidence ≤1인 CQ가 scheme별 허용 상한 초과
+- **복합 scheme 누락**: 2개 이상 scheme이 필요한데 하나만 식별
+- **depth cap 위반**: CQ 답변이 새 주장을 생성하고 후속 CQ가 무한 후퇴
 
 ### 차원 3: 근거 품질
 
@@ -100,27 +99,27 @@ source-credibility.md의 T1-T4 기준으로 대상의 각 근거를 평가:
 
 데이터 현재성, 표본 크기, 방법론도 점검한다.
 
-### 차원 4: Qualifier 적정성
+### 차원 4: Confidence 적정성
 
-대상의 주장 확실성이 근거 강도에 비해 적절한가:
-- **Overclaiming**: 강한 주장 + 약한 근거 → finding
-- **적정**: 근거 강도에 맞는 확실성
-- Qualifier 척도: definitely(0) > usually(1) > in most cases(2) > presumably(3) > possibly(4)
+대상의 주장 확실성이 근거 강도와 CQ 충족도에 비해 적절한가:
+- **Overclaiming**: `virtually certain`/`very likely` + 미충족 CQ 또는 약한 근거 → finding
+- **적정**: CQ 전체 충족 + 근거 강도에 맞는 Tetlock band
+- Confidence 척도: virtually certain(95%+) > very likely(80-95%) > likely(60-80%) > uncertain(40-60%) > unlikely(20-40%)
 
-### 차원 5: Rebuttal 커버리지
+### 차원 5: CQ 미응답 커버리지
 
-대상이 놓치고 있는 반론(blind spot)을 탐색:
-- 대상의 Claim이 거짓이 되는 조건은?
-- 언급되지 않은 반례는?
+대상이 놓치고 있는 critical question(blind spot)을 탐색:
+- 대상의 scheme에서 답변되지 않은 CQ가 있는가?
+- Claim이 거짓이 되는 조건(미응답 CQ)은?
 - Scope 외부에서 발생하는 문제는?
 
 ## Step 3: 심각도 분류
 
 각 finding에 심각도를 부여한다:
 
-- **critical**: 논증 구조적 실패 — Warrant 부재, 순환 논증, 근거 없는 핵심 주장
-- **major**: 중요한 약점 — Qualifier 과대주장, T4 근거 의존, 핵심 반론 미대응
-- **minor**: 개선 가능 — 암묵적 Warrant, 오래된 데이터, 사소한 scope 문제
+- **critical**: 논증 구조적 실패 — scheme 미식별, CQ 전혀 미응답, 근거 없는 핵심 주장
+- **major**: 중요한 약점 — Confidence 과대설정, T4 근거 의존, 핵심 CQ 미응답
+- **minor**: 개선 가능 — CQ 답변 quality 낮음, 오래된 데이터, 사소한 scope 문제
 
 ## Step 4: CRITIQUE-REPORT.md 생성
 
@@ -149,26 +148,26 @@ minor: {N}
 |-------|---------|
 | Claim | {target_claim} |
 | Grounds | {target_grounds} |
-| Warrant | {target_warrant} |
-| Qualifier | {target_qualifier} |
-| Rebuttal | {target_rebuttal} |
+| scheme | {identified scheme(s)} |
+| CQ Responses | {CQ 충족 현황 요약} |
+| Confidence | {target_confidence} |
 
 ## 비평 결과
 
-### 1. Toulmin 완전성
+### 1. Walton Scheme 완전성
 {각 필드 상태 + finding}
 
-### 2. Warrant 유효성
-{Non-sequitur/Missing link/Circular 분석}
+### 2. CQ 응답 품질
+{미충족 CQ 목록 / 복합 scheme 누락 / depth cap 위반}
 
 ### 3. 근거 품질
 {각 근거 T1-T4 평가}
 
-### 4. Qualifier 적정성
-{Overclaiming 여부}
+### 4. Confidence 적정성
+{Overclaiming 여부 + Tetlock band 평가}
 
-### 5. Rebuttal 커버리지
-{blind spot 목록}
+### 5. CQ 미응답 커버리지
+{blind spot CQ 목록}
 
 ## 약점 요약
 

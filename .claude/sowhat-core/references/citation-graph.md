@@ -22,7 +22,7 @@ citations:
 
 형식: `{section_id}.{field}[{index}]`
 - `section_id`: 섹션 파일명에서 확장자를 제거한 식별자 (예: `01-problem`)
-- `field`: Toulmin 필드명 (`Grounds`, `Backing`, `Warrant`, `Qualifier`, `Rebuttal`)
+- `field`: Walton 필드명 (`Grounds`, `CQ Responses`, `Confidence`)
 - `index`: 해당 필드 내 항목 인덱스 (0-based)
 
 ### 섹션 파일 (`sections/*.md`)

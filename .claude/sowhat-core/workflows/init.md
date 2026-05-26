@@ -230,9 +230,9 @@ URL fetch 실패 시:
   [3] idea 모드로 전환
 ```
 
-### 1.5. 대상 콘텐츠 Toulmin 분석 (content-critique 모드 전용)
+### 1.5. 대상 콘텐츠 Walton 분석 (content-critique 모드 전용)
 
-가져온 콘텐츠를 Toulmin 구조로 분석한다. Claude가 분석하고 인간이 확인한다:
+가져온 콘텐츠를 Walton scheme 기반으로 분석한다. Claude가 분석하고 인간이 확인한다:
 
 ```
 ----------------------------------------

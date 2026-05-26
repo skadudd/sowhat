@@ -105,13 +105,13 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 - 모든 기획 섹션의 Acceptance Criteria 합산
 - 중복 제거 및 구조화
 
-각 파일의 형식 (Toulmin 구조 포함):
+각 파일의 형식 (Walton 구조 포함):
 
 ```markdown
 ---
 status: draft
 scheme:
-qualifier:
+confidence:
 version: 1
 section: {N}
 title: {section-name}
@@ -129,16 +129,13 @@ updated: {current_datetime}
 ### {근거 1}
 {기획에서 추출한 내용}
 
-## Warrant (논거 연결)
-> {Claim과 Grounds를 연결하는 원칙 — 초안 또는 비워둠}
+## CQ Responses
 
-## Backing (Warrant 강화)
->
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| CQ1 | [writer: scheme 선택 후 CQ 목록 참조] | | |
 
-## Qualifier
->
-
-## Rebuttal (반론 대응)
+## Confidence
 >
 
 ## Scope
@@ -256,4 +253,4 @@ finalize-planning 완료 — 기획 레이어 → 명세 레이어 전환. 6개 
 - **기획 레이어 완성 전 명세 레이어 진입 불가** — 게이트가 강제한다
 - **challenge 자동 실행은 생략 불가**
 - **명세 초안은 기획에서 추출** — Claude가 새로운 내용을 만들지 않는다
-- **Toulmin 필드는 비워두되 구조는 미리 만든다** — spec 핑퐁에서 채워진다
+- **Walton 필드는 비워두되 구조는 미리 만든다** — spec 핑퐁에서 채워진다

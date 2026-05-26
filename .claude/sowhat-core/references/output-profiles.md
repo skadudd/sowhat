@@ -361,7 +361,7 @@ export/
 
 ### Level 4: 학술형 (Academic)
 
-- 전체 Toulmin 구조 명시적 기술
+- 전체 Walton 구조 명시적 기술
 - 모든 출처 정식 인용 (APA/MLA)
 - 방법론 설명
 - 한계점 별도 섹션

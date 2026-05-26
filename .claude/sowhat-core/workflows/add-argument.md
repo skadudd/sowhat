@@ -19,7 +19,7 @@ thesis에 새 Key Argument를 추가하고, 대응 섹션 파일·config·GitHub
 
 워크플로우: **인자 파싱 → 사전 준비 → 현재 구조 출력 → KA 입력 → 검증 → 섹션 생성 → thesis 업데이트 → config 업데이트 → GitHub Issue → Git Commit → Auto-snapshot → 완료 안내**
 
-> **AI Content Boundary**: 이 워크플로우의 AI 생성물은 `references/ai-content-boundary.md` 원칙을 따른다 — 구조는 AI 자유(`[source:inference]` / `[source:placeholder]`), 구체값(수치·기관명·연도·URL)은 retrieval만(`[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]`). KA 예시는 구조적 명제(`"{주체}는 {속성} 때문에 {결과}다"`), 섹션 초안 Toulmin 필드는 비움 — /sowhat:expand로 채움.
+> **AI Content Boundary**: 이 워크플로우의 AI 생성물은 `references/ai-content-boundary.md` 원칙을 따른다 — 구조는 AI 자유(`[source:inference]` / `[source:placeholder]`), 구체값(수치·기관명·연도·URL)은 retrieval만(`[source:user]` / `[source:#NNN]` / `[source:sub-research]` / `[source:file:*]`). KA 예시는 구조적 명제(`"{주체}는 {속성} 때문에 {결과}다"`), 섹션 초안 Walton 필드는 비움 — /sowhat:expand로 채움.
 
 ---
 
@@ -173,7 +173,7 @@ thesis에 새 Key Argument를 추가하고, 대응 섹션 파일·config·GitHub
 thesis_argument: "{new KA text}"
 status: draft
 scheme: ""
-qualifier: ""
+confidence: ""
 version: 1
 created: {current_datetime}
 updated: {current_datetime}
@@ -189,17 +189,15 @@ updated: {current_datetime}
 
 
 
-## Warrant
+## CQ Responses
 
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| CQ1 | [writer: scheme 선택 후 CQ 목록 참조] | | |
 
+## Confidence
 
-## Backing
-
-
-
-## Rebuttal
-
-
+[writer: Tetlock band 선택 — calibration-guide.md 참조]
 
 ## Open Questions
 

@@ -1,6 +1,6 @@
 ---
 name: sowhat:inject
-description: 외부 자료를 특정 섹션의 특정 Toulmin 필드에 직접 주입한다. "증거 추가", "자료 주입", "inject", "URL 넣기", "파일 넣기", "폴더 넣기", "데이터 추가", "근거 추가", "backing 추가" 등 사용자가 가진 자료를 논증에 직접 반영할 때 사용.
+description: 외부 자료를 특정 섹션의 Walton 필드에 직접 주입한다. "증거 추가", "자료 주입", "inject", "URL 넣기", "파일 넣기", "폴더 넣기", "데이터 추가", "근거 추가", "CQ 답변 추가" 등 사용자가 가진 자료를 논증에 직접 반영할 때 사용.
 argument-hint: "<section> [<url>|file:<path>|dir:<path> [--glob <pattern>]]"
 allowed-tools:
   - Read
@@ -14,12 +14,12 @@ license: MIT
 compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
-외부 자료(URL, 로컬 파일, 폴더, 직접 텍스트)를 분석하고, Tier 판정 후, 사용자가 지정한 섹션의 Toulmin 필드에 직접 주입한다. 폴더 모드(dir:)는 내부 파일을 일괄 분석하여 통합 요약 후 주입한다. 파인딩 파일을 생성하여 출처를 추적한다.
+외부 자료(URL, 로컬 파일, 폴더, 직접 텍스트)를 분석하고, Tier 판정 후, 사용자가 지정한 섹션의 Walton 필드(Grounds/CQ Responses)에 직접 주입한다. 폴더 모드(dir:)는 내부 파일을 일괄 분석하여 통합 요약 후 주입한다. 파인딩 파일을 생성하여 출처를 추적한다.
 </objective>
 
 ## When to Apply
 
-- research finding을 섹션의 Grounds/Backing에 주입할 때
+- research finding을 섹션의 Grounds/CQ Responses에 주입할 때
 - critic 분석 결과를 내 논증에 통합할 때
 
 ## Anti-triggers

@@ -101,7 +101,7 @@ draft/finalize/finalize-planning 실행 시 session.md의 `preview_event` 필드
 | `last_command` | 마지막 실행 커맨드 |
 | `target_section` | 작업 대상 섹션 |
 | `stopped_at` | 중단 지점 (step name 또는 "complete") |
-| `completed_fields` | 이 세션에서 완료된 Toulmin 필드 목록 |
+| `completed_fields` | 이 세션에서 완료된 섹션 필드 목록 |
 | `pending_decisions` | 미결정 사항 (Decision ID + 설명) |
 | `active_research` | 미리뷰 대기 중인 research finding 파일 목록 |
 | `open_questions_count` | 현재 섹션의 미해결 Open Questions 수 |

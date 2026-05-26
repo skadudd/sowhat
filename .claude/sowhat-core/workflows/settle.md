@@ -50,12 +50,11 @@ status_transitions: ["discussing → settled"]
 1. **thesis_argument 필드** — 존재하는가?
 2. **Claim ↔ thesis Answer 정합성** — Claim이 thesis Answer를 지지하는가?
 3. **Grounds 존재 여부** — 최소 1개의 근거가 있어야 함
-4. **Warrant 존재 및 품질** — Warrant가 존재하는가? `"Implicit"` 또는 비어있으면 **경고** (거부는 아니지만 표시)
-5. **Qualifier 설정 여부** — 비어있으면 거부
-6. **Rebuttal 처리 여부** — 반론이 addressed되었거나 Open Question으로 명시되어 있는가?
+4. **Confidence 설정 여부** — 비어있으면 거부
+5. **CQ Responses 완전성** — scheme이 설정된 경우 CQ 응답 테이블이 존재해야 함. 없으면 거부.
 7. **Open Questions** — 미해결 항목이 있으면 거부
 8. **scheme 필드** — 설정되어 있어야 함
-9. **Filler stub detection** — Toulmin 필드가 형식만 채워져 있고 실질 내용이 없는 "빈 껍데기"를 탐지. 거부.
+8. **Filler stub detection** — 섹션 필드가 형식만 채워져 있고 실질 내용이 없는 "빈 껍데기"를 탐지. 거부.
 10. **Source tag 완전성** — `.claude/sowhat-core/bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
 11. **Cross-section regression** — 이 섹션을 settle함으로써 기존 settled 섹션과의 논증 일관성이 깨지는지 검증. 충돌 시 경고.
 12. **Confidence 게이트** — `confidence` 필드 기반 출처 수준 검증 (`references/calibration-guide.md` 참조):
@@ -80,10 +79,9 @@ AI 구조 자동 생성에서도 여전히 발생 가능한 **filler stub** (형
 | Confidence | 미충족 CQ 다수인데 최고 confidence 설정 | CQ 미응답 3개인데 `virtually certain` |
 
 **탐지 방법:**
-1. 각 Toulmin 필드를 불릿 단위로 분리
+1. 각 섹션 필드를 불릿 단위로 분리
 2. Grounds: source tag 분포 확인 — `placeholder`/`inference`만 있고 retrieval 태그(user/#NNN/sub-research/file:*)가 0개면 filler
-3. Warrant: Claim 키워드 80% 이상 반복 → 동어반복 stub
-4. Rebuttal: 구체적 반론 명제 없음 → stub
+3. CQ Responses: 모든 답변이 `[source:placeholder]`/`[source:inference]`만 있으면 stub
 
 **검증 결과:**
 - **Filler stub 발견** → `❌ Stub 탐지: {필드} — {이유}` → settle 거부

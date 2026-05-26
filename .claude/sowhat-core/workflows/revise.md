@@ -300,7 +300,7 @@ git commit -m "revise({section}): {수정된 field} 변경 [{classification}]"
 
 ### 검증 대상
 
-1. **수정된 섹션** — Toulmin 구조 전체 재검증 (7단계 중 관련 단계)
+1. **수정된 섹션** — Walton 구조 전체 재검증 (7단계 중 관련 단계)
 2. **오염 섹션** — Claim → Grounds 흐름에서 이 섹션 의존 여부 확인
 3. **thesis 정합성** — 수정 후에도 Key Argument → Answer 연결이 유효한가
 

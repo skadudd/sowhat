@@ -173,12 +173,11 @@ Confidence band별 최소 Tier 요구 (v3.0.0 — Tetlock band):
 | very likely (80-95%) | T1, T2 | T2 1개 + T3 보조 | ❌ |
 | likely (60-80%) | T1, T2 | T3 2개 교차검증 | ❌ |
 | uncertain (40-60%) | T1, T2, T3 | T3 단독 가능 | ❌ |
-| unlikely / very unlikely (<40%) | 모든 Tier | 모든 Tier | Backing으로만 |
+| unlikely / very unlikely (<40%) | 모든 Tier | 모든 Tier | CQ 보강으로만 |
 ```
 
-### Backing 사용 규칙
-- 모든 Tier 사용 가능
-- T4는 Backing에서만 허용 (보조 자료, 일화, 사례)
+### T4 출처 활용 규칙
+- T4는 CQ 보강 목적으로만 허용 (보조 자료, 일화, 사례) — Grounds 단독 사용 금지
 - T4 출처임을 명시해야 함: `(비검증 출처)`
 
 ### 교차검증 규칙
@@ -294,8 +293,8 @@ stale_reason: null
 ```
 T4 출처를 accept할 때:
   ⚠️ 이 파인딩은 T4 (비검증 출처)입니다.
-  Grounds에 단독 사용할 수 없으며, Backing으로만 활용됩니다.
-  [1] Backing으로 accept
+  Grounds에 단독 사용할 수 없으며, CQ 보강으로만 활용됩니다.
+  [1] CQ 보강으로 accept
   [2] reject
 ```
 

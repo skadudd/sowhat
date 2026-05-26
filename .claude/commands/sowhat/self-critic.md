@@ -11,7 +11,7 @@ license: MIT
 compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
-지정된 섹션의 Toulmin 논증 구조를 5차원(완전성, Warrant 유효성, 근거 품질, Qualifier 적정성, Rebuttal 커버리지)으로 비평하고 개선 방향을 제시한다.
+지정된 섹션의 Walton 논증 구조를 5차원(완전성, CQ 응답 품질, 근거 품질, Confidence 적정성, CQ 미응답 커버리지)으로 비평하고 개선 방향을 제시한다.
 </objective>
 
 ## When to Apply

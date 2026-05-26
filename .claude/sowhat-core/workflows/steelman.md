@@ -60,8 +60,8 @@ retrieval 없이 생성된 steelman은 **논리 기반 stress test**로서 유�
 ## 스텝 1: Thesis Answer 및 Key Arguments 로드
 
 1. `00-thesis.md`에서 Answer와 모든 Key Arguments를 추출
-2. 각 섹션 파일에서 Toulmin 필드 전체를 로드:
-   - Claim, Grounds, Warrant, Backing, Qualifier, Rebuttal, Scheme
+2. 각 섹션 파일에서 Walton 필드 전체를 로드:
+   - Claim, Grounds, scheme, CQ Responses, Confidence
 
 ---
 
@@ -151,12 +151,12 @@ FOR EACH section:
      - strength-scoring.md 기준으로 양측 근거 강도 계산
      - 어느 쪽이 더 강한 근거를 가지고 있는가?
 
-  2. Warrant 방어력 비교:
-     - challenge-algorithm.md Stage 3 기준으로 양측 Warrant 유효성 판정
-     - 어느 쪽의 논리 연결이 더 견고한가?
+  2. CQ 응답 방어력 비교:
+     - challenge-algorithm.md Stage 3 기준으로 양측 CQ 응답 충분성 판정
+     - 어느 쪽의 CQ 응답이 더 견고한가?
 
   3. 취약점 판정:
-     - 🔴 반론이 더 강함: counter가 Grounds + Warrant 모두에서 우위
+     - 🔴 반론이 더 강함: counter가 Grounds + CQ 응답 모두에서 우위
      - ⚠️ 대등: 양측 비슷한 수준, 추가 근거 필요
      - ✅ 원본이 더 강함: 원본이 Grounds 또는 Warrant에서 명확히 우위
 ```
@@ -200,9 +200,9 @@ FOR EACH section:
 
 ---
 
-## Rebuttal 보강 권고
+## CQ 미응답 보강 권고
 
-{각 취약 섹션에 대한 구체적 Rebuttal 보강 방향}
+{각 취약 섹션에 대한 구체적 CQ 답변 보강 방향 — 미충족 CQ(confidence ≤1) 항목 중심}
 
 ---
 

@@ -137,23 +137,21 @@ Part N: 종합 + 결론 + CTA
 |------|------|------|--------|
 | 1 | **주장 중심** (Claim-heavy) | Claim만, Grounds 최소 인용 | 소셜미디어, 슬라이드, 요약 |
 | 2 | **균형형** (Balanced) | Claim + 핵심 Grounds 1-2개 | 블로그, 뉴스레터, 임원 보고 |
-| 3 | **근거 상세** (Evidence-rich) | Claim + 전체 Grounds + Warrant | 제안서, 의사결정 문서 |
-| 4 | **학술형** (Academic) | 전체 Toulmin 구조 + 출처 명시 + 방법론 | 논문, 연구 기획서, 백서 |
+| 3 | **근거 상세** (Evidence-rich) | Claim + 전체 Grounds + CQ 응답 요약 | 제안서, 의사결정 문서 |
+| 4 | **학술형** (Academic) | 전체 Walton 구조 + 출처 명시 + 방법론 | 논문, 연구 기획서, 백서 |
 
 ---
 
-## Toulmin ↔ Minto 통합
+## Walton ↔ Minto 통합
 
 sowhat에서 두 프레임워크는 상호보완적으로 작동한다:
 
-| Toulmin (논증 품질) | Minto (전달 구조) | 역할 |
+| Walton (논증 품질) | Minto (전달 구조) | 역할 |
 |-------------------|-----------------|------|
 | Claim | Key Argument heading | 무엇을 주장하는가 |
 | Grounds | Evidence paragraphs | 왜 믿어야 하는가 |
-| Warrant | Transition/Connection | 어떻게 연결되는가 |
-| Backing | Footnote/Appendix | 깊이 파고들 때 |
-| Qualifier | Hedging language | 얼마나 확실한가 |
-| Rebuttal | Counter-response section | 반론은 어떻게 되는가 |
+| CQ Responses | Transition/Connection | 어떻게 연결되는가 (scheme별) |
+| Confidence | Hedging language | 얼마나 확실한가 |
 | Answer (Thesis) | Pyramid apex | 핵심 메시지 |
 | SCQ (Thesis) | SCQA opening | 도입부 구조 |
 

@@ -15,7 +15,7 @@ continuation:
 status_transitions: ["settled → needs-revision (주입 시)"]
 -->
 
-이 커맨드는 외부 자료(URL, 파일, 텍스트)를 특정 섹션의 특정 Toulmin 필드에 직접 주입한다.
+이 커맨드는 외부 자료(URL, 파일, 텍스트)를 특정 섹션의 특정 Walton 필드에 직접 주입한다.
 research와 달리 "어떤 섹션의 어떤 필드"에 넣을지 사용자가 지정한다.
 
 ## 인자 파싱
@@ -38,7 +38,7 @@ section이 없으면 → `❌ 섹션을 지정하세요. 예: /sowhat:inject 02-
 
 1. `planning/config.json` 로드
 2. `00-thesis.md` 로드
-3. 대상 섹션 파일 로드 → 현재 Toulmin 필드 상태 파악
+3. 대상 섹션 파일 로드 → 현재 섹션 필드 상태 파악
 4. 섹션 status 확인:
    - `invalidated` → `❌ invalidated 상태입니다. 상위 논거가 먼저 revision되어야 합니다.`
    - `settled` → 경고: `⚠️ settled 상태입니다. inject하면 needs-revision으로 강등됩니다. 계속? [Y/N]`
@@ -125,7 +125,7 @@ section이 없으면 → `❌ 섹션을 지정하세요. 예: /sowhat:inject 02-
 
 ## Step 2: 필드 매핑 제안
 
-분석된 내용을 Toulmin 필드에 매핑 제안한다:
+분석된 내용을 Walton 필드에 매핑 제안한다:
 
 ```
 ----------------------------------------
@@ -137,22 +137,16 @@ section이 없으면 → `❌ 섹션을 지정하세요. 예: /sowhat:inject 02-
     "{추출된 데이터/사실 요약}"
     {Tier가 T4면: ⚠️ T4 출처 — Grounds 단독 사용 불가}
 
-[2] Backing에 추가
-    "{추출된 보강 자료 요약}"
+[2] CQ 답변에 추가
+    "{특정 CQ에 대한 답변으로 활용}"
 
-[3] Rebuttal 대응에 추가
-    "{반박 조건에 대한 대응으로 활용}"
-
-[4] Warrant 보강
-    "{논리적 연결을 강화하는 근거}"
-
-[5] 직접 지정 — 필드와 내용을 직접 입력
+[3] 직접 지정 — 필드와 내용을 직접 입력
 
 **현재 섹션 상태:**
   Claim: {현재 Claim 요약}
   Grounds: {현재 Grounds 수}개
-  Warrant: {있음|Implicit|없음}
-  Qualifier: {현재 Qualifier}
+  CQ 충족: {충족 수}/{전체 CQ 수}개
+  Confidence: {현재 Confidence band}
 ----------------------------------------
 ```
 
@@ -160,9 +154,9 @@ section이 없으면 → `❌ 섹션을 지정하세요. 예: /sowhat:inject 02-
 
 T4 출처인 경우 [1] Grounds 옵션에 잠금:
 ```
-[1] Grounds에 추가  🔒 T4 출처 — Backing으로만 사용 가능
+[1] Grounds에 추가  🔒 T4 출처 — CQ 보강으로만 사용 가능
 ```
-[1] 선택 시: `❌ T4 출처는 Grounds에 단독 사용할 수 없습니다. [2] Backing을 선택하세요.`
+[1] 선택 시: `❌ T4 출처는 Grounds에 단독 사용할 수 없습니다. [2] CQ 답변을 선택하세요.`
 
 ---
 
@@ -177,25 +171,13 @@ T4 출처인 경우 [1] Grounds 옵션에 잠금:
 - {새 근거} — 출처: {URL/파일} (📊 {Tier})
 ```
 
-### Backing 주입
+### CQ 주입
 ```markdown
-## Backing
-{기존 Backing}
-- {새 보강 자료} — 출처: {URL/파일} (📊 {Tier})
-```
+## CQ Responses
 
-### Rebuttal 주입
-```markdown
-## Rebuttal
-{기존 Rebuttal}
-- 대응: {반박 대응 내용} — 근거: {URL/파일} (📊 {Tier})
-```
-
-### Warrant 주입
-```markdown
-## Warrant
-{기존 또는 강화된 Warrant}
-  ↳ 보강: {Warrant 지지 자료} — 출처: {URL/파일}
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| {CQ번호} | {기존 Question} | {새 답변 — 출처: URL/파일 (📊 {Tier})} | {score} |
 ```
 
 ---
@@ -241,8 +223,8 @@ citations:
 주입 후 즉시 간이 검증을 수행한다:
 
 1. **Claim-Grounds 연결**: 새 Ground가 Claim을 지지하는가?
-2. **Warrant 유효성**: 새 Ground 추가로 Warrant가 여전히 유효한가?
-3. **Qualifier 적정성**: 근거가 강화되었으면 Qualifier 상향 제안 가능
+2. **CQ 충족성**: 새 Ground 추가로 관련 CQ를 충족할 수 있는가?
+3. **Confidence 적정성**: 근거가 강화되었으면 Confidence 상향 제안 가능
 
 ```
 ----------------------------------------

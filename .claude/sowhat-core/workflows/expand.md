@@ -960,10 +960,10 @@ expand 핑퐁에서 사용자가 내린 모든 결정에 고유 ID를 부여한�
 - **challenge**: 공격 리포트에서 관련 Decision ID를 명시하여 "어떤 결정이 취약점의 원인인가" 추적
 
   ```
-  [challenge Stage 3: Warrant 유효성]
-  ⚠️ D-02-005 (Warrant 선택) 검토 결과:
-    Warrant가 Grounds→Claim을 충분히 연결하지 못함
-    Decision context: "사용자가 [5] Implicit 선택"
+  [challenge Stage 3: CQ 응답 충분성]
+  ⚠️ D-02-005 (CQ 응답) 검토 결과:
+    CQ 미충족으로 Grounds→Claim 연결 불충분
+    Decision context: "사용자가 CQ 미응답 선택"
   ```
 
 ---

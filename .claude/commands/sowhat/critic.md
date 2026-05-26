@@ -15,7 +15,7 @@ license: MIT
 compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
-대상 콘텐츠의 Toulmin 논증 구조를 5차원(완전성/Warrant 유효성/근거 품질/Qualifier 적정성/Rebuttal 커버리지)으로 비평하고, critic/CRITIQUE-REPORT.md를 생성한 뒤, 사용자 섹션에 약점 주입을 제안한다.
+대상 콘텐츠의 Walton 논증 구조를 5차원(완전성/CQ 응답 품질/근거 품질/Confidence 적정성/CQ 미응답 커버리지)으로 비평하고, critic/CRITIQUE-REPORT.md를 생성한 뒤, 사용자 섹션에 약점 주입을 제안한다.
 </objective>
 
 ## When to Apply
@@ -34,7 +34,7 @@ compatibility: "Claude Code >=2.1.3"
 ## Methodology
 
 1. 대상 URL/콘텐츠 로드
-2. Toulmin 구조 추출
+2. Walton 구조 추출
 3. sowhat-critic-agent 스폰 (5차원 분석)
 4. 약점 리포트 출력
 5. 주입 가능 섹션 안내
