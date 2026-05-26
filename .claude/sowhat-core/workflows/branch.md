@@ -19,7 +19,7 @@ status_transitions: []
 
 ## 핵심 개념
 
-- **Branch**: 섹션의 Toulmin 콘텐츠를 복제한 대안적 논증 경로
+- **Branch**: 섹션의 Walton 논증 구조를 복제한 대안적 논증 경로
 - **저장 위치**: `branches/{section}/{branch-name}/` 디렉터리
 - **Branch 파일**: 섹션 `.md` 파일의 복사본 (대안 콘텐츠 포함)
 - **Branch 메타데이터**: `branches/{section}/branches.json`

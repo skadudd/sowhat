@@ -34,7 +34,7 @@ compatibility: "Claude Code >=2.1.3"
 ## Methodology
 
 1. 대상 섹션 및 상태 확인
-2. Toulmin 완전성 자동 검증 (Claim/Grounds/Warrant/Qualifier/Rebuttal/scheme)
+2. Walton 완전성 자동 검증 (Claim/Grounds/scheme/CQ Responses/Confidence)
 3. Filler stub 탐지
 4. Source tag parser 실행
 5. Cross-section regression 확인

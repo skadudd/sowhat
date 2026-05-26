@@ -15,7 +15,7 @@ continuation:
 status_transitions: ["settled → needs-revision", "discussing → needs-revision"]
 -->
 
-이 커맨드는 문서 트리를 8단계(Stage 0-7) 검증으로 공격한다. Stage 0은 사실 검증(Factual Verification), Stage 1-7은 논리 검증(Toulmin Model, Walton Argument Schemes, Pragma-Dialectics)을 적용한다. **두 가지 모드**를 지원한다:
+이 커맨드는 문서 트리를 8단계(Stage 0-7) 검증으로 공격한다. Stage 0은 사실 검증(Factual Verification), Stage 1-7은 논리 검증(Walton Argument Schemes 기반)을 적용한다. **두 가지 모드**를 지원한다:
 
 - **전체 모드 (full mode)**: `$ARGUMENTS`가 비어있거나 `--force`만 포함 → 전체 트리를 대상으로 공격
 - **부분 모드 (section mode)**: `$ARGUMENTS`에 섹션명/번호 포함 (예: `02-solution`, `03-market`) → 해당 섹션만 집중 공격
@@ -513,15 +513,15 @@ date -u +"%Y%m%d-%H%M"
 
 각 공격에 대해 인간이 응답한다.
 
-### 반박하는 경우 (Pragma-Dialectics: defense move)
+### 반박하는 경우 (defense move)
 
 인간의 반박이 **논리적으로 타당한지** Claude가 재검증한다.
 
 반박 수용 조건 (둘 다 충족해야 수용):
-1. 반박이 공격이 지적한 Pragma-Dialectics 규칙 위반을 명시적으로 복원하는가?
-   - 반박은 "Rule {N} — {위반 내용}을 다음 근거로 복원한다: {근거}" 형식으로 제시해야 함
-   - 규칙 명시 없이 일반적 반론만 하는 경우 → 수용 불가
-2. 반박이 새로운 Grounds 또는 Warrant를 제시하는가?
+1. 반박이 공격이 지적한 CQ 미충족을 명시적으로 해소하는가?
+   - 반박은 "CQ {N} — {미충족 내용}을 다음 근거로 해소한다: {근거}" 형식으로 제시해야 함
+   - CQ 명시 없이 일반적 반론만 하는 경우 → 수용 불가
+2. 반박이 새로운 Grounds 또는 CQ 응답을 제시하는가?
    - Claim 재주장, 단순 부정, 주제 전환 → 수용 불가
 
 판정 결과:
@@ -531,7 +531,7 @@ date -u +"%Y%m%d-%H%M"
 
 **인간의 반박을 무조건 수용하지 않는다.** 품질이 최우선이다.
 
-### 수용하는 경우 (Pragma-Dialectics: concession move)
+### 수용하는 경우 (concession move)
 
 역전파 전 반드시 확인한다:
 

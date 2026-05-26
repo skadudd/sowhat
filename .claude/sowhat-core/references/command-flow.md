@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart TD
-    INIT["/sowhat:init<br/>Thesis 확정"] --> EXPAND["/sowhat:expand {section}<br/>Toulmin 전개"]
+    INIT["/sowhat:init<br/>Thesis 확정"] --> EXPAND["/sowhat:expand {section}<br/>Walton 전개"]
     EXPAND --> SETTLE["/sowhat:settle {section}<br/>섹션 완료 선언"]
     SETTLE --> |"모든 섹션 settled?"| CHECK{전체 settled?}
     CHECK --> |"아니오"| EXPAND

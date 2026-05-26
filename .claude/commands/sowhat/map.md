@@ -12,7 +12,7 @@ license: MIT
 compatibility: "Claude Code >=2.1.3"
 ---
 <objective>
-config.json과 모든 섹션 파일을 읽어 논증 트리의 Mermaid 다이어그램을 인라인으로 즉시 출력한다. --export 시 export/ARGUMENT-MAP.md로 Toulmin 전체 구조 스냅샷을 정식 산출물로 생성한다.
+config.json과 모든 섹션 파일을 읽어 논증 트리의 Mermaid 다이어그램을 인라인으로 즉시 출력한다. --export 시 export/ARGUMENT-MAP.md로 Walton 전체 구조 스냅샷을 정식 산출물로 생성한다.
 </objective>
 
 ## When to Apply

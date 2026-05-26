@@ -24,7 +24,7 @@ You have NO knowledge of Con or Pro agents' arguments. Research independently ba
 <input_format>
 You receive a prompt containing:
 - `<thesis>`: The project thesis
-- `<section>`: The section's Toulmin structure, especially Open Questions
+- `<section>`: The section's Walton structure, especially Open Questions
 - `<search_focus>`: Specific aspects to research (from orchestrator)
 </input_format>
 

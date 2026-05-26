@@ -25,7 +25,7 @@ Mermaid나 외부 도구 없이, 인덴트 기반 텍스트로 논리 구조를 
 | 인자 | 의미 |
 |------|------|
 | 인자 없음 | 전체 논증 구조 (Global) |
-| `{section}` (번호 또는 이름) | 해당 섹션 Toulmin 상세 (Local) |
+| `{section}` (번호 또는 이름) | 해당 섹션 Walton 상세 (Local) |
 | `--export` | `export/ARGUMENT-MAP.md`로 정식 스냅샷 저장 |
 
 ---

@@ -336,7 +336,7 @@ spec 05-func-req > 기능 3/8
 
 **모든 출력은 한국어로만 작성한다.** 일본어, 중국어, 기타 언어로 전환하지 않는다.
 
-기술 용어(Toulmin, Warrant, Claim 등)와 고유명사(LinkedIn, GitHub 등)는 영어 원문 유지.
+기술 용어(Walton, scheme, CQ, Claim, Grounds, Confidence 등)와 고유명사(LinkedIn, GitHub 등)는 영어 원문 유지.
 그 외 모든 설명, 판정, 로그, 커밋 메시지는 한국어.
 
 ```

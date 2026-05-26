@@ -3,7 +3,7 @@
 /**
  * source-tag-parser — cycle 7 Plan G implementation
  *
- * Toulmin 섹션 파일의 불릿마다 [source:...] 태그의 존재와 유효성을 검증한다.
+ * 섹션 파일의 불릿마다 [source:...] 태그의 존재와 유효성을 검증한다.
  * cycle 7 의 "AI가 구체값을 자동 생성할 경로 제거"를 코드 수준에서 보증한다.
  *
  * Spec: .claude/sowhat-core/references/ai-content-boundary.md
@@ -124,7 +124,7 @@ function parseFile(filePath) {
 }
 
 /**
- * Finds Toulmin field sections (## Grounds, ## Backing, etc.) and collects
+ * Finds section field blocks (## Grounds, ## CQ Responses, etc.) and collects
  * bullets under each. Returns: [{ field, bullets: [{text, lineNumber}] }]
  */
 function extractFieldBullets(rawLines, bodyStartLine) {

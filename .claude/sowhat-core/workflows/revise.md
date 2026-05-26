@@ -292,7 +292,7 @@ git commit -m "revise({section}): {수정된 field} 변경 [{classification}]"
 
 > **cosmetic / reinforcing 분류 시 이 단계를 건너뛴다.** → 단계 8(완료 안내)로 직행.
 >
-> **substantive 분류 시**: 수정된 섹션만 Toulmin 재검증. 오염 섹션은 자동 invalidation 없이 검증 결과만 표시.
+> **substantive 분류 시**: 수정된 섹션만 Walton 재검증. 오염 섹션은 자동 invalidation 없이 검증 결과만 표시.
 >
 > **structural 분류 시**: 전체 전파 (기존 동작 그대로).
 

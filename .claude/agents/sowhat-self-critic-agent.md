@@ -53,7 +53,7 @@ Key difference from external critic:
 #### {Dimension Name}
 - **상태**: {summary}
 - **Finding**: {specific weakness}
-- **근거**: {citation from user's section — specific Toulmin field}
+- **근거**: {citation from user's section — specific Walton field}
 - **심각도**: {critical|major|minor}
 - **개선 방향**: {what to change — specific and actionable}
 - **Source**: [source:user-section]

@@ -308,7 +308,7 @@ draft 시작 — 사전 검증 완료. 산출물 브리프 작성 대기 중.
   [1] 주장 중심 — Claim + 핵심 수치만 (소셜, 슬라이드)
   [2] 균형형   — Claim + 핵심 근거 1-2개 (블로그, 보고서)     ← 추천: {유형별}
   [3] 근거 상세 — 전체 근거 + 논리 연결 (제안서, 의사결정)
-  [4] 학술형   — 전체 Toulmin + 출처 명시 (논문, 백서)
+  [4] 학술형   — 전체 Walton 구조 + 출처 명시 (논문, 백서)
 ```
 
 `← 추천:` 표시는 `references/output-profiles.md`의 산출물 유형별 기본 증거 깊이를 참조.
@@ -595,16 +595,16 @@ config.json에 `series` 필드가 있으면 생성 시 다음을 추가로 고�
 4. **독립 가독성**: 이 편만 읽어도 이해 가능하도록 핵심 전제는 간략히 재설명
 5. **시리즈 내비게이션**: 문서 상단/하단에 시리즈 내비게이션 추가
 
-**Toulmin 렌더링**:
+**Walton 렌더링**:
 - 불릿 포인트 나열이 아닌, 읽히는 서술형
-- Qualifier 언어 적절히 사용: "확실히", "대체로", "대부분의 경우", "추정컨대"
-- Rebuttal을 자연스러운 반론 대응으로: "물론 …라는 우려도 있다. 그러나 …"
+- Confidence 언어 적절히 사용: "virtually certain", "very likely", "likely", "uncertain"
+- 미충족 CQ를 자연스러운 반론 대응으로: "물론 …라는 우려도 있다. 그러나 …"
 
 **증거 깊이별 렌더링**:
-- Level 1 (주장 중심): Claim + 가장 강한 Ground 1개 인라인
-- Level 2 (균형형): Claim + 핵심 Grounds 1-2개 + Rebuttal 1문장
-- Level 3 (근거 상세): Claim + 전체 Grounds + Warrant + Backing + 상세 Rebuttal
-- Level 4 (학술형): 전체 Toulmin + 출처 정식 인용 + 방법론 + 한계점
+- Level 1 (주장 중심): Claim + 핵심 Grounds 1개 인라인
+- Level 2 (균형형): Claim + 핵심 Grounds 1-2개 + CQ 대응 1문장
+- Level 3 (근거 상세): Claim + 전체 Grounds + scheme + CQ Responses 상세
+- Level 4 (학술형): 전체 Walton 구조 + 출처 정식 인용 + 방법론 + 한계점
 
 ### 단일 콘텐츠 생성
 

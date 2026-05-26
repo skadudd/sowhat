@@ -23,7 +23,7 @@ You receive a prompt containing:
 - `<section>`: The section's full Walton structure (scheme, CQ Responses with confidence 0-4, Confidence band, Grounds, Claim)
 - `<con_attacks>`: Con agent's attack results
 - `<research_findings>`: (optional) Research-Agent findings — supporting evidence to strengthen defense
-- `<target_content>`: (optional, content-critique mode) The target content's Toulmin analysis
+- `<target_content>`: (optional, content-critique mode) The target content's Walton analysis
 - `<target_weaknesses>`: (optional, content-critique mode) Critic report weaknesses to leverage in defense
 - `<stance_instruction>`: (optional, content-critique mode) Stance-specific instructions that override default behavior:
   - persuade: Actively advocate user's Thesis, leverage target's weaknesses in defense

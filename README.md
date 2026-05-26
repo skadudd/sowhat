@@ -4,7 +4,7 @@
 
 **"So What?" — 주장을 증명하고, 글로 만든다.**
 
-**A structured argumentation skill for Claude Code. Build attack-tested arguments with Toulmin, Walton, and Minto Pyramid frameworks, then produce rigorous documents, PRDs, critique reports, and more.**
+**A structured argumentation workflow harness for Claude Code. Build attack-tested arguments with Walton Argument Schemes and Minto Pyramid, then produce rigorous documents, PRDs, critique reports, and more.**
 
 [![npm version](https://img.shields.io/npm/v/sowhat-cc)](https://www.npmjs.com/package/sowhat-cc)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -35,15 +35,14 @@ AI에게 글을 쓰게 하면 그럴듯한 문장이 나온다. 유창하고, �
 sowhat은 **논증 이론**으로 이 문제를 해결한다. 글쓰기를 "문장을 잘 쓰는 일"이 아니라 **"주장을 증명하는 일"**로 재정의한다.
 
 ```
-[Layer 4]  IBIS        문제를 Issue-Position-Argument로 구조화
-[Layer 3]  Walton      8가지 논증 스킴 + 스킴별 Critical Questions
-[Layer 2]  Pragma-D    토론의 절차적 규칙 (assertion/challenge/defense/concession)
-[Layer 1]  Toulmin     모든 주장의 기본 단위 (Claim/Grounds/Warrant/Backing/Qualifier/Rebuttal)
+[Layer 3]  IBIS        문제를 Issue-Position-Argument로 구조화
+[Layer 2]  Walton      10가지 논증 스킴 + 스킴별 Critical Questions (CQs)
+[Layer 1]  Minto       산출물 전달 구조 (Answer First + SCQA + MECE)
 ```
 
-Toulmin 모델은 1958년부터 학계에서 검증된 논증 분석 프레임워크다. Walton의 논증 스킴은 30년간 비형식 논리학의 표준이다. sowhat은 이 이론들을 **실행 가능한 시스템**으로 만들었다:
+Walton의 논증 스킴은 30년간 비형식 논리학의 표준이다. sowhat은 이 이론들을 **실행 가능한 시스템**으로 만들었다:
 
-- 모든 주장은 Toulmin 6필드(Claim, Grounds, Warrant, Backing, Qualifier, Rebuttal)를 갖춰야 확정(settle)된다
+- 모든 주장은 Walton scheme + CQ Responses + Confidence를 갖춰야 확정(settle)된다
 - 확정 전에 3개의 AI 에이전트(Con/Pro/Research)가 변증법적으로 공격한다
 - 전체 논증 트리를 7단계 Challenge로 감사한다 — thesis 정합성, So What, Why So, MECE
 - 살아남은 주장만 글이 된다. Minto Pyramid 구조로.
@@ -104,7 +103,7 @@ draft → discussing → settled
 ```
 /sowhat:init                 # Thesis 수립 (SCQA 핑퐁)
     ↓
-/sowhat:expand 01            # 섹션을 Toulmin 구조로 전개
+/sowhat:expand 01            # 섹션을 Walton 구조로 전개
 /sowhat:debate 01            # 3-에이전트 변증법으로 공격 (선택)
 /sowhat:settle 01            # 검증 후 확정
     ↓  (02, 03 반복)
@@ -164,7 +163,7 @@ npx sowhat-cc --local --uninstall
 /sowhat:init --from <url 또는 파일>
 ```
 
-외부 글/보고서를 Toulmin 분석 → 내 입장 선택(반박/비평/대안/부분 동의) → 5차원 비평 구조 구축.
+외부 글/보고서를 Walton 분석 → 내 입장 선택(반박/비평/대안/부분 동의) → 5차원 비평 구조 구축.
 
 ### 모드 3: 자료에서 출발 (Bottom-Up)
 
@@ -183,12 +182,12 @@ npx sowhat-cc --local --uninstall
 ```
 /sowhat:init                         # Thesis 수립
 /sowhat:expand 01                    # 섹션 전개 시작
-/sowhat:inject 01 file:data.xlsx     # 로컬 파일 → Toulmin 필드에 주입
+/sowhat:inject 01 file:data.xlsx     # 로컬 파일 → Walton 필드에 주입
 /sowhat:inject 01 dir:./research     # 폴더 내 파일 일괄 분석 → 통합 주입
 /sowhat:inject 01                    # 텍스트 직접 입력 모드
 ```
 
-inject는 소스를 분석하고 T1~T4 Tier 신뢰도를 판정한 뒤, **어떤 섹션의 어떤 Toulmin 필드**(Grounds/Backing/Rebuttal/Warrant)에 넣을지 사용자가 선택한다. 모든 주입은 `research/` 파인딩 파일로 출처가 추적된다.
+inject는 소스를 분석하고 T1~T4 Tier 신뢰도를 판정한 뒤, **어떤 섹션의 어떤 Walton 필드**(Grounds/CQ Responses)에 넣을지 사용자가 선택한다. 모든 주입은 `research/` 파인딩 파일로 출처가 추적된다.
 
 research 커맨드도 로컬 자료를 지원한다:
 
@@ -208,7 +207,7 @@ research 커맨드도 로컬 자료를 지원한다:
 | `/sowhat:init` | 프로젝트 초기화 + Thesis 수립 (SCQA 핑퐁) |
 | `/sowhat:init --from <url\|file>` | 외부 콘텐츠 기반 비평 모드 |
 | `/sowhat:init --research [--auto]` | 자료 수집 → Bottom-Up thesis 도출 |
-| `/sowhat:expand [섹션]` | 섹션을 Toulmin 구조로 step-by-step 전개 |
+| `/sowhat:expand [섹션]` | 섹션을 Walton 구조로 step-by-step 전개 |
 | `/sowhat:settle [섹션]` | Stub detection + 교차 검증 후 확정 |
 | `/sowhat:revise [섹션]` | 확정된 섹션 수정 + 오염 범위 자동 탐지 |
 | `/sowhat:add-argument` | Thesis에 새 Key Argument 추가 → 섹션 자동 생성 |
@@ -223,7 +222,7 @@ research 커맨드도 로컬 자료를 지원한다:
 | `/sowhat:steelman [섹션]` | 현재 논증의 최강 반대 논증 트리 자동 생성 |
 | `/sowhat:branch [섹션]` | 대안 논증 경로 생성·비교 |
 | `/sowhat:research [--deep] <대상>` | 외부 리서치 + T1~T4 Tier 신뢰도 평가. URL·파일·폴더·토픽 지원 |
-| `/sowhat:inject [섹션] [출처]` | 외부 자료를 특정 Toulmin 필드에 직접 주입 (URL·파일·폴더·텍스트) |
+| `/sowhat:inject [섹션] [출처]` | 외부 자료를 특정 Walton 필드에 직접 주입 (URL·파일·폴더·텍스트) |
 | `/sowhat:critic` | 대상 콘텐츠 5차원 비평 (content-critique 모드) |
 
 ### 산출물 생성
@@ -335,26 +334,23 @@ settle, debate, snapshot 시 자동으로 스냅샷이 저장되어 논증의 �
 
 ## 이론적 토대
 
-sowhat은 4가지 검증된 논증 이론을 계층적으로 통합한다.
+sowhat은 3가지 검증된 논증 이론을 계층적으로 통합한다.
 
-### Toulmin 모델 (기본 단위)
+### Walton Argumentation Schemes (기본 단위)
 
-모든 섹션은 6개 필드를 채워야 settle 가능:
+모든 섹션은 scheme + CQ Responses + Confidence를 채워야 settle 가능:
 
 | 필드 | 역할 | 예시 |
 |------|------|------|
 | **Claim** | 주장 | "이 시장은 연 30% 성장한다" |
 | **Grounds** | 사실적 근거 | "IDC 2024: CAGR 28%" |
-| **Warrant** | Grounds→Claim 연결 원리 | "CAGR은 미래 성장 예측에 유효한 지표" |
-| **Backing** | Warrant 자체의 근거 | "업계 10년 CAGR 추적 정확도 85%" |
-| **Qualifier** | 확신 강도 | definitely / usually / presumably / possibly |
-| **Rebuttal** | Claim이 무너지는 조건 | "단, 규제 도입 시 성장률 급감 가능" |
+| **scheme** | 논증 유형 | Sample to Population |
+| **CQ Responses** | scheme별 Critical Question 답변 + confidence 0-4 | CQ1: "표본 크기 충분한가" → Yes / 3 |
+| **Confidence** | 확신 강도 (Tetlock band) | likely (60-80%) |
 
-### Walton 논증 스킴 (8종)
+**10종 scheme**: Expert Opinion · Sample to Population · Cause to Effect · Effect to Cause · Analogy · Sign · Classification · Practical Reasoning · Position to Know · Popular Opinion
 
-각 스킴마다 고유한 Critical Questions로 논증의 약점을 체계적으로 공격:
-
-`authority` · `analogy` · `cause-effect` · `statistics` · `example` · `sign` · `principle` · `consequence`
+각 scheme마다 고유한 Critical Questions로 논증의 약점을 체계적으로 공격. `walton-schemes.md` 참조.
 
 ### Minto Pyramid (산출물 구조)
 
@@ -362,11 +358,6 @@ draft 산출물은 Barbara Minto의 피라미드 원칙을 따른다:
 - **Answer First** — 결론을 먼저 제시
 - **SCQA** — Situation → Complication → Question → Answer
 - **MECE** — Key Arguments는 상호 배타적이고 전체를 포괄
-
-### Pragma-Dialectics (토론 규칙)
-
-유효한 논증 이동: assertion → challenge → defense → concession  
-모든 이동은 Argument Log에 기록되어 감사 가능.
 
 ### IBIS (문제 구조화)
 
@@ -405,7 +396,7 @@ Con Agent (공격)
 
 | 메커니즘 | 동작 시점 | 설명 |
 |----------|-----------|------|
-| **Stub Detection** | settle | 형식만 채운 빈 논증 탐지 (구체적 출처 없는 Grounds, 동어반복 Warrant 등) |
+| **Stub Detection** | settle | 형식만 채운 빈 논증 탐지 (구체적 출처 없는 Grounds, CQ 회피 응답 등) |
 | **Cross-Section Regression** | settle | 기존 settled 섹션과의 논증 일관성 검증 |
 | **Verification Debt Tracking** | progress | 미해결 논증 부채 추적 (미수정 challenge, 미확인 출처 등) |
 | **Discussion Audit Trail** | expand, debate, revise | 모든 핑퐁·라운드를 `logs/discussion/`에 구조화 보존 |
@@ -434,7 +425,7 @@ Con Agent (공격)
 {project}/
 ├── planning/config.json       ← 상태 추적 (단일 소스)
 ├── 00-thesis.md               ← SCQA + Key Arguments
-├── 01-{section}.md            ← Toulmin 구조 섹션
+├── 01-{section}.md            ← Walton 구조 섹션
 ├── 02-{section}.md
 ├── research/                  ← 리서치 파인딩 + SYNTHESIS.md
 ├── logs/
@@ -553,6 +544,6 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 **sowhat은 Claude Code에서 논증을 구축하고, 공격하고, 증명하는 시스템이다.**
 
-*Argumentation frameworks: Toulmin (1958), Walton (1996), Minto Pyramid (1987), Pragma-Dialectics (van Eemeren & Grootendorst)*
+*Argumentation frameworks: Walton, Reed, Macagno (2008) Argumentation Schemes; Walton (2013) Methods of Argumentation; Minto (1987) The Pyramid Principle*
 
 </div>

@@ -78,7 +78,7 @@ IF classification IN [cosmetic, reinforcing]:
 
 IF classification == substantive:
   settled → needs-revision
-  스코프 검증 실행 (수정된 섹션만 Toulmin 재검증)
+  스코프 검증 실행 (수정된 섹션만 Walton 재검증)
   오염 섹션 표시하되 자동 invalidation 없음
 
 IF classification == structural:

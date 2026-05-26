@@ -11,7 +11,7 @@ sowhat 프로젝트는 **완벽한 논증**을 구성하는 것이 목적이다.
 프로파일은 이 논증을 **특정 목적·독자·채널에 맞게 변환**하는 설정이다.
 
 ```
-sowhat 논증 (Toulmin + Minto)
+sowhat 논증 (Walton + Minto)
     ├─→ Profile A: 투자 유치 IR 자료 (PDF 제안서)
     ├─→ Profile B: 링크드인 시리즈 (5편)
     ├─→ Profile C: 팀/PM 공유용 PRD

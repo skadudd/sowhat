@@ -246,11 +246,11 @@ else
 
 {new KA text}
 
-## Toulmin Fields
+## Walton Fields
 
 - Claim: (미작성)
 - Grounds: (미작성)
-- Warrant: (미작성)
+- scheme / CQ Responses: (미작성)
 
 ## Status
 

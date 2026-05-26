@@ -44,7 +44,7 @@ Task(
   subagent_type: "sowhat-self-critic-agent",
   prompt: """
   <thesis>{thesis_answer} + {key_arguments}</thesis>
-  <section>{섹션 Toulmin 전체 구조}</section>
+  <section>{섹션 Walton 전체 구조}</section>
   <section_name>{section_name}</section_name>
   <dimension>{dimension or "all"}</dimension>
   """

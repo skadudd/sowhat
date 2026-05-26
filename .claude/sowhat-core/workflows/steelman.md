@@ -254,6 +254,6 @@ git commit -m "steelman({project}): generate counter-narrative"
 - **Source tag 강제** — 모든 counter 항목에 `[source:...]`. 태그 없거나 AI가 임의 부착한 retrieval 태그는 drop
 - **reretrieval 부재 시 placeholder 허용** — `[source:placeholder]` 로 유형 기술만 하여도 유효한 논리 기반 steelman. 사용자에게 research/inject 안내
 - **진정한 steelman** — 허수아비(strawman)가 아닌, 실제로 설득력 있는 반대 논증을 생성해야 한다
-- **Toulmin 기반** — counter도 Claim/Grounds/Warrant 구조를 갖춰야 한다
+- **Walton 기반** — counter도 Claim/Grounds/scheme/CQ 응답 구조를 갖춰야 한다
 - **건설적 목적** — 파괴가 아닌, 원본 논증 강화를 위한 스트레스 테스트
 - **취약점 = 개선 기회** — 반론이 이기는 곳이 가장 보강이 필요한 곳

@@ -14,7 +14,7 @@ Claude가 먼저 자동 검증을 수행하고, 결과를 인간에게 보여준
 인간이 단순히 "확인"만 하면 되는 상황.
 
 **사용 시점:**
-- settle 직전: Toulmin 6필드 완성도 + scheme CQ 자동 점검 → 인간 확인
+- settle 직전: Walton 필드 완성도 (scheme/CQ Responses/Confidence) 자동 점검 → 인간 확인
 - challenge 후: 공격 결과 요약 → 인간이 반박/수용 결정
 - debate round 판정 후: 오케스트레이터 판정 → 인간 확인
 

@@ -31,7 +31,7 @@ status_transitions: ["settled → needs-revision (inject 시)"]
 1. `planning/config.json` 로드
 2. `mode` 필드 확인: `"content-critique"` → 계속
 3. `source` 필드 존재 확인
-4. `00-thesis.md` 로드 → `## Source Content` 섹션에서 대상 Toulmin 분석 추출
+4. `00-thesis.md` 로드 → `## Source Content` 섹션에서 대상 Walton 분석 추출
    - Source Content 섹션이 없으면: `❌ 00-thesis.md에 Source Content 섹션이 없습니다. /sowhat:init --from으로 다시 시작하세요.`
 5. 모든 섹션 파일 로드 (주입 매핑용)
 6. 디렉터리 생성:
@@ -55,8 +55,8 @@ status_transitions: ["settled → needs-revision (inject 시)"]
 
 ## Step 1: 대상 콘텐츠 로드
 
-`00-thesis.md`의 `## Source Content` → `### 대상 Toulmin 분석` 테이블에서 다음을 추출한다:
-- `target_claim`, `target_grounds`, `target_warrant`, `target_qualifier`, `target_rebuttal`
+`00-thesis.md`의 `## Source Content` → `### 대상 Walton 분석` 테이블에서 다음을 추출한다:
+- `target_claim`, `target_grounds`, `target_scheme`, `target_cq_responses`, `target_confidence`
 
 소스 URL/파일 경로는 `config.json`의 `source` 필드에서 가져온다.
 

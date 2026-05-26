@@ -236,7 +236,7 @@ URL fetch 실패 시:
 
 ```
 ----------------------------------------
-📄 대상 콘텐츠 Toulmin 분석
+📄 대상 콘텐츠 Walton 분석
 
   Claim:     {대상의 핵심 주장}
   Grounds:   {주요 근거 1-3개}
@@ -425,7 +425,7 @@ updated: {current_datetime}
 > 분석 대상: {URL 또는 파일 경로}
 > 입장: {반박|비평|대안 제시|부분 동의}
 
-### 대상 Toulmin 분석
+### 대상 Walton 분석
 | Field | Content |
 |-------|---------|
 | Claim | {target_claim} |

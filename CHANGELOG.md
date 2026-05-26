@@ -138,7 +138,7 @@ npm test
 
 ### New Features
 
-- **`/sowhat:self-critic`** — New command and agent for analyzing the user's own argument structure (5-dimension Toulmin critique). Distinct from `/sowhat:critic` which analyzes external content.
+- **`/sowhat:self-critic`** — New command and agent for analyzing the user's own argument structure (5-dimension critique). Distinct from `/sowhat:critic` which analyzes external content.
 - **`critique-dimensions.md`** — Shared 5-dimension critique standard (Completeness, Validity, Evidence Quality, Qualifier Appropriateness, Rebuttal Coverage) used by both critic-agent and self-critic-agent.
 - **Claim Tier A/B differentiation** — `claim_tier` field added to Toulmin model. Tier-A (core) requires T1/T2 sources; Tier-B (supporting) allows T3/T4 + qualifier weakening. Affects `settle` gating and `challenge` Stage 0 severity.
 - **Preview gate** — `draft`, `finalize`, `finalize-planning` now show a file list + action preview before executing. `[1]` continue, `[2]` cancel, `[3]` revise. Skip with `--no-preview`.

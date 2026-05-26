@@ -1,15 +1,9 @@
 # sowhat — 설계 문서
 
-> "So What?" 으로 시작해서 "Get Shit Done." 으로 끝난다.
+> "So What?" 으로 시작해서 rigorous writer가 N회 글을 써도 일관된 품질로 끝난다.
 
-```
-sowhat  →  gsd
-기획        실행
-Why/What    How
-```
-
-Claude Code command로 인간과 Claude가 함께 PRD/Spec을 만들어가는 시스템.
-산출물은 GSD(get-shit-done)가 소비한다.
+Claude Code workflow harness. 인간과 Claude가 함께 논증 기반 PRD/Spec/문서를 만들어가는 시스템.
+산출물은 export/ 디렉터리에 적재되며, 어떤 도구도 소비할 수 있다.
 
 ---
 
@@ -21,40 +15,34 @@ Claude Code command로 인간과 Claude가 함께 PRD/Spec을 만들어가는 �
 4. **최상위 논리가 항상 우선이다** — 하위 결정이 settled되어도 thesis에 반하면 되돌아간다
 5. **기획 레이어 완성 전 명세 레이어 진입 불가** — 게이트가 강제한다
 
-> **원칙 2의 구현** (cycle 7, Plan A+G): AI는 구조(Stasis/Scheme/Claim 형식/Warrant 논리/Qualifier/Rebuttal 구조)만 자동 생성하며, 내용(수치·기관명·연도·인물명·URL 등 구체값)은 retrieval 경로로만 유입된다. 모든 항목에 `[source:...]` 태그가 강제되어 사용자 입력과 AI 구조화가 항상 구별된다. 상세: `sowhat-core/references/ai-content-boundary.md`.
+> **원칙 2의 구현** (cycle 7, Plan A+G): AI는 구조(Stasis/Scheme/Claim 형식/CQ 논리/Confidence)만 자동 생성하며, 내용(수치·기관명·연도·인물명·URL 등 구체값)은 retrieval 경로로만 유입된다. 모든 항목에 `[source:...]` 태그가 강제되어 사용자 입력과 AI 구조화가 항상 구별된다. 상세: `sowhat-core/references/ai-content-boundary.md`.
 
 ---
 
 ## 논증 이론 기반
 
-sowhat은 4개의 논증 이론을 계층적으로 적용한다.
+sowhat은 3개의 논증 이론을 계층적으로 적용한다.
 
 ```
-Layer 4: IBIS (Issue-Based Information System)
+Layer 3: IBIS (Issue-Based Information System)
          ┌─ 복잡한 문제를 Issue-Position-Argument 구조로 분해
          └─ 모든 논의는 핵심 Issue 질문에서 시작 (/sowhat:init Step 2)
 
-Layer 3: Walton's Argument Schemes
-         ┌─ 8가지 논증 유형: authority / analogy / cause-effect /
-         │  statistics / example / sign / principle / consequence
-         ├─ 각 유형별 Critical Questions (어떤 반박이 유효한가)
-         └─ 섹션 frontmatter의 `scheme` 필드로 명시
+Layer 2: Walton's Argumentation Schemes (v3.0.0 기본 단위)
+         ┌─ 10가지 논증 유형: Expert Opinion / Sample to Population / Cause to Effect /
+         │  Effect to Cause / Analogy / Sign / Classification / Practical Reasoning /
+         │  Position to Know / Popular Opinion
+         ├─ 각 유형별 Critical Questions (CQs): scheme에 맞는 반박 질문 집합
+         ├─ CQ 답변 confidence 0-4: 4=강한근거(T1/T2), 3=적당, 2=약한, 1=추측, 0=불가
+         ├─ Settle 게이트: 미충족 CQ(confidence≤1) 임계값 초과 시 차단
+         └─ depth=2 cap: CQ 후속질문은 최대 2단계, 초과 시 자동 항복선언
 
-Layer 2: Pragma-Dialectics
-         ┌─ 토론의 절차적 규칙
-         ├─ Valid moves: assertion / challenge / defense / concession
-         └─ /sowhat:debate 에서 라운드 기반 토론 진행
-
-Layer 1: Toulmin Model (기본 단위)
-         ┌─ Claim: 이 섹션의 주장
-         ├─ Grounds: 근거 (증거)
-         ├─ Warrant: Grounds → Claim 연결 원칙
-         ├─ Backing: Warrant를 강화하는 근거
-         ├─ Qualifier: 주장의 확실성 (definitely / usually / presumably)
-         └─ Rebuttal: 반론 조건 및 대응
+Layer 1: Minto Pyramid (문서 전달 구조)
+         ┌─ 산문 산출물의 top-down 구조 보장
+         └─ draft.md에서 적용 — 논증 layer와 독립
 ```
 
-논증 강도 순서: `definitely` > `usually` > `presumably` > `in most cases` > `possibly`
+Confidence band (Tetlock): `virtually certain (95%+)` > `very likely (80-95%)` > `likely (60-80%)` > `uncertain (40-60%)` > `unlikely (20-40%)` — `calibration-guide.md` 참조
 
 ---
 
@@ -106,13 +94,13 @@ sowhat은 세 가지 진입 모드를 지원한다.
 
 ```
 /sowhat:init --from <url|file>
-  → 대상 콘텐츠 Toulmin 분석 (Claim/Grounds/Warrant/Qualifier/Rebuttal 추출)
+  → 대상 콘텐츠 Walton 분석 (Claim/Grounds/scheme/CQ Responses/Confidence 추출)
   → 입장 선택 (반박 / 비평 / 대안 제시 / 부분 동의)
   → SCQ 핑퐁 (대상 콘텐츠 기반)
   → 00-thesis.md 생성 (Source Content 섹션 포함)
 
 /sowhat:critic
-  → 대상 콘텐츠 5차원 비평 (완전성/Warrant/근거품질/Qualifier/Rebuttal)
+  → 대상 콘텐츠 5차원 비평 (완전성/CQ응답품질/근거품질/Confidence/CQ커버리지)
   → critic/CRITIQUE-REPORT.md 생성
   → 약점 → 사용자 섹션 주입 제안
 
@@ -205,8 +193,8 @@ config.json 추가 필드: `mode` ("idea" | "content-critique" | "research"), `s
     ├── DOCUMENT.md                   ← /sowhat:draft 생성 (인간용 서술)
     ├── PRD.md                        ← /sowhat:draft 생성
     ├── ARGUMENT-MAP.md               ← /sowhat:draft 생성 (텍스트 논증 트리)
-    ├── PROJECT.md                    ← /sowhat:finalize 생성 (GSD용)
-    └── REQUIREMENTS.md               ← /sowhat:finalize 생성 (GSD용)
+    ├── PROJECT.md                    ← /sowhat:finalize 생성 (deliverable)
+    └── REQUIREMENTS.md               ← /sowhat:finalize 생성 (deliverable)
 ```
 
 ---
@@ -254,13 +242,13 @@ updated: {date}
 - [ ]
 ```
 
-### `{N}-{section}.md` (기획/명세 섹션 — Toulmin 구조)
+### `{N}-{section}.md` (기획/명세 섹션 — Walton 구조)
 
 ```markdown
 ---
 status: draft | discussing | settled | needs-revision | invalidated
-scheme: authority | analogy | cause-effect | statistics | example | sign | principle | consequence
-qualifier: definitely | usually | presumably | in most cases | possibly
+scheme: Expert Opinion | Sample to Population | Cause to Effect | Effect to Cause | Analogy | Sign | Classification | Practical Reasoning | Position to Know | Popular Opinion
+confidence: virtually certain | very likely | likely | uncertain | unlikely
 version: 1
 section: {N}
 title: {section-name}
@@ -279,17 +267,14 @@ updated: {date}
 
 ### {근거 2}
 
-## Warrant (논거 연결)
-> Grounds에서 Claim이 도출되는 원칙 또는 규칙.
+## CQ Responses
 
-## Backing (Warrant 강화)
-> Warrant 자체를 지지하는 추가 근거.
+| CQ | Question | Answer | Confidence (0-4) |
+|---|---|---|:---:|
+| CQ1 | [scheme별 CQ 목록 참조] | | |
 
-## Qualifier
-> 주장의 확실성. 예: "통상적으로", "아마도", "반드시"
-
-## Rebuttal (반론 대응)
-> 이 Claim이 성립하지 않는 조건과 그에 대한 대응.
+## Confidence
+> Tetlock band. 예: "likely (60-80%)"
 
 ## Scope
 ### In
@@ -354,7 +339,7 @@ draft → discussing → settled
 | `/sowhat:spec [section]` | 명세 섹션 핑퐁 |
 | `/sowhat:settle [section]` | 동일 커맨드 재사용 |
 | `/sowhat:challenge` | 기획+명세 전체 트리 검증 |
-| `/sowhat:finalize` | GSD export 생성 |
+| `/sowhat:finalize` | deliverable export 생성 |
 
 ### 심화 논증
 
@@ -372,7 +357,7 @@ draft → discussing → settled
 | 커맨드 | 역할 |
 |--------|------|
 | `/sowhat:research [--deep] [url\|file\|dir\|topic]` | 외부 리서치 → 섹션 수정/추가 제안. URL·파일·폴더·토픽 검색 지원. `--deep`으로 Perplexity Deep Research 활성화 (선택적) |
-| `/sowhat:inject [section] [source]` | 외부 자료를 Toulmin 필드에 직접 주입 |
+| `/sowhat:inject [section] [source]` | 외부 자료를 Walton 필드에 직접 주입 |
 | `/sowhat:note [text\|list\|promote]` | 작업 중 아이디어 즉시 캡처 → Open Question 승격 |
 | `/sowhat:revise [section]` | settled 섹션 수정 + 오염 범위 자동 탐지. Discussion audit trail |
 | `/sowhat:sync` | GitHub 변경 감지 → 로컬 반영 |
@@ -399,7 +384,7 @@ draft → discussing → settled
 
 **content-critique 모드 (`--from`):**
 ```
-1. 대상 콘텐츠 Toulmin 분석
+1. 대상 콘텐츠 Walton 분석
 2. 입장 선택 (반박/비평/대안/부분동의)
 3. SCQ 핑퐁 (대상 기반)
 4. 이후 동일
@@ -433,20 +418,19 @@ draft → discussing → settled
 2. 해당 섹션 파일 로드 (없으면 생성)
 3. thesis_argument 필드 확인 → 없으면 인간이 지정
 4. Scheme 선택 핑퐁
-   - "이 논거의 유형은? (authority / statistics / cause-effect / ...)"
+   - "이 논거의 유형은? (Expert Opinion / Cause to Effect / Analogy / ...)"
 5. Claim 핑퐁
    - "이 논거가 thesis의 Answer를 어떻게 지지하는가?"
 6. Grounds 핑퐁
    - "이 주장의 근거는?"
    - "이것이 없으면 Claim이 성립하지 않는가?"
-7. Warrant 핑퐁
-   - "Grounds에서 Claim이 도출되는 원칙은?"
-8. Qualifier 확인
-   - "이 주장의 확실성은? (definitely / usually / presumably)"
-9. Rebuttal 핑퐁
-   - "이 Claim이 성립하지 않는 조건은?"
-10. Scope → AC 순서로 전개
-11. 인간이 충분하다고 판단하면 /sowhat:settle [section] 호출
+7. CQ Responses 핑퐁
+   - scheme별 Critical Questions를 하나씩 제시
+   - 각 CQ 답변에 confidence 0-4 부여
+8. Confidence 확인
+   - "이 주장의 확실성은? (Tetlock band — calibration-guide.md 참조)"
+9. Scope → AC 순서로 전개
+10. 인간이 충분하다고 판단하면 /sowhat:settle [section] 호출
 ```
 
 각 필드 완료 시 `git commit -m "wip({section}): add {field}"`.
@@ -458,16 +442,16 @@ Claude는 채우지 않는다. 질문만 한다. 인간이 답한 내용을 구�
 
 ```
 1. 해당 섹션 파일 로드
-2. 완료 전 자동 검증 (Toulmin 체크리스트):
+2. 완료 전 자동 검증 (Walton 체크리스트):
    a. thesis_argument 필드 존재 여부
    b. Claim이 thesis Answer를 지지하는가
    c. Grounds가 존재하는가 (최소 1개)
-   d. Warrant가 존재하며 "Implicit"이 아닌가 (없으면 경고)
-   e. Qualifier가 설정되었는가
-   f. Rebuttal이 addressed되었는가
-   g. Open Questions가 모두 해소되었는가
-   h. scheme 필드가 설정되었는가
-   i. scheme별 추가 검증 (statistics → 수치 있는가, authority → 출처 있는가)
+   d. scheme 필드가 설정되었는가
+   e. CQ Responses가 존재하는가 (scheme별 임계값 이상)
+   f. 미충족 CQ(confidence ≤1) 수가 임계값 이하인가
+   g. Confidence band가 설정되었는가
+   h. Open Questions가 모두 해소되었는가
+   i. scheme별 추가 검증 (Sample to Population → 수치 있는가, Expert Opinion → 출처 있는가)
 3. 검증 통과 → status: settled
 4. Git commit: "settle({section}): {claim 한 줄}"
 5. GitHub Issue close + label: settled
@@ -536,17 +520,17 @@ Git branch를 사용한 변증법적 토론 루프.
 
 ```
 1. debate/{section}-r{N} 브랜치 생성
-2. 찬성 입장 (thesis 측): 현재 섹션의 Claim + Grounds + Warrant 정리
+2. 찬성 입장 (thesis 측): 현재 섹션의 Claim + Grounds + CQ 응답 정리
 3. 반대 입장 (anti-thesis 측): Claude가 최강 반론 구성
 4. 각 라운드:
-   - 반론 제시 (Pragma-Dialectics의 valid move: challenge)
+   - 반론 제시 (challenge move)
    - 방어/수용 (defense or concession)
    - logs/debate/{section}-round-{N}.md 기록
    - maps/debate/debate-{section}-r{N}.excalidraw 업데이트
 5. 라운드 완료 시: git commit "debate({section}): round-{N} - {outcome}"
 6. 토론 종료: 브랜치 main에 merge (내용은 섹션 파일에 반영)
 7. 결과에 따라:
-   - 원래 Claim 강화 → Warrant/Backing 보강 후 settle 가능
+   - 원래 Claim 강화 → CQ 응답 보강 후 settle 가능
    - 수정 필요 → needs-revision 후 /sowhat:expand 재실행
    - 포기 → invalidated
 ```
@@ -571,7 +555,7 @@ prd → export/PRD.md
 
 map → export/ARGUMENT-MAP.md
   - 텍스트 기반 논증 트리
-  - 모든 Claim/Grounds/Warrant/Qualifier 표시
+  - 모든 Claim/Grounds/scheme/Confidence 표시
   - settled/needs-revision 상태 색상 표시
 
 Git commit: "draft: generate {type}"
@@ -590,7 +574,7 @@ Git commit: "draft: generate {type}"
 2. /sowhat:challenge 자동 실행 (생략 불가)
    - 문제 없을 때만 다음 단계 진행
 
-3. 명세 레이어 고정 섹션 초안 자동 생성 (Toulmin 필드 포함):
+3. 명세 레이어 고정 섹션 초안 자동 생성 (Walton 필드 포함):
    04-actors.md                ← thesis Situation의 관계자들
    05-functional-requirements  ← 기획 섹션 Claim들
    06-data-model.md            ← 근거에서 언급된 데이터
@@ -612,12 +596,12 @@ Git commit: "draft: generate {type}"
 2. /sowhat:challenge 자동 실행 (기획+명세 전체)
 3. export/ 생성:
 
-   PROJECT.md (GSD용)
+   PROJECT.md
    - thesis Answer → 프로젝트 비전
    - Key Arguments → 핵심 목표
    - Scope In/Out 합산
 
-   REQUIREMENTS.md (GSD용)
+   REQUIREMENTS.md
    - 각 명세 섹션 Claim → requirement
    - AC 항목들 → acceptance criteria
    - Edge Cases → constraints
@@ -628,7 +612,7 @@ Git commit: "draft: generate {type}"
 
 5. logs/argument-log.md 최종 요약 추가
 6. config.json layer: "spec" → "finalized"
-7. Git commit: "finalize: export GSD artifacts"
+7. Git commit: "finalize: export deliverables"
 8. GitHub milestone close
 ```
 
@@ -636,17 +620,16 @@ Git commit: "draft: generate {type}"
 
 ## 품질 보증 메커니즘
 
-GSD 1.25-1.29에서 차용한 논증 품질 보증 체계.
+rigorous writer의 검증 부담을 줄이기 위해 도입한 논증 품질 보증 체계.
 
 ### Stub Detection (settle, autonomous)
 
-Toulmin 필드가 형식만 채워져 있고 실질 내용이 없는 "논증 stub"을 탐지. settle 시 거부.
+Walton 필드가 형식만 채워져 있고 실질 내용이 없는 "논증 stub"을 탐지. settle 시 거부.
 
 | 필드 | Stub 예시 |
 |------|----------|
 | Grounds | "다양한 연구에서 확인됨" (구체적 출처 없음) |
-| Warrant | Claim을 동어반복 |
-| Rebuttal | "반론이 있을 수 있으나 극복 가능" (구체적 반론 없음) |
+| CQ Responses | "CQ 해당 없음" (scheme별 CQ를 확인하지 않고 회피) |
 
 ### Cross-Section Regression Gate (settle)
 
@@ -708,7 +691,7 @@ Perplexity API를 활용한 심층 리서치. `PERPLEXITY_API_KEY` 환경변수 
 | challenge 역전파 | `challenge: invalidate({sections}) - {reason}` |
 | debate 라운드 완료 | `debate({section}): round-{N} - {outcome}` |
 | 문서 생성 | `draft: generate {type}` |
-| finalize | `finalize: export GSD artifacts` |
+| finalize | `finalize: export deliverables` |
 
 ---
 
@@ -798,23 +781,20 @@ Perplexity API를 활용한 심층 리서치. `PERPLEXITY_API_KEY` 환경변수 
 
 ---
 
-## GSD 연계
+## 산출물 표준
 
 ```
-sowhat                        gsd
-─────────────────────────────────────────
 /sowhat:finalize 실행
-    └→ export/PROJECT.md      /gsd:new-project 가 소비
-    └→ export/REQUIREMENTS.md /gsd:new-project 가 소비
+    └→ export/PROJECT.md      프로젝트 비전 + 목표 + Scope
+    └→ export/REQUIREMENTS.md 요구사항 + AC + Edge Cases
 
 /sowhat:draft 실행 (선택)
-    └→ export/DOCUMENT.md     인간 검토용
-    └→ export/PRD.md          인간 검토용
-    └→ export/ARGUMENT-MAP.md 논증 감사용
-
-sowhat 내부 구조 (섹션 파일, Issues 등)
-→ GSD는 무관. export/ 만 바라봄.
+    └→ export/DOCUMENT.md     인간 검토용 서술형 문서
+    └→ export/PRD.md          구조화된 제품 요구사항
+    └→ export/ARGUMENT-MAP.md 논증 트리 감사용
 ```
+
+sowhat 내부 구조(섹션 파일, Issues 등)는 export/와 분리된다. 산출물은 export/ 디렉터리에만 적재하고 외부 도구는 이 디렉터리만 바라본다.
 
 ---
 
@@ -832,7 +812,7 @@ sowhat 내부 구조 (섹션 파일, Issues 등)
 [기획 레이어]
 /sowhat:settle thesis
 /sowhat:expand [section] × N
-    └→ Toulmin 구조 핑퐁 (Advisor mode, Discussion audit trail, Decision IDs)
+    └→ Walton CQ 핑퐁 (Advisor mode, Discussion audit trail, Decision IDs)
     └→ research 모드: 매핑된 파인딩 Grounds 자동 제시
     └→ /sowhat:settle [section]  ← Stub detection + Cross-section regression
 
@@ -847,7 +827,7 @@ sowhat 내부 구조 (섹션 파일, Issues 등)
 [명세 레이어]
 /sowhat:spec [section] × 6
 /sowhat:challenge
-/sowhat:finalize                      ← GSD export + draft
+/sowhat:finalize                      ← deliverable export + draft
 
 /sowhat:progress                      ← 논증 부채 추적 + 다음 액션 안내
 /sowhat:resume                        ← handoff.json → session.md → git log 복원

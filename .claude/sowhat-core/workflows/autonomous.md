@@ -145,7 +145,7 @@ FOR EACH section IN target_sections:
 
 이 gate가 cycle 1-6의 실패 원인 — "AI가 기억으로 Grounds 생성" — 을 구조적으로 차단한다. 자동 생성 경로 자체가 없으므로 fabrication 탐지·차단 로직이 불필요.
 
-### Step 1: expand(section) — retrieval 확보된 섹션의 자동 Toulmin 전개
+### Step 1: expand(section) — retrieval 확보된 섹션의 자동 Walton 전개
 
 Step 1-a를 통과한 섹션에 대해 expand 워크플로우를 **AI가 자동으로** 실행한다. 인간 핑퐁 없이 AI가 구조를 채우고, 내용은 retrieval에서만 인용한다.
 
@@ -157,17 +157,16 @@ Task(sowhat-expand-agent,
   <section>{섹션 전체 데이터}</section>
   <research_findings>{매핑된 #NNN finding 원문 + inject 자료}</research_findings>
   <instructions>
-    Toulmin 9단계를 순서대로 자동 전개:
+    Walton 5-step을 순서대로 자동 전개:
     1. Stasis / Scheme / Claim 형식: AI가 자동 결정 ([source:inference])
-    2. Grounds:
+    2. scheme 선택: 주장 유형에 맞는 Walton scheme 자동 분류 ([source:inference])
+    3. Grounds:
        - research_findings 인용만 허용 → [source:#NNN] / [source:file:path]
        - 구체값 자체 생성 금지
-    3. Warrant: Grounds → Claim 연결 논리 원칙만 ([source:inference])
-       — 수치·통계·기관명 포함 금지
-    4. Backing: research_findings 인용만 ([source:#NNN] / [source:file:*])
-    5. Qualifier: Grounds 강도에 맞춰 자동 선택 ([source:inference])
-    6. Rebuttal: 논리 구조만 ([source:inference])
-    7. Scope: In/Out 경계 ([source:inference])
+    4. CQ Responses: scheme CQs에 따라 research_findings 기반 자동 응답
+       - 근거 있는 CQ → [source:#NNN] / [source:file:*]
+       - 논리 원칙만의 CQ → [source:inference]
+    5. Confidence: Grounds+CQ 강도에 맞춰 Tetlock band 자동 선택 ([source:inference])
 
     각 항목 끝에 [source:...] 태그 필수. 태그 없는 항목은 parser가 drop.
     AI는 user/#NNN/sub-research/file:* 태그를 직접 부착할 수 없음 —
@@ -178,7 +177,7 @@ Task(sowhat-expand-agent,
   """)
 ```
 
-**AI가 자유롭게 자동 생성 가능**: Stasis/Scheme/Claim 형식, Warrant 논리 원칙, Qualifier 수준, Rebuttal 구조, Scope 경계. Source tag는 `[source:inference]` 또는 `[source:placeholder]`.
+**AI가 자유롭게 자동 생성 가능**: Stasis/Scheme/Claim 형식, scheme 분류, CQ 논리 응답, Confidence 수준, Scope 경계. Source tag는 `[source:inference]` 또는 `[source:placeholder]`.
 
 **AI가 자동 생성 불가능**: 구체값(수치·기관명·연도·인물명·URL). 이 값은 Step 1-a에서 확보된 `<research_findings>` 태그 내용만 인용. 태그 밖 구체값은 drop.
 

@@ -236,8 +236,8 @@ Research-Agent는 지지·반박 근거를 동등하게 탐색한다.
 
 Con-Agent 추가 프롬프트:
 ```
-<target_content>{Source Content Toulmin 분석}</target_content>
-<stance_instruction>대상 콘텐츠의 저자 입장에서 사용자의 논증을 공격하라. 대상의 Grounds와 Warrant를 사용하여 반론하라.</stance_instruction>
+<target_content>{Source Content Walton 분석}</target_content>
+<stance_instruction>대상 콘텐츠의 저자 입장에서 사용자의 논증을 공격하라. 대상의 Grounds와 CQ 응답을 사용하여 반론하라.</stance_instruction>
 ```
 
 Pro-Agent 추가 프롬프트:
@@ -262,7 +262,7 @@ Pro-Agent 추가 프롬프트:
 
 Pro-Agent 추가 프롬프트:
 ```
-<target_content>{Source Content Toulmin 분석}</target_content>
+<target_content>{Source Content Walton 분석}</target_content>
 <stance_instruction>사용자 Thesis와 대상 콘텐츠 사이의 진정한 공통점을 찾아 종합 제안하라. 피상적 타협이 아닌 양측 논리를 모두 보존하는 통합을 목표로 하라.</stance_instruction>
 ```
 
