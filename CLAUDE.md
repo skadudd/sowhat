@@ -69,6 +69,20 @@ npm publish             # 패키지명: sowhat-cc
 
 ---
 
+## 회귀 보호 범위
+
+sowhat의 회귀 보호는 **결정론적 컴포넌트**에 한정한다:
+
+- `source-tag-parser.js` — 파서 동작 검증
+- `pre-tool-security.js`, `post-tool-validate.js` — hook 동작 검증
+- `scripts/test-*.js`로 실행 (`npm test`)
+
+LLM 워크플로우 행동(예: debate sycophancy 여부, settle 판정 일관성)은 본질적으로 LLM-judge-LLM 문제로 단위 테스트 불가. 별도 인프라(LLM 호출 자동화 + 비용 관리)가 마련되기 전까지 eval YAML 형식의 회귀 보호는 도입하지 않는다.
+
+(근거: v2.3.0이 9-gate harness 가이드를 따라 도입한 `.claude/tests/eval/*.yaml`은 코드 수정 skill 전제의 가이드를 문서·논증 워크플로우인 sowhat에 카테고리 오적용한 것으로 판명. v2.3.1에서 회수.)
+
+---
+
 ## 금지 목록
 
 - 루트 `commands/`, `sowhat-core/`, `agents/` 직접 편집

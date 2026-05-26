@@ -4,6 +4,22 @@ All notable changes to sowhat are documented here.
 
 ---
 
+## [2.3.1] — 2026-05-26
+
+### Removed — cargo-cult retraction
+
+- **`.claude/tests/eval/*.yaml` (5개)** — LLM 워크플로우는 unit-test-style eval로 검증 불가. eval YAML이 "command 실행 → output string 매칭"을 가정하지만, sowhat 명령은 LLM이 해석·실행하는 대화 워크플로우라 결정론적 output이 없음.
+- **`.claude/sowhat-core/references/eval-protocol.md`** — 위와 동일 이유. eval runner(`scripts/eval-runner.js`)도 만들지 않음.
+
+**도입 경위 및 회수 이유**: v2.3.0이 9-gate harness best practice 가이드를 따라 위 파일들을 도입했으나, 그 가이드는 코드 수정 skill(파일 편집 → 단위 테스트로 검증 가능)을 전제로 작성됨. 문서·논증 워크플로우인 sowhat에는 카테고리 부적용.
+
+### 보존
+
+- `scripts/test-source-tags.js`, `scripts/test-draft-hallucination-guard.js` — 결정론적 컴포넌트(파서, 환각 가드)는 단위 테스트 가능. 유지.
+- `npm test` → 위 두 스크립트 실행.
+
+---
+
 ## [2.3.0] — 2026-05-26
 
 ### Breaking Changes

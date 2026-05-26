@@ -519,7 +519,7 @@ npm test
 npm run audit:skills
 ```
 
-PR 전 `npm run audit:skills` 통과를 권장한다. 게이트 기준: `references/eval-protocol.md` 참조.
+PR 전 `npm run audit:skills` 통과를 권장한다.
 
 은퇴한 command는 `commands/archive/`로 이동하고 CLAUDE.md에 은퇴 사유를 기록한다.
 
