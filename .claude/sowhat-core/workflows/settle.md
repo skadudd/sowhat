@@ -183,6 +183,33 @@ Parser가 감지하지 못하는 의미 수준 검증(AI가 `[source:#003]` 으�
 
 settle을 거부하고 종료한다.
 
+## settled 선언 기준 — Definition of Done (3단계)
+
+settled 상태는 다음 3단계를 모두 통과한 경우에만 선언한다. **하나라도 미통과이면 settled 전이 없음.**
+
+```
+단계 1 (자동 검증): 아래 항목 중 ❌ 가 0건
+  □ thesis_argument 필드 존재
+  □ Claim ↔ thesis Answer 정합성
+  □ Grounds 최소 1개
+  □ Confidence 설정됨
+  □ CQ Responses 완전성
+  □ Open Questions 0건
+  □ scheme 설정됨
+  □ Filler stub 없음
+  □ Source tag 완전성 (parser exit 0)
+  □ Cross-section regression 없음 (또는 ⚠️ 경고 수용)
+  □ Confidence 게이트 통과
+  □ CQ Confidence 게이트 통과
+
+단계 2 (인간 승인): verify-argument checkpoint [1] 선택
+단계 3 (상태 전이): status: settled 파일 기록 + git commit
+```
+
+> **의사코드 강제**: if (단계1 ❌ > 0) → settle 거부, 종료. else → 단계2 checkpoint 진행. if (checkpoint == [1]) → 단계3 실행. else → 종료 (settled 아님).
+
+---
+
 ## 검증 통과 시
 
 ### 0. verify-argument Checkpoint
@@ -330,6 +357,7 @@ settle 완료 — {N}-{section} settled 전환. Claim: {claim 한 줄}
 
 ## 핵심 원칙
 
+- **settled = DoD 3단계 통과** — 자동 검증 ❌ 0건 + verify-argument [1] 승인 + 상태 기록 3단계 모두 완료 후에만 선언한다
 - **완료는 인간이 선언한다** — Claude가 자동으로 settle하지 않는다
 - **검증은 구조·정합성만** — cycle 7에서 L2/L2a/unverified_items는 폐기. AI가 구체값을 자동 생성할 경로가 없으므로 fabrication 탐지·플래그 불필요 (`references/ai-content-boundary.md`)
 - **Filler stub은 거부** — 형식만 채운 빈 껍데기 논증은 여전히 settle 불가. 단, fabrication 의심은 더 이상 settle 거부 사유가 아니다 — source tag가 모든 구체값을 이미 추적
