@@ -1,6 +1,6 @@
 {
   "name": "sowhat-cc",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Structured argumentation system for Claude Code. Build logic-driven PRDs with Walton Argumentation Schemes and Minto Pyramid frameworks.",
   "bin": {
     "sowhat-cc": "bin/install.js"
@@ -11,7 +11,11 @@
     "agents",
     "sowhat-core"
   ],
-  "os": ["darwin", "linux", "win32"],
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
   "keywords": [
     "claude",
     "claude-code",
