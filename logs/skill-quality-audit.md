@@ -219,3 +219,40 @@
 ---
 
 *Audit: 2026-03-24 | Method: skill-creator criteria + cross-skill pattern analysis*
+
+---
+
+## Phase 1 (P0) — 정합성 수정 결과 (2026-05-27)
+
+3 Explore agent 병렬 감사 후 발견된 구조적 결함을 단일 사이클로 해소. 커밋: `sowhat-quality-pass` 브랜치.
+
+| 항목 | 결과 |
+|---|---|
+| Agent `model: inherit` 명시 (6개) | ✅ 완료 |
+| character.md two-tier 분리 복원 | ✅ 완료 — workflow import 추가, process 축약 |
+| settle.md 번호 재정렬 (1-12) | ✅ 완료 — 누락(6,9)·중복(8) 해소 |
+| Walton scheme 정식명 통일 + 매핑표 | ✅ 완료 — walton-schemes.md 매핑표 신설, expand·challenge 정식명으로 교체 |
+| `example` scheme 제거 | ✅ 완료 — 카탈로그 외 비공식 scheme 전면 제거 |
+| session.md 저장 보강 (6 workflow) | ✅ 완료 — snapshot/series/steelman/self-critic/config/character에 시작·완료 2시점 추가 |
+| toulmin-model.md 루트 stub 삭제 | ✅ 완료 — archive에만 보존 |
+| handoff.json 생성 트리거 추가 | ✅ expand·debate에 추가 |
+| ux-standards.md §8 신설 (Skill tool 금지) | ✅ 완료 |
+
+---
+
+## Phase 2 (P1) — 에이전트 본문 한글화 결과 (2026-05-27)
+
+6개 agent .md 파일의 영문 평문을 한글로 전환. XML 태그명·frontmatter 필드·scheme 정식 영문명·`[source:...]` 태그·코드·`CRITICAL` 키워드는 영문 유지.
+
+| 파일 | 번역 범위 |
+|---|---|
+| `sowhat-con-agent.md` | `<role>`, `<input_format>`, `<attack_dimensions>` 전체, `<output_format>` 도입·IMPORTANT 라인, `<principles>` 앞 4항목 |
+| `sowhat-pro-agent.md` | `<role>`, `<input_format>`, `<defense_approach>` 전체, `<output_format>` 도입, `<principles>` 앞 3항목 |
+| `sowhat-challenge-agent.md` | `<role>`, `<input_format>`, `<stages>` 도입 라인, `<output_format>` 도입 |
+| `sowhat-critic-agent.md` | `<role>`, `<input_format>`, `<critique_dimensions>` 평가 지시, output 종합 평가 플레이스홀더 |
+| `sowhat-self-critic-agent.md` | `<role>`, `<input_format>`, `<critique_dimensions>` 평가 지시·차이점 설명, output 종합 평가 플레이스홀더 |
+| `sowhat-research-agent.md` | `<role>`, `<input_format>`, Debate/Challenge 모드 1-6항, Fact-check 모드 1-4항, `<principles>` 전체 |
+
+빌드(`node scripts/build.js`) 정상 종료, `npm test` 통과 확인.
+
+*Phase 1/2 Audit update: 2026-05-27*
