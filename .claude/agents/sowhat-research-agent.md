@@ -5,6 +5,7 @@ tools: Read, Glob, Grep, WebSearch, WebFetch
 color: blue
 license: MIT
 compatibility: "Claude Code >=2.1.3"
+model: inherit
 ---
 
 <role>
@@ -99,7 +100,7 @@ When `<mode>deep-research</mode>` is received:
      사용자에게 명시적 동의를 받은 뒤 오케스트레이터가 fact-check 모드로 재스폰해야 합니다.
      ```
 
-2. **영수증 무결성 확인**: 결과 태그 내부에 `usage.total_tokens` 또는 `interaction.usage.total_tokens` 필드가 0보다 큰 값으로 존재해야 한다. 없거나 0이면 위와 동일하게 `❌ DEEP_RESEARCH_RECEIPT_INVALID`로 abort.
+> **영수증 무결성 검증 책임**: 오케스트레이터가 담당. 오케스트레이터가 영수증 검증을 완료한 뒤 결과를 이 에이전트에 전달한다(`references/deep-research-adapters.md` 공통 영수증 정책 참조). 에이전트는 태그 수신 여부만 확인하고 독자적 재검증은 수행하지 않는다.
 
 3. **응답 분석** (영수증 검증 통과 후 — 엔진별 파싱은 `references/deep-research-adapters.md` §A.4 / §B.5 참조):
 

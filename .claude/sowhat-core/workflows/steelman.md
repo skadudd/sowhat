@@ -29,6 +29,22 @@ status_transitions: []
    ```bash
    mkdir -p counter
    ```
+6. `logs/session.md` 저장 (시작 저장):
+   ```
+   ---
+   command: steelman
+   section: (전체 또는 지정 섹션)
+   step: start
+   status: in_progress
+   saved: {current_datetime_ISO8601}
+   ---
+
+   ## 마지막 컨텍스트
+   steelman 시작 — counter-narrative 생성 준비 완료
+
+   ## 재개 시 첫 질문
+   counter-narrative 생성 재개
+   ```
 
 ---
 
@@ -244,6 +260,23 @@ steelman 완료 후:
 ```bash
 git add counter/
 git commit -m "steelman({project}): generate counter-narrative"
+```
+
+`logs/session.md` 완료 저장:
+```
+---
+command: steelman
+section: (전체 또는 지정 섹션)
+step: complete
+status: complete
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+steelman 완료 — counter/STEELMAN-REPORT.md 생성. 가장 취약 섹션: {weakest_section}
+
+## 재개 시 첫 질문
+/sowhat:revise {weakest_section}
 ```
 
 ---

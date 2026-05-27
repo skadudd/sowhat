@@ -1,7 +1,7 @@
 # sowhat — workflow harness 소스 리포
 
 이 리포는 sowhat을 *만드는* 곳이다 (사용처 아님).
-sowhat = Claude Code runtime 위의 **workflow harness** (slash command 25개 + subagent 5개 + reference 라이브러리).
+sowhat = Claude Code runtime 위의 **workflow harness** (slash command 27개 + subagent 6개 + reference 라이브러리).
 
 ---
 

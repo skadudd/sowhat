@@ -8,6 +8,27 @@ version: "3.0.0"
 sowhat v3.0.0부터 Toulmin 6필드(claim/grounds/warrant/backing/qualifier/rebuttal)를 대체한다.
 각 scheme은 추론 *종류*를 식별하고, 그 종류에 적합한 Critical Questions(CQs)를 제공한다.
 
+## Scheme ID 매핑
+
+| 정식 영문명 | 짧은 ID (워크플로우 내 허용) |
+|---|---|
+| Expert Opinion | authority |
+| Sample to Population | statistics |
+| Cause to Effect | cause-effect |
+| Effect to Cause | effect-cause |
+| Analogy | analogy |
+| Sign | sign |
+| Classification | principle |
+| Practical Reasoning | consequence |
+| Position to Know | position |
+| Popular Opinion | popular |
+
+> `example`은 10-scheme 카탈로그 외 비공식 사용 — 모든 워크플로우에서 제거됨.
+
+---
+
+> Toulmin → Walton 마이그레이션 완료(v3.0.0). 원본 보존: `references/archive/toulmin-model.md`
+
 ## Defeasible Reasoning 원칙
 
 Walton scheme은 **defeasible** — 반박 가능한 추론을 다룬다.

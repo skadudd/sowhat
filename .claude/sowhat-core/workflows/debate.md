@@ -569,7 +569,28 @@ saved: {current_datetime}
 
 라운드 완료 후 `step: round-{N}-complete`으로 업데이트.
 
-debate 완료 커밋 직전에 `status: complete`로 업데이트한다.
+debate 완료 커밋 직전에 `status: complete`로 업데이트하고, `logs/handoff.json`을 생성한다:
+
+```json
+{
+  "last_command": "debate",
+  "target_section": "{section}",
+  "stopped_at": "complete",
+  "completed_fields": ["outcome", "rounds_completed"],
+  "pending_decisions": [],
+  "active_research": [],
+  "open_questions_count": 0,
+  "verification_debt": {
+    "challenge_unresolved": 0,
+    "stub_suspects": 0,
+    "debate_weakened": 0
+  },
+  "notes_pending": 0,
+  "next_action": "/sowhat:settle {section}",
+  "decision_ids": [],
+  "saved": "{current_datetime_ISO8601}"
+}
+```
 
 ---
 

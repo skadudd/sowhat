@@ -463,14 +463,13 @@ AI는 **구체값을 포함한 선택지를 만들지 않는다**. 위 4개가 �
 ---
 
 **scheme별 증거 요건** (참고 — 사용자 입력에 대한 가이드라인):
-- `statistics`: 수치/데이터 권장
-- `cause-effect`: 인과 메커니즘 설명 권장
-- `authority`: 전문가 이름/출처
-- `analogy`: 유사 사례와 유사성 설명
-- `example`: 대표적 사례와 대표성 설명
-- `sign`: 패턴 관찰
-- `principle`: 원칙 출처/적용 조건
-- `consequence`: 결과 흐름 설명
+- `Sample to Population`: 수치/데이터 권장
+- `Cause to Effect`: 인과 메커니즘 설명 권장
+- `Expert Opinion`: 전문가 이름/출처
+- `Analogy`: 유사 사례와 유사성 설명 (사례 논증 포함)
+- `Sign`: 패턴 관찰
+- `Classification`: 원칙 출처/적용 조건
+- `Practical Reasoning`: 결과 흐름 설명
 
 AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 
@@ -888,7 +887,28 @@ saved: {current_datetime}
 {다음에 물어볼 질문 그대로}
 ```
 
-`expand({section}): complete` 커밋 직전에 `status: complete`로 업데이트한다.
+`expand({section}): complete` 커밋 직전에 `status: complete`로 업데이트하고, `logs/handoff.json`을 생성한다:
+
+```json
+{
+  "last_command": "expand",
+  "target_section": "{section}",
+  "stopped_at": "complete",
+  "completed_fields": ["stasis", "scheme", "claim", "grounds", "cq_responses", "confidence"],
+  "pending_decisions": [],
+  "active_research": [],
+  "open_questions_count": 0,
+  "verification_debt": {
+    "challenge_unresolved": 0,
+    "stub_suspects": 0,
+    "debate_weakened": 0
+  },
+  "notes_pending": 0,
+  "next_action": "/sowhat:settle {section}",
+  "decision_ids": [],
+  "saved": "{current_datetime_ISO8601}"
+}
+```
 
 ---
 

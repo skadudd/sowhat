@@ -15,7 +15,7 @@ Deep Research를 지원하는 모든 엔진의 호출 패턴, 영수증 검증, 
    - `engine`: `perplexity` | `gemini`
    - `context`: 선택. challenge Stage 0이면 `stage0-{section}`, debate면 `debate-r{round}-{section}` 등
 2. **응답 전체를 그대로 저장** (헤더 분리 불필요, body만 저장 가능). 후속 검증과 사용자 감사 추적에 필요
-3. **영수증 검증 통과 전에는 어떤 후속 단계도 진입 금지** — research-agent 스폰 차단, 사용자 출력에 결과 노출 차단
+3. **영수증 검증 통과 전에는 어떤 후속 단계도 진입 금지** — research-agent 스폰 차단, 사용자 출력에 결과 노출 차단. **영수증 검증 책임은 오케스트레이터 전담** — agent는 검증된 `<perplexity_result>`/`<gemini_result>` 태그만 수신한다.
 4. **메타데이터 헤더는 절대 생략 금지**: `🔬 Engine: {엔진}:{모델/agent} | Tokens: {N} | Citations: {M} | Spot-checked: {K}` 형식
 
 ---

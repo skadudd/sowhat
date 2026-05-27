@@ -351,7 +351,13 @@ spec 05-func-req > 기능 3/8
 
 ---
 
-## 8. 미리보기 게이트 (Preview Gate)
+## 8. Skill tool 사용 금지 (CRITICAL)
+
+모든 workflow에서 `Skill` 도구 호출 금지. 파일 조작은 직접 도구(Read/Write/Edit/Bash)로 수행한다.
+
+---
+
+## 9. 미리보기 게이트 (Preview Gate)
 
 **적용 범위**: `draft`, `finalize`, `finalize-planning` — 다파일 생성 또는 외부 git commit이 발생하는 커맨드.
 **적용 제외**: `expand`, `settle`, `revise` — 이미 인터랙티브 핑퐁 구조이므로 추가 게이트는 마찰.

@@ -5,6 +5,7 @@ tools: Read, Glob, Grep, WebFetch
 color: orange
 license: MIT
 compatibility: "Claude Code >=2.1.3"
+model: inherit
 ---
 
 <role>

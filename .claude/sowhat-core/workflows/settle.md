@@ -52,16 +52,16 @@ status_transitions: ["discussing → settled"]
 3. **Grounds 존재 여부** — 최소 1개의 근거가 있어야 함
 4. **Confidence 설정 여부** — 비어있으면 거부
 5. **CQ Responses 완전성** — scheme이 설정된 경우 CQ 응답 테이블이 존재해야 함. 없으면 거부.
-7. **Open Questions** — 미해결 항목이 있으면 거부
-8. **scheme 필드** — 설정되어 있어야 함
+6. **Open Questions** — 미해결 항목이 있으면 거부
+7. **scheme 필드** — 설정되어 있어야 함
 8. **Filler stub detection** — 섹션 필드가 형식만 채워져 있고 실질 내용이 없는 "빈 껍데기"를 탐지. 거부.
-10. **Source tag 완전성** — `.claude/sowhat-core/bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
-11. **Cross-section regression** — 이 섹션을 settle함으로써 기존 settled 섹션과의 논증 일관성이 깨지는지 검증. 충돌 시 경고.
-12. **Confidence 게이트** — `confidence` 필드 기반 출처 수준 검증 (`references/calibration-guide.md` 참조):
+9. **Source tag 완전성** — `.claude/sowhat-core/bin/source-tag-parser.js validate` 호출로 구조적 검증. 태그 누락, 화이트리스트 밖 값, 미실존 retrieval 대조 실패 시 거부.
+10. **Cross-section regression** — 이 섹션을 settle함으로써 기존 settled 섹션과의 논증 일관성이 깨지는지 검증. 충돌 시 경고.
+11. **Confidence 게이트** — `confidence` 필드 기반 출처 수준 검증 (`references/calibration-guide.md` 참조):
     - ≥60% (likely 이상 = Primary claim): Grounds에 T1/T2 출처가 없으면 `❌ Primary claim은 T1/T2 수준 출처가 필요합니다` 출력 후 거부
     - <60% (uncertain 이하 = Supporting claim): T3/T4 또는 출처 없음도 허용, 단 CQ 응답 confidence가 대부분 높은데 overall confidence가 낮으면 ⚠️ 경고 (Underclaiming)
     - `confidence` 미설정: Grounds 강도 기반 자동 추론
-13. **CQ Confidence 게이트** (D2) — `cq_responses` 필드 기반 CQ 답변 품질 검증 (`references/calibration-guide.md`):
+12. **CQ Confidence 게이트** (D2) — `cq_responses` 필드 기반 CQ 답변 품질 검증 (`references/calibration-guide.md`):
     - 미충족 CQ (confidence ≤ 1) 수 ≥ scheme별 임계값 → settle 차단
     - 미충족 CQ 목록 출력: `❌ CQ 미충족 {N}개 — {미충족 CQ 목록}`
     - `cq_responses` 없음 → `❌ CQ 응답 누락 — /sowhat:expand로 CQ 응답 필요`

@@ -552,6 +552,23 @@ git add -A
 git commit -m "init: create series {series_name}"
 ```
 
+`logs/session.md` 완료 저장:
+```
+---
+command: series
+section: (auto)
+step: complete
+status: complete
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+series create 완료 — {series_name} 생성. 에피소드 {N}편 계획.
+
+## 재개 시 첫 질문
+/sowhat:init --series {series_name} --episode 1
+```
+
 ### 12. 완료 안내
 
 ```
@@ -647,6 +664,23 @@ startup-lessons      스타트업 레슨                 1/3편       Ep1 작성
 3. `series.json`의 `updated` 필드를 현재 datetime으로 갱신.
 
 ### 완료 안내
+
+`logs/session.md` 완료 저장:
+```
+---
+command: series
+section: (auto)
+step: complete
+status: complete
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+series add 완료 — Ep {N} ({project_name}) 등록.
+
+## 재개 시 첫 질문
+/sowhat:series status {series-name}
+```
 
 ```
 ✅ 에피소드 등록 완료

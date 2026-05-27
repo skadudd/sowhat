@@ -650,6 +650,46 @@ def validate_config(file_path, file_type):
 
 ---
 
+## 세션 저장
+
+config는 [3] 설정 보기를 제외한 모든 옵션([1] API 키, [2] 기능, [4] 초기화, [5] 직접 편집)이 파일을 변경한다.
+
+**시작 저장** — Step 1에서 [3] 이외 옵션 선택 즉시:
+```
+---
+command: config
+section: (auto)
+step: {선택 옵션}-start
+status: in_progress
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+config {선택 옵션} 시작
+
+## 재개 시 첫 질문
+설정 변경 재개 또는 현재 설정 확인
+```
+
+**완료 저장** — 설정 파일 쓰기 직후:
+```
+---
+command: config
+section: (auto)
+step: complete
+status: complete
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+config 완료 — {변경 내용 한 줄 요약}
+
+## 재개 시 첫 질문
+/sowhat:progress
+```
+
+**면제**: [3] 설정 보기 — 읽기 전용, session.md 저장 불필요.
+
 ## 핵심 원칙
 
 - **단계적 안내** — 항상 메뉴 → 선택 → 입력. 사용자가 "무엇이 가능한지"를 먼저 본다

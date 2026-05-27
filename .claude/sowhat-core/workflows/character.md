@@ -39,6 +39,23 @@ status_transitions: []
 
 `character-system.md` Phase 1-5를 순서대로 실행한다.
 
+`logs/session.md` 저장 (시작 저장 — [1] 선택 즉시):
+```
+---
+command: character
+section: (auto)
+step: start
+status: in_progress
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+character 새 캐릭터 생성 시작
+
+## 재개 시 첫 질문
+현재 단계(Step 1-5 중 어디까지 완료됐는지) 확인 후 재개
+```
+
 ### Step 1: 이름 + 레퍼런스 수집 (Phase 1)
 
 1. 캐릭터 이름 입력받기 (kebab-case)
@@ -95,7 +112,23 @@ status_transitions: []
 1. `character.md` 확정 (5층 구조, ~2100자)
 2. `changelog.md`에 v1 기록
 3. Git commit: `feat(character): create {name} v1`
-4. 완료 안내
+4. `logs/session.md` 완료 저장:
+   ```
+   ---
+   command: character
+   section: (auto)
+   step: complete
+   status: complete
+   saved: {current_datetime_ISO8601}
+   ---
+
+   ## 마지막 컨텍스트
+   character 생성 완료 — {name} v1 저장.
+
+   ## 재개 시 첫 질문
+   /sowhat:draft로 캐릭터 적용 시작
+   ```
+5. 완료 안내
 
 ---
 

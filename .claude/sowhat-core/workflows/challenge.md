@@ -280,14 +280,13 @@ Grounds에 포함된 **사용자 입력 citation**(`[source:user]`) 또는 **ret
 
 | Scheme | Critical Questions |
 |--------|-------------------|
-| authority | 이 권위자가 이 도메인의 진짜 전문가인가? 관련 분야에 전문가 합의가 있는가? 이해충돌은 없는가? |
-| analogy | 두 케이스가 이 논증에서 중요한 측면에서 충분히 유사한가? 차이점이 논증에 결정적인가? |
-| cause-effect | 인과 메커니즘이 타당한가? 역인과(reverse causation) 가능성은? Confounding variable은? |
-| statistics | 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 현재 시점에 유효한가? |
-| example | 대표적인 사례인가? 체리피킹이 아닌가? 일반화가 가능한가? |
-| sign | 이 신호가 신뢰할 수 있는 지표인가? 동일한 신호를 설명하는 다른 해석은 없는가? |
-| principle | 이 원칙이 이 상황에 적용되는가? 관련 예외 조건은 없는가? |
-| consequence | 결과가 현실적인가? 의도치 않은 부작용은? 적용 시간대는 맞는가? |
+| Expert Opinion | 이 권위자가 이 도메인의 진짜 전문가인가? 관련 분야에 전문가 합의가 있는가? 이해충돌은 없는가? |
+| Analogy | 두 케이스가 이 논증에서 중요한 측면에서 충분히 유사한가? 차이점이 논증에 결정적인가? 대표적인 사례인가? 체리피킹이 아닌가? |
+| Cause to Effect | 인과 메커니즘이 타당한가? 역인과(reverse causation) 가능성은? Confounding variable은? |
+| Sample to Population | 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 현재 시점에 유효한가? |
+| Sign | 이 신호가 신뢰할 수 있는 지표인가? 동일한 신호를 설명하는 다른 해석은 없는가? |
+| Classification | 이 원칙이 이 상황에 적용되는가? 관련 예외 조건은 없는가? |
+| Practical Reasoning | 결과가 현실적인가? 의도치 않은 부작용은? 적용 시간대는 맞는가? |
 
 scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되면 공격 리포트에 포함.
 

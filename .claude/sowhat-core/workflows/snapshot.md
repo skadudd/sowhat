@@ -90,6 +90,23 @@ status_transitions: ["(restore) → needs-revision"]
    - 파일 없으면 첫 스냅샷 (v1)
    - 있으면 마지막 버전 + 1
 
+2.5. `logs/session.md` 저장 (시작 저장):
+   ```
+   ---
+   command: snapshot
+   section: (auto)
+   step: create-v{N}
+   status: in_progress
+   saved: {current_datetime_ISO8601}
+   ---
+
+   ## 마지막 컨텍스트
+   snapshot create 시작 — v{N} 생성 중
+
+   ## 재개 시 첫 질문
+   스냅샷 v{N} 생성 재개
+   ```
+
 3. `snapshots/` 디렉터리 생성 (없으면):
    ```bash
    mkdir -p snapshots/v{N}
@@ -166,6 +183,23 @@ status_transitions: ["(restore) → needs-revision"]
 git add snapshots/ planning/config.json
 git commit -m "snapshot(v{N}): {label}"
 ```
+
+8. `logs/session.md` 완료 저장:
+   ```
+   ---
+   command: snapshot
+   section: (auto)
+   step: complete
+   status: complete
+   saved: {current_datetime_ISO8601}
+   ---
+
+   ## 마지막 컨텍스트
+   snapshot v{N} 생성 완료 — "{label}"
+
+   ## 재개 시 첫 질문
+   /sowhat:progress
+   ```
 
 ### 출력
 
@@ -288,6 +322,23 @@ Claim이 변경된 경우, Claude가 자연어로 의미적 차이를 설명한�
    - trigger: `"auto:pre-restore"`
    - 스냅샷 생성 절차 동일하게 수행
 
+3.5. `logs/session.md` 저장 (시작 저장):
+   ```
+   ---
+   command: snapshot
+   section: (auto)
+   step: restore-v{version}
+   status: in_progress
+   saved: {current_datetime_ISO8601}
+   ---
+
+   ## 마지막 컨텍스트
+   snapshot restore 시작 — v{version}으로 복원 예정. 백업 v{backup} 생성 완료.
+
+   ## 재개 시 첫 질문
+   사용자 복원 확인 대기 후 복원 진행
+   ```
+
 4. **[decision] checkpoint**:
    ```
    ⚠️ 복원 확인
@@ -327,6 +378,23 @@ Claim이 변경된 경우, Claude가 자연어로 의미적 차이를 설명한�
 ```bash
 git add -A
 git commit -m "snapshot: restore from v{N} — {label}"
+```
+
+`logs/session.md` 완료 저장:
+```
+---
+command: snapshot
+section: (auto)
+step: complete
+status: complete
+saved: {current_datetime_ISO8601}
+---
+
+## 마지막 컨텍스트
+snapshot restore 완료 — v{N}으로 복원. 모든 섹션 needs-revision 전환.
+
+## 재개 시 첫 질문
+/sowhat:revise로 각 섹션 내용 검토
 ```
 
 ### 출력
