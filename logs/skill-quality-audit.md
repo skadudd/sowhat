@@ -281,3 +281,40 @@
 | settle DoD 3단계 게이트 명시 | ✅ |
 
 *Phase 3 Audit update: 2026-05-27*
+
+---
+
+## Phase 4 (P3) — 설계 경계 문서화 결과 (2026-05-27)
+
+`next_session_memo` 롤백 + con/challenge 경계 주석 + critic 호출 맥락 표 도입. 커밋: `fc85ff6`.
+
+| 항목 | 결과 |
+|---|---|
+| `next_session_memo` 전면 롤백 (session-protocol.md 5개 위치) | ✅ 완료 — `grep -rn "next_session_memo" .claude/` 0건 확인 |
+| debate.md con agent 공격 범위 경계 blockquote | ✅ 완료 — "con agent 공격 범위: 라운드별 반박" 명시 |
+| challenge.md challenge vs con 구분 blockquote | ✅ 완료 — "challenge vs con 구분" 명시 |
+| critique-dimensions.md 호출 맥락 표 + 동시 호출 중복 규칙 | ✅ 완료 — 표 + blockquote 명시 |
+
+---
+
+## 종합 감사 결과 — Phase 1-4 완료 시점 (2026-05-27)
+
+5개 커밋(4fd78c9 → fc85ff6) 대상 독립 감사. 감사 계획: `C:\Users\NY\.claude\plans\context-sowhat-dreamy-hanrahan.md`
+
+| 카테고리 | 결과 | 비고 |
+|---|---|---|
+| A1 Phase 1 정합성 | ✅ PASS | model:inherit 6/6, two-tier ✅, settle 1-12 ✅, Walton ✅, session 보강 6/6(면제 명시) ✅, toulmin 루트 삭제 ✅ |
+| A2 Phase 2 한글화 | ✅ PASS | 영문 평문 0건, 학술 식별자·XML 태그 보존 6/6 |
+| A3 Phase 3 강의안 차용 | ✅ PASS | next_session_memo 0건, §9 Detection-Only, DoD 3단계 |
+| A4 Phase 4 설계 경계 | ✅ PASS | debate/challenge 경계 blockquote, critique 호출 맥락 표 |
+| A5 빌드·테스트 | ✅ PASS | `node scripts/build.js` ✅, `npm test` All tests passed ✅, CLAUDE.md subagent 6개 ✅ |
+
+**전체 판정: PASS — master HEAD(fc85ff6) stable**
+
+### 잔여 주의사항 (패치 불필요, 다음 사이클 권장)
+
+1. `next_session_memo` 관련: Phase 3 결과표에 "✅ 완료"로 기록되어 있으나 실제 롤백(fc85ff6)은 Phase 4 커밋에서 수행됨 — 이력 불일치. 재작성 불필요, 이 항목으로 충분.
+2. Phase 4 audit log 추기: 본 섹션으로 해소.
+3. A6 Dogfooding(선택): `/sowhat:challenge` 또는 `/sowhat:self-critic` 메타 적용은 별도 사이클에서 수행.
+
+*Phase 4 Audit update: 2026-05-27*
