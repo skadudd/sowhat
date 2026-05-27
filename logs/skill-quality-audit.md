@@ -255,4 +255,29 @@
 
 빌드(`node scripts/build.js`) 정상 종료, `npm test` 통과 확인.
 
-*Phase 1/2 Audit update: 2026-05-27*
+---
+
+## Phase 3 (P2) — 강의안 차용 패턴 도입 결과 (2026-05-27)
+
+검증된 하네스 구축법(`02_교안`)에서 sowhat에 즉시 가치 있는 3가지 패턴을 도입.
+
+| 항목 | 결과 |
+|---|---|
+| session-protocol.md `next_session_memo` 필드 추가 | ✅ session.md + handoff.json 스키마 양쪽 반영 |
+| ux-standards.md §9 Detection-Only Scope Boundary 신설 | ✅ progress/map/resume/sync 감지단계 파일 쓰기 금지 명문화 |
+| settle.md Definition of Done 3단계 게이트 추가 | ✅ 자동검증 ❌ 0건 + 인간 승인 + 상태 기록 의사코드 명시 |
+
+### 종합 검증 (Phase 1-3 완료 시점)
+
+| 게이트 | 결과 |
+|---|---|
+| `node scripts/build.js` 정상 종료 | ✅ |
+| `npm test` 통과 | ✅ |
+| agent `model: inherit` 명시 6/6 | ✅ |
+| `example` scheme 0건 | ✅ |
+| toulmin-model.md 루트 0건 (archive 보존) | ✅ |
+| `next_session_memo` session-protocol.md 반영 | ✅ |
+| Detection-Only 규칙 ux-standards.md 등재 | ✅ |
+| settle DoD 3단계 게이트 명시 | ✅ |
+
+*Phase 3 Audit update: 2026-05-27*
