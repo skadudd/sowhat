@@ -13,7 +13,6 @@ section: {section-name or (auto)/(url)/(search)}
 step: {current-step-name}
 status: in_progress
 saved: {current_datetime_ISO8601}
-next_session_memo: "{현재 열려 있는 파일 경로·라인 번호·진입점 — 재개 시 즉시 참조할 구체 컨텍스트}"
 ---
 
 ## 마지막 컨텍스트
@@ -34,7 +33,6 @@ section: {section-name}
 step: complete
 status: complete
 saved: {current_datetime_ISO8601}
-next_session_memo: "{다음 세션에서 즉시 필요한 파일 경로·라인 번호·연결 지점 — 없으면 생략 가능}"
 ---
 
 ## 마지막 컨텍스트
@@ -43,8 +41,6 @@ next_session_memo: "{다음 세션에서 즉시 필요한 파일 경로·라인 
 ## 재개 시 첫 질문
 {next suggested command}
 ```
-
-> `next_session_memo`는 선택 필드이지만 권장된다. resume이 session.md를 1차 참조할 때 이 필드가 있으면 수동 탐색 없이 정확한 컨텍스트로 복원할 수 있다. 구체적일수록 유효하다. 예: `"planning/02-market.md:47 — Grounds G3 미완, Sub-Research 결과 대기 중"`.
 
 
 ## Optional Extension Fields
@@ -95,7 +91,6 @@ draft/finalize/finalize-planning 실행 시 session.md의 `preview_event` 필드
   "notes_pending": 2,
   "next_action": "/sowhat:settle 02-market",
   "decision_ids": ["D-02-001", "D-02-002", "D-02-003"],
-  "next_session_memo": "planning/02-market.md:47 — Grounds G3 미완, Sub-Research 결과 대기 중",
   "saved": "2026-03-26T10:30:00Z"
 }
 ```
@@ -115,7 +110,6 @@ draft/finalize/finalize-planning 실행 시 session.md의 `preview_event` 필드
 | `notes_pending` | 미처리 노트 수 |
 | `next_action` | 다음 권장 커맨드 |
 | `decision_ids` | 이 세션에서 생성된 Decision ID 목록 |
-| `next_session_memo` | 다음 세션에서 즉시 참조할 파일 경로·라인 번호·연결 지점 (선택, 권장) |
 | `saved` | 생성 시각 (ISO 8601) |
 
 ### resume에서의 활용

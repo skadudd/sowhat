@@ -17,6 +17,8 @@ status_transitions: ["settled → needs-revision", "discussing → needs-revisio
 
 이 커맨드는 문서 트리를 8단계(Stage 0-7) 검증으로 공격한다. Stage 0은 사실 검증(Factual Verification), Stage 1-7은 논리 검증(Walton Argument Schemes 기반)을 적용한다. **두 가지 모드**를 지원한다:
 
+> **challenge vs con 구분**: con은 debate 라운드별 즉시 반박; challenge는 최종 확정 전 독립적 종합 검증. debate 이력(session.md)을 참조하되, 이미 수정된 약점을 재지적하지 않는다.
+
 - **전체 모드 (full mode)**: `$ARGUMENTS`가 비어있거나 `--force`만 포함 → 전체 트리를 대상으로 공격
 - **부분 모드 (section mode)**: `$ARGUMENTS`에 섹션명/번호 포함 (예: `02-solution`, `03-market`) → 해당 섹션만 집중 공격
 

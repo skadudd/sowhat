@@ -21,6 +21,8 @@ status_transitions: []
 
 Thesis가 위협받을 수 있으며, 그것이 논리적으로 정당하면 **무너뜨리는 것이 올바른 결과다.**
 
+> **con agent 공격 범위**: 라운드별 반박 — 단일 라운드 맥락. 이전 라운드 수정 반영은 다음 라운드 con이 재평가. `/sowhat:challenge`는 별도의 독립 종합 검증이므로 debate 공격 이력과 혼동하지 않는다.
+
 ## AI Content Boundary (cycle 7)
 
 Con/Pro 에이전트는 **논리적 공격·방어**만 자동 생성한다. 구체값(수치·기관명·연도·인물명·URL)은 자동 생성 금지. 상세: `references/ai-content-boundary.md`.

@@ -5,6 +5,17 @@ v3.0.0부터 Toulmin 5차원 → Walton Argumentation Schemes 기반으로 재�
 
 ---
 
+## 호출 맥락
+
+| Agent | 대상 | 차원 | 주 용도 |
+|---|---|---|---|
+| critic | 외부 타겟 콘텐츠 | 5차원 전체 | 약점 주입 → debate 연계 |
+| self-critic | 사용자 자신의 논증 | 5차원 전체 | 초안 진단 → revise/expand 연계 |
+
+> content-critique 모드에서 critic과 self-critic의 동시 호출은 중복 — critic을 우선 실행, self-critic은 critic 피드백 반영 후에만 호출.
+
+---
+
 ## 1. Walton Scheme 완전성 (Scheme Completeness)
 
 논증이 Walton scheme 구조를 갖추고 있는가?
