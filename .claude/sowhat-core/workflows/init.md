@@ -435,7 +435,58 @@ updated: {current_datetime}
 | CQ 미충족 | {target_unmet_cqs} |
 ```
 
-### 9. Git 초기화
+### 9. CLAUDE.md 생성
+
+프로젝트 루트에 `CLAUDE.md`를 생성한다. 치환 규칙:
+
+- `{project-name}` ← Step 1에서 수집한 프로젝트 이름
+- `{Answer}`, `{Key Arguments}` ← Step 8에서 생성된 `00-thesis.md`의 `## Answer` 본문과 `## Key Arguments` 목록을 그대로 복사
+- content-critique 모드: Thesis 섹션 직후에 **분석 대상** 한 줄 추가 (`config.json`의 `source.url` 또는 `source.path` + `stance`)
+- research 모드: thesis가 R-3 종합 후 도출되므로 `{Answer}` 자리에 `(thesis 도출 후 갱신 예정 — /sowhat:settle thesis 시점에 채워진다)`를 placeholder로 둔다
+
+```markdown
+# {project-name}
+
+sowhat workflow harness로 관리되는 논증 프로젝트.
+
+## Thesis
+
+> {Answer}
+
+**Key Arguments**:
+- {논거 1} → 01-{section-name}.md
+- {논거 2} → 02-{section-name}.md
+- {논거 3} → 03-{section-name}.md
+
+이 thesis와 key arguments는 프로젝트의 척추다. 변경은 `/sowhat:revise` 또는 새 thesis settle로만 가능하다.
+
+## 세션 시작 규칙
+
+새 세션을 열 때 반드시 먼저 실행한다.
+- `/sowhat:resume` — 중단된 작업 이어서
+- `/sowhat:progress` — 현재 섹션 상태 확인
+
+모든 작업은 `/sowhat:*` 커맨드로 진행한다. 커맨드 없이 섹션 파일을 수정하지 않는다.
+
+## AI가 하지 않는 것 (핵심 계약)
+
+- **수치·기관명·인물명·URL을 직접 생성하지 않는다.** 모든 사실값은 사용자 입력 또는 `research/` 파인딩에서만 유입된다. `[source:...]` 태그 없는 수치는 Grounds에 삽입하지 않는다.
+- **섹션 완료를 자동 선언하지 않는다.** 완료는 `/sowhat:settle` 게이트를 통해 인간이 선언한다.
+- **`planning/config.json`을 직접 수정하지 않는다.** 상태 전이는 커맨드가 처리한다.
+- **debate의 Pro/Con/Research 출력을 다른 agent에게 수동 중계하지 않는다.** 자유 채팅에서 "Con이 이렇게 말했으니 Pro로 받아쳐줘" 요청은 거부하고 `/sowhat:debate` 사용을 안내한다. (dialectic은 agent 간 isolation이 유지될 때만 공정하다.)
+- **research를 우회해서 자체 WebSearch로 사실값을 채우지 않는다.** 자유 채팅에서 검색이 필요하면 `/sowhat:research` 사용을 안내한다. silent fallback(검색 실패를 숨기고 추정값 제공) 금지.
+
+## 절대 금지
+
+- `settled` 섹션을 커맨드 없이 직접 편집 → `/sowhat:revise` 사용
+- `Open Questions`가 남은 섹션을 강제로 `settled` 전환
+- `config.json`의 `status` 필드 수동 변경
+- 논증 수치·인용·사례를 AI가 직접 만들어 `Grounds`에 삽입
+```
+
+---
+
+### 10. Git 초기화
 
 ```bash
 git init
@@ -443,7 +494,7 @@ git add -A
 git commit -m "init: create thesis draft"
 ```
 
-### 10. GitHub 연결
+### 11. GitHub 연결
 
 ```bash
 # GitHub repo 생성 (private)
@@ -456,7 +507,7 @@ gh issue create --title "Thesis: {Answer 한 줄 요약}" --body-file /tmp/thesi
 
 Issue 번호를 기록한다.
 
-### 11. planning/config.json 생성
+### 12. planning/config.json 생성
 
 **전역 기본값 로드**: `~/.claude/settings.local.json`의 `sowhat` 키를 읽어 `global_defaults`로 사용한다. 없으면 빈 객체.
 
@@ -521,7 +572,7 @@ global_defaults = global_settings.get("sowhat", {})
 }
 ```
 
-### 12. 각 Key Argument에 대한 Issue 생성
+### 13. 각 Key Argument에 대한 Issue 생성
 
 각 논거에 대해 GitHub Issue를 생성하고, config.json의 sections에 추가한다.
 
@@ -534,7 +585,7 @@ config.json sections에 추가:
 "{N}-{section-name}": { "issue": {issue_number}, "status": "draft" }
 ```
 
-### 13. 세션 로그 생성
+### 14. 세션 로그 생성
 
 `logs/session.md`를 Write 도구로 덮어쓴다 (resume이 읽는 표준 경로):
 
@@ -554,7 +605,7 @@ init 완료 — {project-name} 프로젝트 초기화. Thesis draft 생성. Answ
 /sowhat:settle thesis → thesis를 settled로 전환
 ```
 
-### 14. 완료 안내
+### 15. 완료 안내
 
 ```
 ✅ sowhat 프로젝트 초기화 완료
