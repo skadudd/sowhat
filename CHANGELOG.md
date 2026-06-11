@@ -4,6 +4,24 @@ All notable changes to sowhat are documented here.
 
 ---
 
+## [3.1.0] — 2026-06-11
+
+### Changed
+- **Context-rot 대폭 감소**: 5개 monolith 워크플로우(draft/init/research/expand/series)의 조건부 분기를 on-demand reference로 추출(워크플로우 본문 ~1,948L 경감). `ux-standards`·`draft` 템플릿도 선택 import/포인터로 분할.
+- **런타임 출력 verbosity 감소**: parser 호출을 `--json-file`로 바꿔 대화 raw JSON 덤프 제거. `expand`/`spec`의 필드·항목별 커밋을 섹션당 1커밋으로 batching. 출력 규율(`ux-standards` §11) 표준화.
+- `challenge` 스테이지 스펙 중복 제거 — 판정 로직은 `challenge-algorithm.md` 단일 소유.
+
+### Added
+- `source-tag-parser`에 `--json-file <path>` 플래그 — 전체 JSON은 파일 기록, stdout엔 간결 요약만.
+
+### Removed
+- Codex 멀티런타임 잔재(`AGENTS.md`/`.codex/`/`.agents/`) 제거 — **Claude Code 단일 런타임**으로 통일.
+
+### Fixed
+- dangling references(`draft-review-algorithm.md` 등) 해소, README 에이전트 카운트(5→6), confidence 네임스페이스·`grounds_structure`·Steelman 용어 정합.
+
+---
+
 ## [3.0.0] — 2026-05-26
 
 ### Breaking Changes — Toulmin → Walton Argumentation Schemes
