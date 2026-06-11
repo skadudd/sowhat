@@ -238,143 +238,22 @@ Stage 0 research-agent가 응답하지 않는 경우의 방어 로직:
 
 ## 검증 순서 (고정 — 순서 변경 불가)
 
-### [0단계] Grounds 사실 검증 (Factual Verification)
+스테이지별 **검사 대상 한눈 맵**. 각 스테이지의 판정 알고리즘·Pass 기준·severity 분류는 **`references/challenge-algorithm.md`가 단일 소유**하며, agent 스폰 시 해당 `§Stage N` 섹션 전문을 주입한다(위 "에이전트 스폰 패턴" 참조). 아래 표는 오케스트레이션용 요약이며 상세 로직을 여기 중복 기재하지 않는다.
 
-Grounds에 포함된 **사용자 입력 citation**(`[source:user]`) 또는 **retrieval 결과**(`[source:#NNN]` / `[source:sub-research]` / `[source:file:*]`)가 실제와 일치하는지 검증한다.
+| 스테이지 | 검사 대상 (요약) | agent | 알고리즘 |
+|---|---|---|---|
+| **0** Grounds 사실 검증 | 사용자 입력 citation·retrieval 결과의 실존·값·단위/방향·해석 정합·도메인 용어 일관성·draft 산출물 교차. cycle 7 축소 역할: AI fabrication 탐지 불필요 (`references/ai-content-boundary.md` §"Challenge Stage 0의 축소된 역할") | research-agent | §Stage 0 |
+| **1** Thesis 정합성 | 섹션 thesis_argument가 Answer를 실제 지지하는가 (필요성·충분성·IBIS Position) | challenge-agent | §Stage 1 |
+| **2** Argument Scheme 유효성 | 각 섹션 `scheme`의 Critical Questions 적용, 미설정 시 ⚠️ 취약 플래그 | challenge-agent | §Stage 2 |
+| **3** CQ 응답 충분성 | scheme별 필수 CQ 답변 완전성·품질(confidence ≤1 상한)·복합 scheme·depth cap | challenge-agent | §Stage 3 |
+| **4** So What | Grounds + CQ → Claim 흐름의 자연스러움, Claim→KA→thesis 연결 | challenge-agent | §Stage 4 |
+| **5** Why So | Grounds의 충분성·필요성·중복·비약. **`grounds_structure`(linked/convergent/mixed)에 따라 필요성 판정** — linked는 단일 ground 붕괴 시 Claim 붕괴, convergent는 각 ground 독립 지지 | challenge-agent | §Stage 5 |
+| **6** Confidence 보정 | Confidence band(Tetlock) ↔ 근거 강도 균형 (over/under-claiming) | challenge-agent | §Stage 6 |
+| **7** MECE + 독립 반론 | KA 중복·누락·scope 충돌 + 섹션별 최강 독립 반론 생성 후 CQ 대응 확인 | challenge-agent | §Stage 7 |
 
-**cycle 7 역할 축소** (`references/ai-content-boundary.md` §"Challenge Stage 0의 축소된 역할"): AI가 구체값을 자동 생성할 경로가 제거되었으므로 "AI fabrication 탐지"는 불필요. Stage 0은 사용자가 직접 입력한 citation의 실존·값 정확성 확인에 집중한다.
-
-검증 항목:
-1. **수치·사실 대조**: 사용자 입력 citation의 원문과 섹션 값 비교
-2. **1차 출처 역추적**: 2차 출처(뉴스 등)에서 인용한 데이터의 원본 확인
-3. **단위·방향 검증**: 상한/하한, 증가/감소, 전년비/기준년비 등 혼동 여부
-4. **해석 정합성**: 원본 데이터가 섹션의 해석을 지지하는지
-5. **사례 대표성**: 특정 거래/사건 인용 시 특수 거래(증여, 직거래 등) 여부
-6. **Cross-Section 정합성**: 동일 데이터가 여러 섹션에서 일관되게 인용되는지
-7. **도메인 용어 정의 일관성** (cycle 7.1 추가): 동일 용어(예: "SSOT", "분리 설계", "거시/미시")가 여러 섹션에서 다른 정의로 쓰이는지 확인. 불일치 발견 시 → ⚠️ minor
-8. **draft 산출물 Cross-Section** (cycle 7.1 추가, 조건부): `export/generated/**/DOCUMENT.md`가 존재하면 settled 섹션 수치와 산출물 수치를 교차 검사. 산출물에서 섹션에 없는 수치 발견 시 → ⚠️ major (draft 환각 가능성). 파일 없으면 skip.
-
-사실 오류 발견 시: 사용자에게 revise 경로 안내 (`/sowhat:revise {section}` 으로 citation 수정 또는 교체). `unverified_items` frontmatter 기록은 cycle 7에서 폐기 — 오류는 즉시 revise 트리거.
-
-> **에이전트**: sowhat-research-agent (WebSearch/WebFetch 필요). challenge-algorithm.md Stage 0 참조.
-
----
-
-### [1단계] Thesis 정합성
-
-각 섹션의 thesis_argument가 thesis의 Answer를 **실제로** 지지하는지 검증한다.
-
-검증 항목:
-- 이 섹션의 Claim이 제거되면 thesis Answer가 흔들리는가? (필요성)
-- settled + discussing 섹션들이 합쳐졌을 때 Answer를 **완전히** 커버하는가? (충분성)
-- IBIS 관점: 어떤 Issue에 대한 Position인지 명확한가?
-- 빠진 Key Argument가 있지 않은가?
-
----
-
-### [2단계] Argument Scheme 유효성 (NEW)
-
-각 섹션의 `scheme` 필드를 확인하고 해당 scheme의 Critical Questions를 적용한다.
-
-**scheme이 없는 섹션**: scheme 미설정 → `⚠️ scheme 미설정 (공격 취약)`으로 기록하고 계속.
-
-**scheme별 Critical Questions:**
-
-| Scheme | Critical Questions |
-|--------|-------------------|
-| Expert Opinion | 이 권위자가 이 도메인의 진짜 전문가인가? 관련 분야에 전문가 합의가 있는가? 이해충돌은 없는가? |
-| Analogy | 두 케이스가 이 논증에서 중요한 측면에서 충분히 유사한가? 차이점이 논증에 결정적인가? 대표적인 사례인가? 체리피킹이 아닌가? |
-| Cause to Effect | 인과 메커니즘이 타당한가? 역인과(reverse causation) 가능성은? Confounding variable은? |
-| Sample to Population | 표본이 대표성 있는가? 방법론이 건전한가? 데이터가 현재 시점에 유효한가? |
-| Sign | 이 신호가 신뢰할 수 있는 지표인가? 동일한 신호를 설명하는 다른 해석은 없는가? |
-| Classification | 이 원칙이 이 상황에 적용되는가? 관련 예외 조건은 없는가? |
-| Practical Reasoning | 결과가 현실적인가? 의도치 않은 부작용은? 적용 시간대는 맞는가? |
-
-scheme 미설정이거나 scheme의 Critical Questions에 취약점이 발견되면 공격 리포트에 포함.
-
----
-
-### [3단계] CQ 응답 충분성 (NEW)
-
-각 섹션의 CQ Responses를 검증한다. **이 단계가 논증 구조의 핵심 검증이다.**
-
-검증 항목:
-1. **CQ 응답 완전성**: scheme별 필수 CQs가 모두 답변되어 있는가? 미답변 CQ → 약점 플래그
-2. **CQ 답변 품질**: confidence ≤1 (추측 또는 답 불가) CQ 수 → scheme별 허용 상한과 비교
-   - Cause to Effect, Classification: 미충족 CQ 0개 허용 (엄격)
-   - Expert Opinion, Analogy 등: 1개 허용
-   - Sign, Position to Know, Popular Opinion: 2개 허용
-3. **복합 Scheme 완전성**: 2개 이상 scheme 지정 시, 각 scheme의 CQs가 모두 활성화되어 있는가?
-4. **depth cap**: CQ 답변이 새 주장을 생성하는 경우, 후속 CQ가 depth 2를 초과하지 않는가?
-
-일반적인 CQ 실패 패턴:
-- Expert Opinion: 전문가 이해충돌 미검토 (CQ3)
-- Cause to Effect: 대안 원인 미검토 (CQ2)
-- Sample to Population: 표본 대표성 미검토 (CQ1)
-
----
-
-### [4단계] So What
-
-각 Grounds가 해당 Claim을 지지하는지 검증한다. scheme의 CQ 응답을 경유하여 확인.
-
-검증 항목:
-- 이 Grounds + CQ Responses → Claim의 흐름이 자연스러운가?
-- "So What?"에 답할 수 있는가? (Grounds가 있으면 Claim이 따라오는가)
-- Claim이 상위 Key Argument를 지지하는가? (thesis까지 연결선 확인)
-
----
-
-### [5단계] Why So
-
-각 Claim이 충분하고 필요한 근거를 가지는지 검증한다.
-
-검증 항목:
-- **충분성**: Grounds가 Claim을 지지하기에 충분한가? (근거가 너무 약하거나 적지 않은가)
-- **필요성**: 각 Ground를 제거했을 때 Claim이 약해지는가? (불필요한 근거는 없는가)
-- **중복성**: 여러 Grounds가 동일한 내용을 반복하지 않는가?
-- **비약**: Grounds에서 Claim으로의 논리적 비약이 있는가?
-
----
-
-### [6단계] Confidence 보정 (NEW)
-
-각 섹션의 Confidence band와 근거 강도의 균형을 검증한다. (`references/calibration-guide.md` 참조)
-
-**Confidence band (Tetlock):**
-
-| band | 범위 |
-|------|------|
-| `virtually certain` | 95%+ |
-| `very likely` | 80-95% |
-| `likely` | 60-80% |
-| `uncertain` | 40-60% |
-| `unlikely` | 20-40% |
-
-검증 기준:
-
-| 상황 | 판정 |
-|------|------|
-| `virtually certain` + 근거 약함 (인터뷰 1-3건, 사례 1-2개) | Overclaiming — Confidence 하향 권장 |
-| `virtually certain` + 미충족 CQ 있음 | Overclaiming — `very likely` 이하 권장 |
-| `unlikely` + 강한 데이터 (대규모 연구, 강한 인과) | Underclaiming — 약한 포지션 |
-| `likely` 이상 + 미충족 CQ 2개+ | Confidence 수준과 CQ 응답 불균형 |
-| `likely` + CQ 전체 충족 + T1/T2 근거 | 균형 — 통과 |
-
----
-
-### [7단계] MECE + Steelman
-
-**MECE 검증:**
-- Key Arguments 간 중복이 있는가? (같은 논거를 두 섹션이 다루는가)
-- 빠진 논거가 있는가? (thesis Answer 달성에 필요한데 어떤 섹션도 다루지 않는 것)
-- 섹션 간 Scope 충돌이 있는가? (같은 영역을 두 섹션이 In으로 주장하는가)
-
-**Steelman 검증 (NEW):**
-각 섹션에 대해 가장 강한 반론을 독립적으로 생성하고, 섹션의 CQ Responses가 이를 대응하는지 확인:
-1. Claude가 scheme의 Critical Questions를 기반으로 해당 섹션에 대한 최강 반론을 직접 생성
-2. 섹션의 `## CQ Responses` 테이블에서 관련 CQ 답변 확인
-3. 관련 CQ가 미응답이거나 confidence ≤1이면 → 플래그
+> **Stage 0 → Stage 4-5 연계**: Stage 0에서 사실 오류가 발견된 Grounds는 So What·Why So에서 "오류 있는 근거"로 더 엄격히 검증한다.
+> **용어 구분 (Steelman)**: Stage 7의 "독립 반론(Steelman)"은 challenge **내부**의 섹션별 검증 항목이다. 사전 단계의 독립 워크플로우 `/sowhat:steelman`(thesis 전체에 대한 반대 논증 트리 생성)과 다르며, debate의 라운드 내 Con 전술과도 별개다.
+> **사실 오류 발견 시**: `/sowhat:revise {section}`으로 citation 수정·교체 안내 (즉시 revise 트리거 — `unverified_items` frontmatter 기록은 cycle 7에서 폐기).
 
 ---
 

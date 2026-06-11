@@ -366,11 +366,21 @@ FOR EACH section:
      근거 유형 미충족 → ⚠️ major: 근거 유형 불일치
      Tier 미충족 → ⚠️ major: 출처 신뢰도 부족 (Tier 상향 또는 confidence 하향 권고)
 
-  2. 필요성 테스트:
-     FOR EACH ground:
-       "이 ground를 제거하면 Claim이 약해지는가?"
-       - NO → 💡 minor: 불필요한 근거 (제거 권고)
-       - YES → 필요한 근거
+  2. 필요성 테스트 (section.grounds_structure에 따라 분기):
+     IF grounds_structure == "linked":
+       # 모든 ground가 함께 있어야 Claim 성립 → 각 ground는 필요, 단 단일 실패점 존재
+       weakest = argmin(ground.strength)
+       IF weakest.strength 가 약함(T3/T4 또는 출처 미명시) → 🔴 critical: linked 구조의 단일 약점 ground가 Claim 전체를 붕괴시킴 (보강 또는 convergent 재구성 권고)
+       # linked에서는 "불필요한 근거" 판정을 적용하지 않는다 (제거 시 구조 붕괴)
+     ELIF grounds_structure == "convergent" OR 미지정:
+       FOR EACH ground:
+         "이 ground를 제거하면 Claim이 약해지는가?"
+         - NO → 💡 minor: 불필요한 근거 (제거 권고)
+         - YES → 필요한 근거
+     ELIF grounds_structure == "mixed":
+       # linked 부분집합은 위 linked 규칙, convergent 부분집합은 위 convergent 규칙 각각 적용
+       linked 부분집합에 약점 ground → 🔴 critical (위와 동일)
+       convergent 부분집합 → 개별 필요성 판정
 
   3. 중복성 테스트:
      FOR EACH pair (ground_i, ground_j):

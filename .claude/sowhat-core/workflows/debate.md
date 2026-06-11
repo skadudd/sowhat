@@ -160,6 +160,8 @@ git checkout -b "$BRANCH"
   3. **Scheme CQ**: 충족 CQ 중에서도 가장 취약한 답변이 있는 CQ 공격
   4. **Steelman**: 위 세 가지로 공격이 없으면, 섹션에 대한 최강 반론을 독립 생성
 
+> **용어 구분 (Steelman)**: 여기서 Con-Agent의 "Steelman"은 **debate 라운드 내 전술**(공격거리가 없을 때 독립 최강 반론 생성)이다. challenge의 Stage 7 "독립 반론"(섹션별 검증 항목), 그리고 사전 독립 워크플로우 `/sowhat:steelman`(thesis 전체 반대 논증 트리 생성)과는 적용 범위가 다르다.
+
 - scheme별 Critical Questions (`references/walton-schemes.md` 전문 참조):
 
   | Scheme | 핵심 Critical Questions |
