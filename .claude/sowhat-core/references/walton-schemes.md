@@ -198,4 +198,4 @@ cqs:
 
 ## 전체 카탈로그
 
-60+ scheme 전체: `references/walton-schemes-full.md` (참고용만 — sowhat 게이트에서 미사용)
+Walton의 전체 60+ argumentation scheme 분류는 sowhat 게이트에서 사용하지 않는다. sowhat은 위에 정의한 핵심 scheme 집합만 운용하며, 그 외 scheme이 필요하면 가장 가까운 핵심 scheme으로 매핑한다. (전체 분류는 Walton, Reed & Macagno, *Argumentation Schemes*, 2008 참조.)

@@ -1,7 +1,7 @@
 ---
 name: sowhat:config
 description: sowhat 설정을 관리한다. API 키, 기능 토글, 모델 선택 등. "설정", "config", "API 키", "퍼플렉시티", "perplexity", "deep research 설정", "기능 켜기", "기능 끄기" 등 sowhat 프로젝트 설정을 변경할 때 사용.
-argument-hint: ""
+argument-hint: "(인자 없음 — 대화형 메뉴)"
 allowed-tools:
   - Read
   - Write

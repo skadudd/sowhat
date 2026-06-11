@@ -39,7 +39,7 @@ sowhat = Claude Code runtime 위의 **workflow harness** (slash command 27개 + 
 | Subagent | `.claude/agents/sowhat-*.md` | `sowhat-` prefix 필수 (빌드 필터 기준) |
 
 `description` 필드 누락 금지 — 트리거 불가.
-(근거: audit 결과 9개 command에서 발견. `logs/skill-quality-audit.md` 참조)
+(근거: 과거 audit에서 9개 command 누락 발견 → 현재 27개 전부 보유로 해소됨. 이력: `logs/skill-quality-audit.md`. 규칙은 신규 command에 계속 적용.)
 
 Command = 요약·진입점 / Workflow = 실행 본문으로 분리 유지 (Two-tier standards).
 Multi-step command는 반드시 `logs/session.md` 저장 포함.

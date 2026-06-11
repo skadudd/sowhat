@@ -60,6 +60,7 @@ compatibility: "Claude Code >=2.1.3"
 @.claude/sowhat-core/references/strength-scoring.md
 @.claude/sowhat-core/references/source-credibility.md
 @.claude/sowhat-core/references/challenge-algorithm.md
+@.claude/sowhat-core/references/session-protocol.md
 </execution_context>
 
 <context>

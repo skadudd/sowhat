@@ -369,7 +369,7 @@ draft 산출물은 Barbara Minto의 피라미드 원칙을 따른다:
 
 ## 에이전트
 
-논증 검증에 5개 전문 에이전트가 동원된다:
+논증 검증에 6개 전문 에이전트가 동원된다:
 
 | 에이전트 | 역할 |
 |----------|------|
@@ -378,6 +378,7 @@ draft 산출물은 Barbara Minto의 피라미드 원칙을 따른다:
 | **Pro** | 논증 방어. 유효한 공격과 허위 공격 구분 |
 | **Challenge** | 7단계 논증 계층 독립 검증 (Thesis → Key Args → Grounds) |
 | **Critic** | 외부 콘텐츠 5차원 비평 |
+| **Self-Critic** | 사용자 자신의 논증을 5차원으로 자기비평 (`/sowhat:self-critic`) |
 
 ### 3-에이전트 변증법 (`/sowhat:debate`)
 

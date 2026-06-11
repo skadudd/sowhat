@@ -48,6 +48,7 @@ compatibility: "Claude Code >=2.1.3"
 @.claude/sowhat-core/references/ux-standards.md
 @.claude/sowhat-core/workflows/character.md
 @.claude/sowhat-core/references/character-system.md
+@.claude/sowhat-core/references/session-protocol.md
 </execution_context>
 
 <context>
