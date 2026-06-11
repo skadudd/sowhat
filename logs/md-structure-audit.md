@@ -66,13 +66,17 @@
 
 ---
 
-## 4. 의도적 보류 (Phase 2 후보)
-per-run 가치 대비 touch/risk가 큰 항목은 보류. 추후 별도 사이클에서 신중히 진행 권장:
-- **ux-standards.md 분할**(§2.3 체크포인트·§9 detection-scope·§10 preview-gate를 선택 import로): 섹션당 25-41L로 ≥80L 임계 미만이나 ~20개 command multiplier. command별 import 재배선 필요 → breakage risk.
-- **draft.md 프레임워크/채널 템플릿 분리**(framework ~187L, channel ~128L): 임계 초과·가치 있으나 Step 5 생성 로직 내부 중첩 → dispatch 경계 정밀 검증 필요.
-- **debate.md 조건부 섹션**(stance 53L·global 17L·branch-lifecycle 46L): 각 블록 <80L 임계 미만 → 과편화 방지 위해 보류.
-- **character-system.md 설계근거/운영 분리**: `@`-import된 운영 본문이라 신중한 rationale-only 분리 필요.
-- **draft PRD/series-gen 템플릿 분리**, **series 잔여 서브커맨드**(digest/add/terms): 후속.
+## 4. Phase 2 (완료) + 잔여 보류
+
+### Phase 2 완료 (2026-06-11)
+- **draft.md 템플릿 분리**: frameworks(170L)·series(90L)·channels(133L)·PRD(86L) → reference 4개. draft 1410→959L. Step 5 dispatch 로직은 본문 유지, 템플릿만 포인터화.
+- **ux-standards.md 분할**: §9 detection→`ux-detection-boundary.md`, §10 preview→`ux-preview-gate.md`. ux-standards 439→368L. consumer 정확 재배선(detection: progress/map/resume/sync, preview: draft/finalize/finalize-planning) + 교차검증 통과. **§2.3 체크포인트/decision 포맷은 near-universal 사용으로 코어 유지**(분리 보류).
+- 검증: dangling 0, fence 짝수, `npm test` 통과, consumer↔import 일치.
+
+### 잔여 보류 (Phase 3 후보, 저ROI)
+- **debate.md 조건부 섹션**(stance/global/branch-lifecycle ~103L): 각 블록 <80L 임계 미만, 6% 절감 → 과편화 방지 위해 보류.
+- **character-system.md 설계근거 분리**(~180L): `@`-import 운영 본문 + char 명령 저빈도 → ROI 낮음.
+- **series 잔여 서브커맨드**(digest/add/terms): 소형, 후속.
 
 ---
 

@@ -46,6 +46,7 @@ Thesis: "{Answer 40자}"
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md
+@.claude/sowhat-core/references/ux-detection-boundary.md
 @.claude/sowhat-core/workflows/map.md
 @.claude/sowhat-core/references/session-protocol.md
 </execution_context>

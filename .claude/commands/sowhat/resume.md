@@ -49,6 +49,7 @@ logs/session.md, git log, 섹션 상태, debate 브랜치를 분석하여 중단
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md
+@.claude/sowhat-core/references/ux-detection-boundary.md
 @.claude/sowhat-core/workflows/resume.md
 @.claude/sowhat-core/references/session-protocol.md
 </execution_context>

@@ -44,6 +44,7 @@ config.json과 모든 섹션 파일을 읽어 전체 진행 상황 대시보드�
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md
+@.claude/sowhat-core/references/ux-detection-boundary.md
 @.claude/sowhat-core/workflows/progress.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/strength-scoring.md

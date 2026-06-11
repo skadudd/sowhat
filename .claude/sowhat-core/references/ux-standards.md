@@ -359,81 +359,10 @@ spec 05-func-req > 기능 3/8
 
 ## 9. Detection-Only Scope Boundary (CRITICAL)
 
-**감지 전용 command는 파일 쓰기·git commit·Edit/Write/Bash(파일 생성) 도구 호출 금지.** 리포트 텍스트 출력만 허용한다.
-
-### 감지 전용 command 목록
-
-| Command | 허용 | 금지 |
-|---|---|---|
-| `/sowhat:progress` | Read, Glob, Grep | Write, Edit, Bash |
-| `/sowhat:map` | Read, Glob, Grep | Write, Edit, Bash |
-| `/sowhat:resume` | Read, Glob, Grep | Write, Edit, Bash |
-| `/sowhat:sync` 감지 단계 | Read, Glob, Grep | Write, Edit, Bash — 반영 단계에만 허용 (명시적 확인 게이트 후) |
-
-> `/sowhat:note`는 노트 저장이 주요 기능이므로 감지 전용이 아니다.
-
-### 경계 게이트 규칙
-
-감지 전용 command 실행 중 파일 쓰기가 필요한 상황이 발생하면:
-1. **즉시 멈춘다** — 쓰기 없이 리포트만 출력한다
-2. **경고 표시**: `⚠️ 이 command는 감지 전용입니다. 파일 변경은 허용되지 않습니다.`
-3. 필요 시 변경을 수행할 수 있는 command를 안내한다
-
-```
-# 올바른 패턴 — progress는 읽기만
-> /sowhat:progress 실행
-→ 상태 표시 후 종료 (파일 변경 없음)
-
-# 금지 패턴
-> /sowhat:progress 실행
-→ logs/session.md 업데이트  ← VIOLATION
-```
-
-### sync 감지/반영 분리
-
-`/sowhat:sync`는 두 단계로 명확히 분리한다:
-- **감지 단계**: 로컬 vs GitHub 상태 비교, diff 리포트 출력
-- **반영 단계**: 사용자 명시적 확인([1]/[2]) 후에만 파일 쓰기·git 작업 허용
+감지 전용 커맨드(progress/map/resume/sync)의 read-only 경계 규칙은 **`references/ux-detection-boundary.md`** 참조. 해당 커맨드만 import한다.
 
 ---
 
 ## 10. 미리보기 게이트 (Preview Gate)
 
-**적용 범위**: `draft`, `finalize`, `finalize-planning` — 다파일 생성 또는 외부 git commit이 발생하는 커맨드.
-**적용 제외**: `expand`, `settle`, `revise` — 이미 인터랙티브 핑퐁 구조이므로 추가 게이트는 마찰.
-**스킵 조건**: `--force` 또는 `--no-preview` 플래그 전달 시 게이트를 건너뛰고 즉시 실행.
-
-### 미리보기 출력 포맷
-
-```
-> [draft > 미리보기 게이트]
-
-📋 생성될 파일:
-  export/linkedin-series/01-problem.md       (신규)
-  export/linkedin-series/02-solution.md      (신규)
-  export/linkedin-series/index.md            (신규)
-
-📊 영향:
-  settled 섹션 3개 → 산출물 3개
-  status 전이 없음
-
-[1] 이대로 만들기
-[2] 취소
-[3] 수정 요청 (자유 입력)
-```
-
-### 분기 처리
-
-- `[1]` → 즉시 실행
-- `[2]` → 종료
-- `[3]` → 사용자 수정 요청 자유 입력 → 미리보기 재생성 → 반복 (최대 3회)
-- 그 외 텍스트 입력 → `[3]`과 동일 처리
-
-### 요약 규칙
-
-| 항목 | 규칙 |
-|------|------|
-| 파일 목록 | 생성/수정/삭제 파일 전체. 경로는 상대경로 |
-| 상태 전이 | 영향받는 섹션 + 변경 후 상태 표시 |
-| 수정 루프 | 최대 3회. 초과 시 취소로 처리 |
-| `--no-preview` | 미리보기 전혀 없이 즉시 실행 |
+미리보기 게이트(draft·finalize·finalize-planning 전용) 포맷·분기 규칙은 **`references/ux-preview-gate.md`** 참조. 해당 커맨드만 import한다.

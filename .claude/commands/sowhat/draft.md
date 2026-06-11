@@ -62,6 +62,7 @@ settled 섹션들의 논증 구조를 종합하여, 바바라 민토의 피라�
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md
+@.claude/sowhat-core/references/ux-preview-gate.md
 @.claude/sowhat-core/workflows/draft.md
 @.claude/sowhat-core/references/minto-pyramid.md
 @.claude/sowhat-core/references/output-profiles.md

@@ -54,6 +54,7 @@ disable-model-invocation: true
 
 <execution_context>
 @.claude/sowhat-core/references/ux-standards.md
+@.claude/sowhat-core/references/ux-preview-gate.md
 @.claude/sowhat-core/workflows/finalize-planning.md
 @.claude/sowhat-core/references/session-protocol.md
 @.claude/sowhat-core/references/continuation-format.md
