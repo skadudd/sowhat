@@ -366,3 +366,14 @@ spec 05-func-req > 기능 3/8
 ## 10. 미리보기 게이트 (Preview Gate)
 
 미리보기 게이트(draft·finalize·finalize-planning 전용) 포맷·분기 규칙은 **`references/ux-preview-gate.md`** 참조. 해당 커맨드만 import한다.
+
+---
+
+## 11. 출력 규율 (Output Discipline)
+
+대화 컨텍스트를 보호하기 위해 **상세는 파일에, 대화엔 요약만** 출력한다. (Claude Code는 모든 Write/Edit/Bash를 렌더하므로 불필요한 echo·dump를 만들지 않는 것이 핵심.)
+
+- **로그·산출물 파일을 raw `cat`으로 대화에 덤프 금지.** 파일에 기록하고, 대화엔 핵심 상태 변화(카운트·verdict·다음 액션)만 1~몇 줄.
+- parser 호출은 `--json-file <path>` — 전체 JSON은 파일, stdout엔 간결 요약(formatReportText). `tee`/`> file && cat file` 우회 불필요.
+- session.md·argument-log 등은 Write로 기록하되 같은 내용을 추가로 echo하지 않는다.
+- 모델 패턴: `challenge.md` — 상세 리포트는 `logs/challenge-{datetime}.md`에 저장, 대화엔 "🔴 N건 발견 (상세: 파일)" 요약만.

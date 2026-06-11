@@ -170,12 +170,10 @@ AI가 직접 붙일 수 없는 source (workflow가 자동 부착):
 - `/sowhat:map {section} --field {현재 진행 중인 필드}` 트리거
 - 맵 출력 후 핑퐁 재개
 
-**각 스텝 완료 후 즉시 커밋:**
-- `wip({section}): add stasis+scheme`
-- `wip({section}): add claim`
-- `wip({section}): add grounds`
-- `wip({section}): add cq-responses`
-- `wip({section}): add confidence`
+**커밋 정책 (context 보호 — batching):**
+- 각 필드는 완료 즉시 **섹션 `.md`에 저장**(Write/Edit)하되 **필드별 커밋은 하지 않는다.**
+- 섹션의 모든 필드(stasis→scheme→claim→grounds→cq→confidence→scope/AC)가 끝나면 **종료 시 1회만 커밋**(`expand({section}): complete walton structure`).
+- 중단해도 필드는 `.md`에 저장돼 있고 session.md `step:`가 위치를 추적하므로 작업 손실 없음(미커밋은 resume이 `git status`로 감지).
 
 ---
 
@@ -267,7 +265,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 | 가치 | 비교 대상, 우선순위 기준 | 사실 나열만 |
 | 행동 | 사실+가치+실행가능성 조합 | 어느 하나만 |
 
-인간 선택 → `stasis` 필드에 저장 → `wip({section}): add stasis+scheme` 커밋 (스텝 2 완료 후 함께).
+인간 선택 → `stasis` 필드에 섹션 `.md` 저장. (커밋은 섹션 종료 시 1회 — 필드별 커밋 안 함.)
 
 ---
 
@@ -314,7 +312,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
 - 복합 scheme이 확정되면 → 모든 scheme의 CQs를 스텝 5에서 다 적용
 - 복합 scheme 패턴 상세: `@walton-pitfalls.md`
 
-인간 선택 → `scheme` 필드에 저장 (복합이면 쉼표 구분: `Expert Opinion, Cause to Effect`) → `wip({section}): add stasis+scheme` 커밋.
+인간 선택 → `scheme` 필드에 저장 (복합이면 쉼표 구분: `Expert Opinion, Cause to Effect`). (커밋은 섹션 종료 시 1회.)
 
 ---
 
@@ -372,7 +370,7 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
   [5] 잘 모르겠다 → Open Question 등록
 ```
 
-인간 답변 → `## Claim` 필드에 저장 → `wip({section}): add claim` 커밋.
+인간 답변 → `## Claim` 필드에 저장. (커밋은 섹션 종료 시 1회.)
 
 ---
 
@@ -512,7 +510,7 @@ AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 
 `grounds_structure` 필드에 저장. challenge/debate의 공격 전략이 이에 따라 달라진다.
 
-인간 답변 → `## Grounds` 필드에 저장 → `wip({section}): add grounds` 커밋.
+인간 답변 → `## Grounds` 필드에 저장. (커밋은 섹션 종료 시 1회.)
 
 ---
 
@@ -562,7 +560,7 @@ CQ {N}/{총수} [{scheme명}]: {CQ 질문}
 **미충족 CQ 처리**: confidence ≤ 1인 CQ는 미충족으로 집계.
 scheme별 미충족 허용 상한 초과 시 → settle 차단 (`@calibration-guide.md`).
 
-완료 후 `## CQ Responses` 필드에 저장 → `wip({section}): add cq-responses` 커밋.
+완료 후 `## CQ Responses` 필드에 저장. (커밋은 섹션 종료 시 1회.)
 
 ---
 
@@ -590,7 +588,7 @@ scheme별 미충족 허용 상한 초과 시 → settle 차단 (`@calibration-gu
 - 미충족 CQ ≥ 임계값인데 `very likely` 이상 선택 → `⚠️ Overclaiming: CQ 미충족과 confidence 불일치`
 - 모든 CQ가 confidence 4인데 `uncertain` 이하 → `⚠️ Underclaiming: 더 강한 confidence 가능`
 
-인간 답변 → `confidence` 필드에 anchor 어휘 저장 → `wip({section}): add confidence` 커밋.
+인간 답변 → `confidence` 필드에 anchor 어휘 저장. (커밋은 섹션 종료 시 1회.)
 
 ---
 
@@ -906,7 +904,7 @@ git commit -m "expand({section}): complete walton structure"
   CQs:        총 {N}개, 미충족 {M}개
 
   status: discussing
-  커밋: {N}회
+  커밋: 1회 (섹션 종료 시점)
 
 ---
 
@@ -935,7 +933,7 @@ git commit -m "expand({section}): complete walton structure"
 - **Claude는 질문만 한다** — 내용을 대신 채우지 않는다. 특히 **구체 수치·기관명·연도·인물명은 절대 AI가 생성하지 않는다** (`references/ai-content-boundary.md` 참조)
 - **항상 thesis와의 연결을 확인한다** — 모든 필드는 thesis Answer로 거슬러 올라간다
 - **CQ 응답은 생략 불가** — 미충족 CQ(confidence 0)는 경고 후 계속 가능하나 settle 차단 가능함을 고지
-- **각 스텝 완료마다 커밋** — 작업 손실 방지
+- **섹션 종료 시 1회 커밋** — 필드는 `.md`에 즉시 저장되어 작업 손실 방지 (필드별 커밋 안 함 — context 보호)
 - **Discussion audit trail 필수** — 모든 핑퐁 라운드를 `logs/discussion/`에 기록
 - **Decision ID 부여** — 사용자 결정마다 D-{section}-{seq} ID를 부여하여 settle/challenge에서 추적 가능
 - **Advisor mode** — Claim 선택 시 병렬 리서치로 판단 근거를 미리 제공 (근거 부족할 때)

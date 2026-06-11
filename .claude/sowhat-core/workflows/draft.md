@@ -678,20 +678,16 @@ draft 진입 전 `.claude/sowhat-core/bin/source-tag-parser.js` 로 모든 입�
 
 ```bash
 date -u +"%Y%m%d-%H%M%S"
-mkdir -p logs/parser
 LOG="logs/parser/draft-{datetime}.json"
 node .claude/sowhat-core/bin/source-tag-parser.js validate --all planning/ --project . --strict \
-  --json > "$LOG"
-cat "$LOG"
-# 로그 생성 여부 확인 (PowerShell 환경에서 tee silent fail 방지)
-test -f "$LOG" || echo "⚠️ parser 로그 미생성 — 호출 누락 또는 파일 시스템 권한 문제. logs/parser/ 디렉토리를 확인하세요."
+  --json-file "$LOG"
 ```
 
 `planning/` 디렉토리가 없으면(init 직후) parser는 exit 2. 이 경우 "입력 섹션 없음"으로 판단하고 Step 5.5b만 진행.
 
 Parser가 errors 보고 시(exit 1) draft 중단. `logs/parser/draft-{datetime}.json`에 영구 저장된 리포트를 사용자에게 보여주고 `/sowhat:revise {section}` 안내. `--strict`로 warnings도 차단(draft는 외부 공유용이므로 보수적).
 
-> **cross-platform 주의**: `tee` 대신 `> "$LOG"` + `cat "$LOG"` 패턴 사용 (PowerShell 호환). `test -f` 명령으로 로그 생성 여부 최종 확인.
+> **출력 규율**: `--json-file`로 호출 — 전체 JSON은 `$LOG`에 영구 기록되고 stdout엔 **간결 요약(formatReportText)만** 출력된다(대화에 raw JSON 덤프 안 함). exit 1이면 그 요약 + `/sowhat:revise` 안내만 제시한다. parser가 디렉토리 생성·파일 기록을 직접 수행하므로 PowerShell `tee`/`cat` 우회는 불필요.
 
 ### 5.5b. 산출물 구체값 매칭 (literal-first + 보수적 LLM-semantic)
 

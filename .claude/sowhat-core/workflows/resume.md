@@ -68,12 +68,14 @@ git log --oneline -20 2>/dev/null
 ```
 
 최근 커밋에서 패턴 매칭:
-- `wip({section}): add {step}` → expand 진행 중
+- `wip({section}): expand …` → expand 섹션 작업 커밋됨 (필드 단위 아님 — 섹션당 1 커밋)
 - `debate({section}): round-{N}` → debate 진행 중
 - `expand({section}): complete` → expand 완료
 - `debate({section}): merge` → debate 완료
 
 마지막 wip 커밋 이후 complete 커밋이 없으면 → **미완성 작업**
+
+> **mid-section 위치 판정**: expand는 섹션 완료 시 1회 커밋하므로 섹션 내부 진행 위치(어느 필드까지 작성)는 git 로그가 아니라 **session.md의 `step:` 필드** + **미커밋 섹션 파일 변경(아래 E의 `git status`)**으로 판정한다.
 
 ### C. discussing 상태 섹션 탐지
 
@@ -239,7 +241,7 @@ session.md가 유실되었을 때 파일 상태 + git log로 최대한 복구한
 3. git log --oneline -30 에서 패턴 매칭:
 
    커밋 패턴 → 추론 결과:
-   - "wip({section}): add {field}" → expand 진행 중, {field} 단계
+   - "wip({section}): expand …" → expand 섹션 작업 커밋됨 (섹션 내부 위치는 session.md `step:` + 미커밋 `git status`로 판정)
    - "expand({section}): complete" → expand 완료, settle 대기
    - "debate({section}): round-{N}" → debate round {N} 완료
    - "debate({section}): merge" → debate 완료, merge됨

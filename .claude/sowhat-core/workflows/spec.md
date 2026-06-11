@@ -276,12 +276,7 @@ date -u +"%Y-%m-%dT%H:%M:%SZ"
 - 인간의 답변을 해당 섹션에 구조화하여 기록
 - **역추적 태그 포함**: 각 항목에 `(← {section} {field})` 출처 표시
 
-각 핑퐁 질문에서 인간이 답변하면 즉시 커밋:
-
-```bash
-git add {section_file}
-git commit -m "wip({section}): add {현재 항목 키워드}"
-```
+각 핑퐁 답변은 즉시 **`{section_file}`에 저장**하되 **항목별 커밋은 하지 않는다** (context 보호 — batching). 커밋은 아래 종료 시 1회. 중단해도 답변은 파일에 저장돼 있고 session.md `step:`가 위치를 추적한다.
 
 ## Argument Log 업데이트
 
@@ -322,6 +317,12 @@ saved: {current_datetime}
 ## 종료
 
 인간이 충분하다고 판단하거나 턴 상한 도달 시 핑퐁을 종료한다.
+
+종료 시 **1회 커밋** (항목별 커밋 안 함):
+```bash
+git add {section_file} logs/argument-log.md
+git commit -m "spec({section}): complete spec section"
+```
 
 ```
 ✅ 명세 섹션 {N}-{name} 전개 완료 (status: discussing)

@@ -54,7 +54,7 @@ Multi-step command는 반드시 `logs/session.md` 저장 포함.
 - `@.claude/sowhat-core/references/status-transitions.md` — 상태 전이 게이트
 - `@.claude/sowhat-core/references/command-flow.md` — command 간 의존성
 
-**cross-platform**: Parser·로그 호출 시 `tee` 대신 `> file && cat file` 패턴 사용 (PowerShell에서 `tee` silent fail 가능).
+**출력 규율 (context 보호)**: 상세는 파일에, 대화엔 요약만. 로그·산출물 파일을 raw `cat`으로 대화에 덤프 금지 — 카운트·verdict 등 핵심 상태 변화만 간결히 출력한다. parser 호출은 `--json-file <path>`로 (전체 JSON은 파일, stdout엔 요약). 모델 패턴: `challenge.md`(상세는 `logs/challenge-*.md`, 대화엔 요약), `references/ux-standards.md` §출력 규율.
 
 ---
 
