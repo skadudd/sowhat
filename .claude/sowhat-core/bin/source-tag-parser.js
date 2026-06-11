@@ -366,12 +366,13 @@ function formatReportText(result) {
 // ---------------------------------------------------------------------------
 
 function parseArgs(argv) {
-  const args = { mode: null, target: null, project: null, json: false, all: false, strict: false };
+  const args = { mode: null, target: null, project: null, json: false, jsonFile: null, all: false, strict: false };
   args.mode = argv[0] || null;
 
   for (let i = 1; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--json') args.json = true;
+    else if (a === '--json-file') { args.jsonFile = argv[++i]; }
     else if (a === '--all') args.all = true;
     else if (a === '--strict') args.strict = true;
     else if (a === '--project') { args.project = argv[++i]; }
@@ -390,7 +391,10 @@ Modes:
 
 Flags:
   --all       Recursively process every .md under <dir>.
-  --json      Emit machine-readable JSON instead of text report.
+  --json      Emit machine-readable JSON to stdout instead of text report.
+  --json-file <path>  Write full JSON to <path> and print only the concise
+              text report to stdout (keeps the conversation clean; no tee/cat
+              workaround needed — node writes the file directly).
   --strict    Warnings count as failure (exit 1).
   --project   Directory root for resolving #NNN (research/) and file: paths.
               Defaults to the current working directory.
@@ -438,8 +442,21 @@ function main() {
 
   const results = files.map((f) => validateFile(f, projectRoot));
 
-  if (args.json) {
-    console.log(JSON.stringify(results.length === 1 ? results[0] : results, null, 2));
+  const payload = results.length === 1 ? results[0] : results;
+
+  if (args.jsonFile) {
+    // Write full JSON to the file (durable record) and print only the concise
+    // text report to stdout — keeps the conversation clean while preserving the
+    // machine-readable log. node writes the file directly, so the PowerShell
+    // `tee`/`> file && cat file` workaround is unnecessary.
+    fs.mkdirSync(path.dirname(path.resolve(args.jsonFile)), { recursive: true });
+    fs.writeFileSync(args.jsonFile, JSON.stringify(payload, null, 2));
+    for (const r of results) {
+      console.log(formatReportText(r));
+      console.log('');
+    }
+  } else if (args.json) {
+    console.log(JSON.stringify(payload, null, 2));
   } else {
     for (const r of results) {
       console.log(formatReportText(r));

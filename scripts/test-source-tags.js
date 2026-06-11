@@ -70,6 +70,42 @@ for (const c of cases) {
   }
 }
 
+// --json-file: writes full JSON to the file, prints concise text report to stdout
+{
+  const fs = require('fs');
+  const outPath = path.join(repoRoot, '.tmp-json-file-test.json');
+  const validFixture = path.join(fixturesRoot, 'valid-section.md');
+  let stdout = '';
+  try {
+    stdout = execFileSync(
+      process.execPath,
+      [parser, 'validate', validFixture, '--project', fixturesRoot, '--json-file', outPath],
+      { encoding: 'utf8' }
+    );
+  } catch (err) {
+    stdout = err.stdout || '';
+  }
+
+  let pass = false;
+  try {
+    const fileJson = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+    const fileHasCounts = typeof fileJson.errorCount === 'number';
+    const stdoutIsTextReport = stdout.includes('Summary:') && !stdout.trim().startsWith('{');
+    pass = fileHasCounts && stdoutIsTextReport;
+  } catch (_) {
+    pass = false;
+  } finally {
+    try { fs.unlinkSync(outPath); } catch (_) {}
+  }
+
+  if (pass) {
+    console.log('  ok  --json-file writes JSON to file, concise report to stdout');
+  } else {
+    failures++;
+    console.log('  FAIL  --json-file writes JSON to file, concise report to stdout');
+  }
+}
+
 console.log('');
 console.log(failures === 0 ? 'All tests passed.' : `${failures} test(s) failed.`);
 process.exit(failures === 0 ? 0 : 1);
