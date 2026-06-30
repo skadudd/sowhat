@@ -298,19 +298,31 @@ drift가 감지되지 않으면 조용히 통과하고 스텝 1로 진행한다.
   복합 선택: 번호를 여러 개 입력 (예: 1 3 → Expert Opinion + Cause to Effect)
 ```
 
-**[LLM 보조 제안] Writer 선택 직후**:
-- 선택된 scheme이 단일이면: 복합 scheme 가능성을 확인한다
+**[Phase 2 — sowhat-scheme-agent Task A 스폰] Writer 선택 직후**:
+- 선택된 scheme으로 sowhat-scheme-agent를 Task A 모드로 스폰한다:
   ```
-  ℹ️ 복합 scheme 확인:
-    선택: {선택한 scheme}
-    이 주장에 {다른 scheme}도 해당될 수 있습니다.
-    예) Expert Opinion + Cause to Effect: 전문가가 인과 관계를 주장할 때
+  task_a = Task(sowhat-scheme-agent,
+    prompt = """
+    <task>compound_analysis</task>
+    <selected_scheme>{사용자가 선택한 scheme 이름}</selected_scheme>
+    <stasis>{stasis}</stasis>
+    <thesis_argument>{thesis_argument}</thesis_argument>
+    """)
+  ```
+  - task_a.needs_compound=true → 복합 scheme 확인 UI 표시:
+    ```
+    ℹ️ 복합 scheme 확인:
+      선택: {selected_scheme}
+      {task_a.rationale}
+      추가 제안: {task_a.suggested 목록}
 
-  [1] 단일 scheme 유지
-  [2] 복합 scheme으로 확장 → 어떤 scheme 추가?
-  ```
+    [1] 단일 scheme 유지
+    [2] 복합 scheme으로 확장 ({task_a.suggested} 추가)
+    [3] 다른 scheme 직접 선택
+    ```
+  - task_a.needs_compound=false → 단일 scheme으로 바로 진행
+  - 에이전트 오류(빈 객체 반환 등) → fallback: `.claude/sowhat-core/references/walton-pitfalls.md` Read 후 LLM이 직접 복합 가능성 판단
 - 복합 scheme이 확정되면 → 모든 scheme의 CQs를 스텝 5에서 다 적용
-- 복합 scheme 패턴 상세: `@walton-pitfalls.md`
 
 인간 선택 → `scheme` 필드에 저장 (복합이면 쉼표 구분: `Expert Opinion, Cause to Effect`). (커밋은 섹션 종료 시 1회.)
 
@@ -524,8 +536,20 @@ AI가 이 요건을 채우는 게 아니다. 사용자 입력이 채운다.
 
 **SUB-RESEARCH Semi-Async 중이었다면: 여기서 Grounds 결과를 먼저 확인한다.**
 
+> **[Phase 2 — sowhat-scheme-agent Task B 스폰]** 확정된 scheme(들)의 CQ 목록을 에이전트로 추출한다:
+> ```
+> task_b = Task(sowhat-scheme-agent,
+>   prompt = """
+>   <task>cq_extraction</task>
+>   <schemes>{확정된 scheme 이름 목록 — 쉼표 구분}</schemes>
+>   """)
+> ```
+> - task_b 결과의 cqs 목록을 아래 CQ 응답 UI에 사용한다.
+> - 에이전트 오류(빈 배열 반환 등) → fallback: `.claude/sowhat-core/references/walton-schemes.md` Read 후 직접 CQ 추출.
+> - 또한 `.claude/sowhat-core/references/calibration-guide.md`를 Read 도구로 로드한다 (미충족 CQ 허용 상한 확인용).
+
 scheme(s)에 해당하는 CQs를 자동 호출한다. 각 CQ에 답변하고 confidence 0-4를 부여한다.
-CQ 전체 목록: `@walton-schemes.md` | 함정 대응 규칙: `@walton-pitfalls.md`
+CQ 목록: sowhat-scheme-agent Task B 결과 사용 (fallback: walton-schemes.md 직접 Read)
 
 **복합 scheme 처리**: 여러 scheme이 확정된 경우 모든 scheme의 CQs를 연달아 출력한다.
 
@@ -563,6 +587,8 @@ scheme별 미충족 허용 상한 초과 시 → settle 차단 (`@calibration-gu
 완료 후 `## CQ Responses` 필드에 저장. (커밋은 섹션 종료 시 1회.)
 
 ---
+
+> **[로딩 게이트 — 스텝 6 전]** calibration-guide.md는 스텝 5 게이트에서 로드됐으면 재사용. `.claude/sowhat-core/references/strength-scoring.md`를 Read 도구로 로드한다 (Grounds Tier·수 기반 confidence 자동 추정 기준).
 
 ### 스텝 6: Confidence Band
 

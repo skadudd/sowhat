@@ -197,12 +197,13 @@ accumulated_issues += stage_0_results
 
 **Stage 1-7 — 논리 검증 (sowhat-challenge-agent 사용)**
 
+> **[Phase 2]** sowhat-challenge-agent가 `<pre_execution>` 블록에서 challenge-algorithm.md와 stage별 참조 파일을 자체 로드한다. 오케스트레이터는 `<algorithm>` 블록을 전달하지 않는다.
+
 ```
 FOR stage IN [1, 2, 3, 4, 5, 6, 7]:
   result_{stage} = Task(sowhat-challenge-agent,
     prompt = """
     <stage>{stage}: {stage_name}</stage>
-    <algorithm>{challenge-algorithm.md의 해당 Stage 섹션 전문}</algorithm>
     <thesis>{thesis_answer, key_arguments}</thesis>
     <sections>{모든 섹션 데이터 (메모리 변수)}</sections>
     <stage_0_issues>{Stage 0에서 발견된 사실 오류 목록 — 논리 검증 시 참고}</stage_0_issues>
@@ -388,6 +389,8 @@ date -u +"%Y%m%d-%H%M"
 > **메타데이터 원칙**: 엔진 헤더는 절대 생략하지 않는다. 사용자가 silent fallback 여부를 즉시 확인할 수 있어야 한다.
 
 ---
+
+> **[로딩 게이트 — 인간 응답 처리 전 필수]** `.claude/sowhat-core/references/checkpoints.md`를 Read 도구로 로드한다 (반박/수용 기준 및 역전파 게이트 형식 확인용).
 
 ## 인간 응답 처리
 

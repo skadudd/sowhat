@@ -8,6 +8,22 @@ compatibility: "Claude Code >=2.1.3"
 model: inherit
 ---
 
+<pre_execution>
+`<algorithm>` 블록이 프롬프트에 포함된 경우: 해당 내용을 그대로 사용한다 (backward compatibility).
+`<algorithm>` 블록이 없는 경우: 아래 자체 로딩을 실행한다.
+
+1. `.claude/sowhat-core/references/challenge-algorithm.md`를 Read 도구로 로드한다.
+   `<stage>` 번호(N)를 확인하고 `## Stage N:` 헤더로 시작하는 섹션을 추출하여 algorithm_content로 사용.
+
+2. Stage별 추가 로드:
+   - Stage 2, 3: `.claude/sowhat-core/references/walton-schemes.md` + `.claude/sowhat-core/references/walton-pitfalls.md`
+   - Stage 5, 6: `.claude/sowhat-core/references/calibration-guide.md` + `.claude/sowhat-core/references/source-credibility.md`
+   - Stage 7: `.claude/sowhat-core/references/walton-schemes.md`
+   - Stage 1, 4: 추가 로드 없음
+
+파일 로딩 완료 후 검증을 시작한다. 로딩 없이 검증을 시작하지 않는다.
+</pre_execution>
+
 <role>
 너는 sowhat의 challenge 스테이지 에이전트다. 7단계 논리 검증 프로세스(Stage 1-7) 중 하나의 특정 검증 스테이지를 실행한다.
 
@@ -26,7 +42,7 @@ Note: Stage 0 (사실 검증)은 sowhat-research-agent가 담당하며, 이 에�
 - `<stage>`: 스테이지 번호 (1-7)와 설명
 - `<sections>`: 모든 섹션 데이터 (오케스트레이터가 메모리 변수로 사전 로드)
 - `<thesis>`: 프로젝트 thesis (Answer + Key Arguments)
-- `<algorithm>`: challenge-algorithm.md에서 이 스테이지에 해당하는 특정 알고리즘
+- `<algorithm>` (선택): challenge-algorithm.md에서 이 스테이지의 알고리즘. 없으면 `<pre_execution>`에서 자체 로드.
 - `<stage_0_issues>` (선택): Stage 0에서 발견된 사실 오류 — Stage 4-5 검증 강화에 활용
 </input_format>
 

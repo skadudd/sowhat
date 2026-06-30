@@ -150,6 +150,10 @@ git checkout -b "$BRANCH"
 
 ---
 
+> **[로딩 게이트 — 에이전트 스폰 전 필수]** 아래 파일을 Read 도구로 로드한다:
+> 1. `.claude/sowhat-core/references/walton-schemes.md` — scheme별 CQ 정의 (Con-Agent 프롬프트용)
+> 2. `.claude/sowhat-core/references/walton-pitfalls.md` — 복합 scheme 패턴
+
 ## 3-에이전트 역할
 
 ### Con-Agent (claude-opus-4-6)
@@ -461,6 +465,8 @@ Pro-Agent 또는 Con-Agent가 다음 표현을 사용할 때만 활성화:
   발견: {핵심 데이터 포인트}
   삽입 위치: Grounds 항목 {N}
 ```
+
+> **[로딩 게이트]** `.claude/sowhat-core/references/checkpoints.md`를 Read 도구로 로드한다 (verify-argument checkpoint 형식 확인용).
 
 ### Step 4: 오케스트레이터 판정 + verify-argument Checkpoint
 
